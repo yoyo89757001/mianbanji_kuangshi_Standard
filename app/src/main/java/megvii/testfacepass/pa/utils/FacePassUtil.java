@@ -77,7 +77,7 @@ public class FacePassUtil {
                                 config.lowBrightnessThreshold = 70f;
                                 config.highBrightnessThreshold = 210f;
                                 config.brightnessSTDThreshold = 60f;
-                                config.retryCount = 3;
+                                config.retryCount = baoCunBean.getMoshengrenPanDing();
                                 config.maxFaceEnabled = true;
                                 config.fileRootPath = MyApplication.SDPATH2;
                                 /* 创建SDK实例 */

@@ -239,8 +239,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     private Box<IDCardTakeBean> idCardTakeBeanBox=MyApplication.myApplication.getIdCardTakeBeanBox();
  //   private int jiqiType=-1;
     private boolean isGET = true;
-    private int cishu=30;
-    private int jidianqi=5000;
+    private int cishu=5;
+    private int jidianqi=6000;
     private Lztek lztek=null;
     private Function mFuncs = null;
     private int loc_readerHandle=-1;
@@ -1296,12 +1296,12 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         for (FacePassRecognitionResult result : recognizeResult) {
                           //  Log.d("RecognizeThread", "result.trackId:" + result.trackId);
                             //String faceToken = new String(result.faceToken);
-                            Log.d("RecognizeThread", "paAccessControl.getConfig().searchThreshold:" + paAccessControl.getConfig().searchThreshold);
+                         //   Log.d("RecognizeThread", "paAccessControl.getConfig().searchThreshold:" + paAccessControl.getConfig().searchThreshold);
                             if (FacePassRecognitionResultType.RECOG_OK == result.facePassRecognitionResultType) {
                                 //识别的
                                 //  getFaceImageByFaceToken(result.trackId, faceToken);
-                                Log.d("RecognizeThread", "result.detail.searchScore:" + result.detail.searchScore);
-                                Log.d("RecognizeThread", "识别了");
+                              //  Log.d("RecognizeThread", "result.detail.searchScore:" + result.detail.searchScore);
+                               // Log.d("RecognizeThread", "识别了");
                                 //  Log.d("RecognizeThread", subjectBox.getAll().get(0).toString());
                                 Subject subject = subjectBox.query().equal(Subject_.teZhengMa, new String(result.faceToken)).build().findUnique();
                                 // Log.d("RecognizeThread", "subject:" + subject);
@@ -1363,7 +1363,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                     concurrentHashMap.put(result.trackId, (concurrentHashMap.get(result.trackId)) + 1);
                                 }
                                 //判断次数超过3次
-                                if (concurrentHashMap.get(result.trackId) == 3) {
+                                if (concurrentHashMap.get(result.trackId) == cishu) {
                                    // tID = result.trackId;
                                     isLink = true;
                                   //  msrBitmap = nv21ToBitmap.nv21ToBitmap(result.feedback.rgbImage.image, result.feedback.rgbImage.width, result.feedback.rgbImage.height);
@@ -1674,6 +1674,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         if (baoCunBean.getHoutaiDiZhi() == null || baoCunBean.getHoutaiDiZhi().equals("")) {
             return;
         }
+      //  Log.d("AllConnects", baoCunBean.getHoutaiDiZhi());
         Bitmap bb = BitmapUtil.rotateBitmap(bitmap, SettingVar.msrBitmapRotation);
         RequestBody body = null;
         body = new FormBody.Builder()

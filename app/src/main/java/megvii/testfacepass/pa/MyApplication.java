@@ -117,7 +117,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         myApplication = this;
         BoxStore mBoxStore = MyObjectBox.builder().androidContext(this).build();
 
-        Bugly.init(getApplicationContext(), "bb8f1f9237", false);
+        Bugly.init(getApplicationContext(), "e92fdff61f", false);
 
       //  Log.d("MyApplication","机器码"+ FileUtil.getSerialNumber(this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(this));
         //全局dialog
@@ -211,6 +211,7 @@ public class MyApplication extends Application implements Application.ActivityLi
             baoCunBean.setPort(8090);
             baoCunBean.setMsrPanDing(true);
             baoCunBean.setConfigModel(1);
+            baoCunBean.setMoshengrenPanDing(5);
 
             mBoxStore.boxFor(BaoCunBean.class).put(baoCunBean);
         }
