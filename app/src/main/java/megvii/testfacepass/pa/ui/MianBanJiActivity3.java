@@ -2201,11 +2201,11 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         iv_error_gif_out_Ir.setVisibility(View.VISIBLE);//红色圈外层
                         layout_loadbg_Ir.setVisibility(View.VISIBLE);//识别结果大框
                         layout_loadbg_Ir.setBackgroundResource(R.mipmap.error_bg);//切换背景
-                        tvName_Ir.setVisibility(View.VISIBLE);//姓名
-                        tvTime_Ir.setVisibility(View.GONE);//时间
+                        tvName_Ir.setVisibility(View.GONE);//姓名
+                        tvTime_Ir.setVisibility(View.VISIBLE);//时间
                         tvFaceTips_Ir.setVisibility(View.VISIBLE);//识别提示
-                        tvName_Ir.setText("无权限通过,请重试");
-                        tvTime_Ir.setText("");
+                        tvName_Ir.setText("");
+                        tvTime_Ir.setText("无权限通过,请重试");
                         tvFaceTips_Ir.setText(kouzhao);
                         break;
                     }
