@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import megvii.testfacepass.pa.MyApplication;
+import megvii.testfacepass.pa.beans.BaoCunBean;
 import megvii.testfacepass.pa.utils.fx.FxTool;
 
 public class DengUT {
@@ -65,8 +66,45 @@ public class DengUT {
     public  static boolean isOpenDOR=false;//默认关的 false
 
     public  static boolean isExecution=false;//是否执行过 false
+    private static DengUT mInstance;
+    private static final byte[] LOCKER = new byte[0];
+    private static int jiqiType=0;
 
-    public static void closeWrite(){
+    /**
+     * 单例模式获取OkHttpNewUtils
+     *
+     * @return
+     */
+    public static DengUT getInstance(BaoCunBean baoCunBean) {
+        if (mInstance == null) {
+            synchronized (LOCKER) {
+                if (mInstance == null) {
+                    mInstance = new DengUT();
+                }
+            }
+        }
+        if (baoCunBean.getDangqianChengShi2()!=null){
+            switch (baoCunBean.getDangqianChengShi2()){
+                case "天波":
+                    jiqiType=0;
+                    break;
+                case "涂鸦":
+                    jiqiType=1;
+                    break;
+                case "户外防水8寸屏":
+                    jiqiType=2;
+                    break;
+                case "高通8寸屏":
+                    jiqiType=3;
+                    break;
+            }
+        }
+
+        return mInstance;
+    }
+
+
+    public  void closeWrite(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -75,16 +113,18 @@ public class DengUT {
                 }catch (NoClassDefFoundError e){
                     e.printStackTrace();
                 }
-                FxTool.fxLED1Control(false);
-                FxTool.fxLED2Control(false);
-                FxTool.fxLED3Control(false);
+                if (jiqiType==2) {
+                    FxTool.fxLED1Control(false);
+                    FxTool.fxLED2Control(false);
+                    FxTool.fxLED3Control(false);
+                }
                 writeGpio(CAMERA_WHITE_PATH,0);
             //    writeFile("0");
             }
         }).start();
 
     }
-    public static void openWrite(){
+    public  void openWrite(){
         writeGpio(RED_LAMP_PATH,0); //关红灯
         writeGpio(GREEN_LAMP_PATH,0);//关绿灯
         writeGpio(GPIO7_PATH,1);
@@ -94,9 +134,11 @@ public class DengUT {
         }catch (NoClassDefFoundError e){
             e.printStackTrace();
         }
-        FxTool.fxLED2Control(false);
-        FxTool.fxLED3Control(false);
-        FxTool.fxLED1Control(true);
+        if (jiqiType==2) {
+            FxTool.fxLED2Control(false);
+            FxTool.fxLED3Control(false);
+            FxTool.fxLED1Control(true);
+        }
        // writeFile("1");
     }
 
@@ -104,23 +146,26 @@ public class DengUT {
 
 
 
-    public static void closeRed(){
+    public  void closeRed(){
         writeGpio(RED_LAMP_PATH,0);
+        if (jiqiType==2)
         FxTool.fxLED2Control(false);
     }
 
-    public static void openRed(){
+    public  void openRed(){
         writeGpio(GREEN_LAMP_PATH,0);//关绿灯
         writeGpio(GPIO7_PATH,0); // 关白灯
         writeGpio(RED_LAMP_PATH,1);
         writeGpio(CAMERA_WHITE_PATH,255);
-        FxTool.fxLED1Control(false);
-        FxTool.fxLED3Control(false);
-        FxTool.fxLED2Control(true);
+        if (jiqiType==2) {
+            FxTool.fxLED1Control(false);
+            FxTool.fxLED3Control(false);
+            FxTool.fxLED2Control(true);
+        }
         Log.d("DengUT", "红灯");
     }
 
-    public static void closeLOED(){//关屏幕
+    public  void closeLOED(){//关屏幕
         writeGpio(BRIGHTNESS_PATH,0);
         try {
             Lztek lztek=Lztek.create(MyApplication.myApplication);
@@ -136,7 +181,7 @@ public class DengUT {
         Log.d("DengUT", "关屏幕");
     }
 
-    public static void openLOED(){//开屏幕
+    public  void openLOED(){//开屏幕
         writeGpio(BRIGHTNESS_PATH,255);
         try {
             Lztek lztek=Lztek.create(MyApplication.myApplication);
@@ -153,17 +198,18 @@ public class DengUT {
     }
 
 
-    public static void closeGreen(){
+    public  void closeGreen(){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 writeGpio(GREEN_LAMP_PATH,0);
+                if (jiqiType==2)
                 FxTool.fxLED3Control(false);
             }
         }).start();
 
     }
-    public static void openGreen(){
+    public  void openGreen(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -171,20 +217,23 @@ public class DengUT {
                 writeGpio(RED_LAMP_PATH,0); //关红灯
                 writeGpio(GREEN_LAMP_PATH,1);
                 writeGpio(CAMERA_WHITE_PATH,255);
-                FxTool.fxLED1Control(false);
-                FxTool.fxLED2Control(false);
-                FxTool.fxLED3Control(true);
+                if (jiqiType==2) {
+                    FxTool.fxLED1Control(false);
+                    FxTool.fxLED2Control(false);
+                    FxTool.fxLED3Control(true);
+                }
             }
         }).start();
 
     }
 
-    public static void closeDool(){
+    public  void closeDool(){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 writeGpio(RELAY_CTL_PATH,0);
                 TPS980PosUtil.setRelayPower(0);
+                if (jiqiType==2)
                 FxTool.fxDoorControl(false);
                 try {
                     HwitManager.HwitSetIOValue(9,0);
@@ -197,12 +246,13 @@ public class DengUT {
     }
 
 
-    public static void openDool(){
+    public  void openDool(){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 writeGpio(RELAY_CTL_PATH,1);
                 TPS980PosUtil.setRelayPower(1);
+                if (jiqiType==2)
                 FxTool.fxDoorControl(true);
                 try {
                     HwitManager.HwitSetIOValue(9,1);

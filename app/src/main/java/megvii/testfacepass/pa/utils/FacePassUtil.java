@@ -76,7 +76,7 @@ public class FacePassUtil {
                                 config.blurThreshold = 0.5f;
                                 config.lowBrightnessThreshold = 70f;
                                 config.highBrightnessThreshold = 210f;
-                                config.brightnessSTDThreshold = 60f;
+                                config.brightnessSTDThreshold = 80f;
                                 config.retryCount = baoCunBean.getMoshengrenPanDing();
                                 config.maxFaceEnabled = true;
                                 config.fileRootPath = MyApplication.SDPATH2;
@@ -92,8 +92,8 @@ public class FacePassUtil {
                                 float blurThreshold2 = 0.3f;
                                 float lowBrightnessThreshold2 = 70f;
                                 float highBrightnessThreshold2 = 210f;
-                                float brightnessSTDThreshold2 = 60f;
-                                FacePassConfig config1=new FacePassConfig(faceMinThreshold2,20f,20f,20f,blurThreshold2,
+                                float brightnessSTDThreshold2 = 80f;
+                                FacePassConfig config1=new FacePassConfig(faceMinThreshold2,22f,22f,22f,blurThreshold2,
                                         lowBrightnessThreshold2,highBrightnessThreshold2,brightnessSTDThreshold2);
                                 boolean is=   mFacePassHandler.setAddFaceConfig(config1);
 

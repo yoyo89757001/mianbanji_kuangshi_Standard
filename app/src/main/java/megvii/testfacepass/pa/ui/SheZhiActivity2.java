@@ -177,8 +177,11 @@ public class SheZhiActivity2 extends Activity {
         // mFacePassHandler=MyApplication.myApplication.getFacePassHandler();
         EventBus.getDefault().register(this);//订阅
 
-        DengUT.openLOED();
-        DengUT.closeWrite();
+        DengUT.getInstance(baoCunBean).openLOED();
+
+        DengUT.getInstance(baoCunBean).closeWrite();
+        DengUT.getInstance(baoCunBean).closeGreen();
+        DengUT.getInstance(baoCunBean).closeRed();
 
         if (baoCunBean.getDangqianChengShi2()!=null){
             chengshi.setText(baoCunBean.getDangqianChengShi2());
@@ -282,7 +285,7 @@ public class SheZhiActivity2 extends Activity {
             Lztek lztek=Lztek.create(MyApplication.myApplication);
             lztek.navigationBarSlideShow(false);
             lztek.hideNavigationBar();
-        }catch (Exception e){
+        }catch (NoClassDefFoundError e){
             e.printStackTrace();
         }
         try {
@@ -851,7 +854,7 @@ public class SheZhiActivity2 extends Activity {
             try {
                 Lztek lztek=Lztek.create(MyApplication.myApplication);
                 lztek.navigationBarSlideShow(true);
-            }catch (Exception e){
+            }catch (NoClassDefFoundError e){
                 e.printStackTrace();
             }
             try {
