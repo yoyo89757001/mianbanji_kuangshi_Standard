@@ -60,6 +60,8 @@ public class ZhiLingBean {
         private String cardID;
         private String shortId;
 
+
+
         public int getCommand() {
             return command;
         }

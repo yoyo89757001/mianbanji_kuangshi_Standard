@@ -227,7 +227,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     //定义一个HashMap用于存放音频流的ID
     private HashMap<Integer, Integer> musicId = new HashMap<>();
     private int pp = 0;
-    private ReadThread mReadThread;
+   // private ReadThread mReadThread;
+    private ReadThread2 mReadThread2;
     private InputStream mInputStream;
     private int w, h, cameraH, cameraW;
     private float s1 = 0, s2 = 0;
@@ -418,7 +419,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                             daKaBean.setBumen(subject.getDepartmentName());
                             daKaBean.setTime2(System.currentTimeMillis());
                             daKaBeanBox.put(daKaBean);
-
                             //启动定时器或重置定时器
                             if (task != null) {
                                 task.cancel();
@@ -482,12 +482,49 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                tastyToast.show();
 
                            }else if (subjectList.size()==1){
+                               DengUT.getInstance(baoCunBean).openDool();
+                               //启动定时器或重置定时器
+                               if (task != null) {
+                                   task.cancel();
+                                   //timer.cancel();
+                                   task = new TimerTask() {
+                                       @Override
+                                       public void run() {
+                                           Message message = new Message();
+                                           message.what = 222;
+                                           mHandler.sendMessage(message);
+                                       }
+                                   };
+                                   timer.schedule(task, jidianqi);
+                               } else {
+                                   task = new TimerTask() {
+                                       @Override
+                                       public void run() {
+                                           Message message = new Message();
+                                           message.what = 222;
+                                           mHandler.sendMessage(message);
+                                       }
+                                   };
+                                   timer.schedule(task, jidianqi);
+                               }
+
                                faceLinearLayout.setVisibility(View.VISIBLE);
                                faceName.setText(subjectList.get(0).getName());
-                               Glide.with(MyApplication.myApplication)
-                                       .load(R.drawable.erroy_bg)
-                                       .apply(myOptions)
-                                       .into(faceImage);
+                               if (paAccessControl!=null){
+                                   try {
+                                       Glide.with(MyApplication.myApplication)
+                                               .load(new BitmapDrawable(getResources(),paAccessControl.getFaceImage(subjectList.get(0).getTeZhengMa().getBytes())))
+                                               .apply(myOptions)
+                                               .into(faceImage);
+                                   } catch (FacePassException e) {
+                                       e.printStackTrace();
+                                   }
+                                   try {
+                                       link_shangchuanshualian(subjectList.get(0).getSid(),paAccessControl.getFaceImage(subjectList.get(0).getTeZhengMa().getBytes()),subjectList.get(0).getPeopleType()+"");
+                                   } catch (FacePassException e) {
+                                       e.printStackTrace();
+                                   }
+                               }
                                new Thread(new Runnable() {
                                    @Override
                                    public void run() {
@@ -498,7 +535,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                                faceLinearLayout.setVisibility(View.GONE);
                                            }
                                        });
-
                                    }
                                }).start();
                            }else {
@@ -550,37 +586,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
             {
                 int aa= mFuncs.lc_beep(loc_readerHandle, 2);
                 Log.d("MianBanJiActivity3", loc_readerHandle+"   "+ aa);
-                        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true){
-                    int st = 0;
-                    byte[] rData = new byte[128];
-                    int[] rlen = new int[2];
-                    if (loc_readerHandle!=-1){
-                      //  Log.d("MianBanJiActivity3", "ffffffff:"+loc_readerHandle);
-                        st = mFuncs.lc_getAutoReturnedData(loc_readerHandle, rData, rlen);
-                      //  Log.d("MianBanJiActivity3", "hh哈哈:"+st);
-                        if (st == 0)
-                        {
-                            StringBuilder showStr= new StringBuilder();
-                            int len=rlen[0];
-                            for(int i= 0; i<len; i++)
-                                showStr.append(byteToHexString(rData[i]));
-                            Log.d("MianBanJiActivity3", showStr.toString());
-                            Message message = new Message();
-                            message.what = 999;
-                            message.obj=showStr.toString();
-                            mHandler.sendMessage(message);
-
-
-                        }
-                    }
-                }
-
-            }
-        }).start();
-
+                mReadThread2 = new ReadThread2();
+                mReadThread2.start();
 
             }
         }catch (NoClassDefFoundError error){
@@ -620,34 +627,64 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
 
 
-    private class ReadThread extends Thread {
+//    private class ReadThread extends Thread {
+//
+//        @Override
+//        public void run() {
+//            super.run();
+//            while (!isInterrupted()) {
+//                int size;
+//                try {
+//                    final byte[] buffer = new byte[64];
+//                    if (mInputStream == null) return;
+//                    size = mInputStream.read(buffer);
+//                    if (size > 0) {
+//                        // Log.d("ReadThread", "buffer.length:" + byteToString(buffer));
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                readdd(buffer);
+//                            }
+//                        });
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    return;
+//                }
+//            }
+//        }
+//    }
+
+    private class ReadThread2 extends Thread {
 
         @Override
         public void run() {
             super.run();
             while (!isInterrupted()) {
-                int size;
-                try {
-                    final byte[] buffer = new byte[64];
-                    if (mInputStream == null) return;
-                    size = mInputStream.read(buffer);
-                    if (size > 0) {
-                        // Log.d("ReadThread", "buffer.length:" + byteToString(buffer));
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                readdd(buffer);
-                            }
-                        });
+                int st = 0;
+                byte[] rData = new byte[128];
+                int[] rlen = new int[2];
+                if (loc_readerHandle!=-1){
+                    //  Log.d("MianBanJiActivity3", "ffffffff:"+loc_readerHandle);
+                    st = mFuncs.lc_getAutoReturnedData(loc_readerHandle, rData, rlen);
+                    //  Log.d("MianBanJiActivity3", "hh哈哈:"+st);
+                    if (st == 0)
+                    {
+                        StringBuilder showStr= new StringBuilder();
+                        int len=rlen[0];
+                        for(int i= 0; i<len; i++)
+                            showStr.append(byteToHexString(rData[i]));
+                        Log.d("MianBanJiActivity3", showStr.toString());
+                        Message message = new Message();
+                        message.what = 999;
+                        message.obj=showStr.toString();
+                        mHandler.sendMessage(message);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
                 }
+
             }
         }
     }
-
 
     private void readdd(byte[] idid) {
         String sdfds = byteToString(idid);
@@ -1556,8 +1593,11 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     protected void onDestroy() {
         Log.d("MianBanJiActivity3", "onDestroy");
 
-        if (mReadThread != null) {
-            mReadThread.interrupt();
+//        if (mReadThread != null) {
+//            mReadThread.interrupt();
+//        }
+        if (mReadThread2 != null) {
+            mReadThread2.interrupt();
         }
         if (linkedBlockingQueue != null) {
             linkedBlockingQueue.clear();
@@ -1644,6 +1684,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         }
         if (event.equals("guanbimain")) {
             finish();
+            Log.d("MianBanJiActivity3", "关闭Mianbanjia");
             return;
         }
         if (event.equals("configs")){

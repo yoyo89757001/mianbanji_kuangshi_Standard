@@ -1,7 +1,8 @@
 package megvii.testfacepass.pa.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +10,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+
 import com.bumptech.glide.request.RequestOptions;
 
-import java.io.File;
+
 import java.util.List;
 
 import io.objectbox.query.LazyList;
-import megvii.testfacepass.pa.MyApplication;
+
+
+
 import megvii.testfacepass.pa.R;
 import megvii.testfacepass.pa.beans.Subject;
 import megvii.testfacepass.pa.view.GlideRoundTransform;
@@ -28,30 +31,30 @@ import megvii.testfacepass.pa.view.GlideRoundTransform;
 
 public class UserListAdapter2 extends BaseAdapter {
 
-    private List<Subject> mGroupNames;
+    private List<String> mGroupNames;
     private LayoutInflater mLayoutInflater;
     private ItemDeleteButtonClickListener mItemDeleteButtonClickListener;
 
-    private Context context;
-    private RequestOptions myOptions2 =null;
+   // private Context context;
+  //  private RequestOptions myOptions2 =null;
 
 
-    public UserListAdapter2(List<Subject> data, Context context) {
+    public UserListAdapter2(List<String> data, Context context) {
         mGroupNames=data;
-        this.context=context;
-        myOptions2 = new RequestOptions()
-                .fitCenter()
-                .error(R.drawable.erroy_bg)
-                //   .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
-                .transform(new GlideRoundTransform(context, 20));
+//        this.context=context;
+//        myOptions2 = new RequestOptions()
+//                .fitCenter()
+//                .error(R.drawable.erroy_bg)
+//                //   .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
+//                .transform(new GlideRoundTransform(context, 20));
     }
 
-    public List<Subject> getData() {
+    public List<String> getData() {
 
         return mGroupNames;
     }
 
-    public void setData(LazyList<Subject> data) {
+    public void setData(LazyList<String> data) {
         mGroupNames = data;
     }
 
@@ -81,15 +84,15 @@ public class UserListAdapter2 extends BaseAdapter {
         }
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mLayoutInflater.inflate(R.layout.layout_item_group_nameuser, parent, false);
+            convertView = mLayoutInflater.inflate(R.layout.layout_item_group_nameuser2, parent, false);
             holder = new ViewHolder();
             holder.groupNameTv =  convertView.findViewById(R.id.tv_group_name);
             holder.deleteGroupIv =  convertView.findViewById(R.id.iv_delete_group);
-            holder.touxiang =  convertView.findViewById(R.id.touxiang);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
         holder.deleteGroupIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,20 +101,8 @@ public class UserListAdapter2 extends BaseAdapter {
                 }
             }
         });
+        holder.groupNameTv.setText(mGroupNames.get(position));
 
-        holder.groupNameTv.setText(mGroupNames.get(position).getName());
-        Bitmap bitmap = null;
-        try {
-            if (mGroupNames.get(position).getTeZhengMa()!=null){
-                Glide.with(context)
-                        .load(MyApplication.SDPATH3+ File.separator+mGroupNames.get(position).getTeZhengMa()+".png")
-                        .apply(myOptions2)
-                        .into(holder.touxiang);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         return convertView;
     }
@@ -119,7 +110,7 @@ public class UserListAdapter2 extends BaseAdapter {
 
     public static class ViewHolder {
         TextView groupNameTv;
-        ImageView deleteGroupIv,touxiang;
+        ImageView deleteGroupIv;
     }
 
 

@@ -1,7 +1,7 @@
 package megvii.testfacepass.pa.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+
 
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
@@ -15,13 +15,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-import java.io.File;
+
 import java.util.List;
 
 
 import io.objectbox.query.LazyList;
 import mcv.facepass.FacePassHandler;
-import megvii.testfacepass.pa.MyApplication;
+
 import megvii.testfacepass.pa.R;
 import megvii.testfacepass.pa.beans.Subject;
 
@@ -104,6 +104,7 @@ public class UserListAdapter extends BaseAdapter {
             holder.groupNameTv =  convertView.findViewById(R.id.tv_group_name);
             holder.deleteGroupIv =  convertView.findViewById(R.id.iv_delete_group);
             holder.touxiang =  convertView.findViewById(R.id.touxiang);
+            holder.kahao=convertView.findViewById(R.id.kahao);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -118,6 +119,11 @@ public class UserListAdapter extends BaseAdapter {
         });
 
         holder.groupNameTv.setText(mGroupNames.get(position).getName());
+        if (mGroupNames.get(position).getWorkNumber()==null){
+            holder.kahao.setText("未绑定ID卡");
+        }else {
+            holder.kahao.setText("已绑定ID卡: "+mGroupNames.get(position).getWorkNumber());
+        }
         try {
             if (mGroupNames.get(position).getTeZhengMa()!=null && facePassHandler!=null){
                 Glide.with(context)
@@ -125,7 +131,6 @@ public class UserListAdapter extends BaseAdapter {
                         .apply(myOptions2)
                         .into(holder.touxiang);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,7 +139,7 @@ public class UserListAdapter extends BaseAdapter {
 
 
     public static class ViewHolder {
-        TextView groupNameTv;
+        TextView groupNameTv,kahao;
         ImageView deleteGroupIv,touxiang;
     }
 

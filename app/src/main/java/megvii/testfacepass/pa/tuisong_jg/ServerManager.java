@@ -33,7 +33,7 @@ public class ServerManager {
             e.printStackTrace();
         }
 
-        mServer = AndServer.serverBuilder(MyApplication.myApplication)
+        mServer = AndServer.webServer(MyApplication.myApplication)
                 .inetAddress(inetAddress)
                 .port(port)
                 .timeout(12, TimeUnit.SECONDS)

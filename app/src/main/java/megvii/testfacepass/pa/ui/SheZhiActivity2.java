@@ -56,6 +56,7 @@ import megvii.testfacepass.pa.dialog.XiuGaiSBFZDialog;
 import megvii.testfacepass.pa.dialog.XiuGaiYuYinDialog;
 import megvii.testfacepass.pa.dialog.XiuGaigGSMDialog;
 import megvii.testfacepass.pa.dialog.YuYingDialog;
+import megvii.testfacepass.pa.utils.AppUtils;
 import megvii.testfacepass.pa.utils.DateUtils;
 import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.DiaLogUtil;
@@ -118,6 +119,10 @@ public class SheZhiActivity2 extends Activity {
     TextView chengshi;
     @BindView(R.id.switchs56)
     Switch switchs56;
+    @BindView(R.id.rl55)
+    RelativeLayout rl55;
+    @BindView(R.id.banbenhao)
+    TextView banbenhao;
     //  JiaZaiDialog dddd;
     private ZLoadingDialog zLoadingDialog;
     private final String group_name = "facepasstestx";
@@ -149,30 +154,27 @@ public class SheZhiActivity2 extends Activity {
         ButterKnife.bind(this);
         //ScreenAdapterTools.getInstance().reset(this);//如果希望android7.0分屏也适配的话,加上这句
         //在setContentView();后面加上适配语句
-        options1Items.add(new JsonBean("天波"));
+        options1Items.add(new JsonBean("智连"));
+        options1Items.add(new JsonBean("亮钻"));
         options1Items.add(new JsonBean("涂鸦"));
-        options1Items.add(new JsonBean("户外防水8寸屏"));
-        options1Items.add(new JsonBean("高通8寸屏"));
         baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
         // chengShiIDBeanBox = MyApplication.myApplication.getChengShiIDBeanBox();
         baoCunBean = baoCunBeanDao.get(123456L);
         if (baoCunBean.getDangqianChengShi2()!=null){
             switch (baoCunBean.getDangqianChengShi2()){
-                case "天波":
+                case "智连":
                     jiqiType=0;
                     break;
-                case "涂鸦":
+                case "亮钻":
                     jiqiType=1;
                     break;
-                case "户外防水8寸屏":
+                case "涂鸦":
                     jiqiType=2;
-                    break;
-                case "高通8寸屏":
-                    jiqiType=3;
                     break;
             }
         }
 
+        banbenhao.setText("v:"+AppUtils.getVersionName(this));
 
         // mFacePassHandler=MyApplication.myApplication.getFacePassHandler();
         EventBus.getDefault().register(this);//订阅
@@ -290,7 +292,7 @@ public class SheZhiActivity2 extends Activity {
         }
         try {
             HwitManager.HwitSetHideSystemBar(SheZhiActivity2.this);
-            HwitManager.HwitSetDisableSlideShowSysBar(1);
+            HwitManager.HwitSetDisableSlideShowSysBar(0);
         }catch (NoClassDefFoundError error){
             error.printStackTrace();
         }
@@ -314,7 +316,7 @@ public class SheZhiActivity2 extends Activity {
 
 
     @OnClick({R.id.rl1, R.id.rl11, R.id.rl12, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8, R.id.rl9,
-            R.id.rl13, R.id.rl14, R.id.rl15, R.id.rl16, R.id.rl17, R.id.rl28, R.id.daochu, R.id.rl33,R.id.rl222})
+            R.id.rl13, R.id.rl14, R.id.rl15, R.id.rl16, R.id.rl17, R.id.rl28, R.id.daochu, R.id.rl33,R.id.rl222,R.id.rl55})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl1: {
@@ -840,6 +842,11 @@ public class SheZhiActivity2 extends Activity {
 //                    tastyToast.show();
 //                }
                 break;
+            case R.id.rl55:
+                startActivity(new Intent(SheZhiActivity2.this, ReadCardActivity.class));
+                break;
+
+
         }
     }
 
@@ -1165,13 +1172,13 @@ public class SheZhiActivity2 extends Activity {
                 baoCunBean=baoCunBeanDao.get(123456);
                 if (baoCunBean.getDangqianChengShi2()!=null){
                     switch (baoCunBean.getDangqianChengShi2()){
-                        case "天波":
+                        case "智连":
                             jiqiType=0;
                             break;
-                        case "涂鸦":
+                        case "亮钻":
                             jiqiType=1;
                             break;
-                        case "户外防水8寸屏":
+                        case "涂鸦":
                             jiqiType=2;
                             break;
                     }

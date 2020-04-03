@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.objectbox'
 android {
     compileSdkVersion 28
- //   buildToolsVersion "29.0.3"
+    //   buildToolsVersion "29.0.3"
 //    aaptOptions {
 //                 cruncherEnabled = false
 //                 useNewCruncher = false
@@ -104,13 +104,13 @@ dependencies {
     implementation group: 'net.sourceforge.jexcelapi', name: 'jxl', version: '2.6.12' //导出wps
     implementation 'com.zyao89:zloading:1.2.0'//加载框
     implementation 'pub.devrel:easypermissions:3.0.0'//6。0权限
-    implementation 'com.yanzhenjie.andserver:api:2.0.5'//小服务器
-    annotationProcessor 'com.yanzhenjie.andserver:processor:2.0.5'//小服务器
- //   implementation 'me.jessyan:autosize:1.2.0'//屏幕适配
+    implementation 'com.yanzhenjie.andserver:api:2.1.0'//小服务器
+    annotationProcessor 'com.yanzhenjie.andserver:processor:2.1.0'//小服务器
+    //   implementation 'me.jessyan:autosize:1.2.0'//屏幕适配
     implementation 'com.alibaba:fastjson:1.1.71.android'
-  //  implementation 'com.google.zxing:core:3.4.0'
-   // implementation 'com.clj.fastble:FastBleLib:2.3.4'//BLE蓝牙
-  //  implementation 'com.inuker.bluetooth:library:1.4.0'//蓝牙
+    //  implementation 'com.google.zxing:core:3.4.0'
+    // implementation 'com.clj.fastble:FastBleLib:2.3.4'//BLE蓝牙
+    //  implementation 'com.inuker.bluetooth:library:1.4.0'//蓝牙
 
 }
 // 指定com.android.support 包的版本一致
@@ -124,3 +124,4 @@ dependencies {
 //        }
 //    }
 //}
+
