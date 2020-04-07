@@ -995,10 +995,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
             while (!isRing) {
                 try {
                     //有动画 ，延迟到一秒一次
-                    if (linkedBlockingQueue.size()==0){
-                        isGET=true;
-                    }
-
                     ZhiLingBean.ResultBean commandsBean = linkedBlockingQueue.take();
                     isLink = true;
                     if (paAccessControl==null){
