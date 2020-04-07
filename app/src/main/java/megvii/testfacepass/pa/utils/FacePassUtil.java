@@ -41,20 +41,20 @@ public class FacePassUtil {
                             try {
                                 /* 填入所需要的配置 */
                                 config = new FacePassConfig();
-                                config.poseBlurModel = FacePassModel.initModel(MyApplication.myApplication.getAssets(), "attr.pose_blur.align.av200.190630.bin");
+                                config.poseBlurModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "attr.pose_blur.align.av200.190630.bin");
 
-                                config.livenessModel = FacePassModel.initModel(MyApplication.myApplication.getAssets(), "liveness.3288CPU.rgb.int8.C.bin");
+                                config.livenessModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "liveness.3288CPU.rgb.int8.C.bin");
 
                                 //也可以使用GPU活体模型，GPU活体模型分两个，用于GPU加速的模型和CACHE，当使用CPU活体模型时，请传null，当使用GPU活体模型时，必须传入加速cache模型
 //                            config.livenessModel = FacePassModel.initModel(getApplicationContext().getAssets(), "liveness.3288GPU.rgb.C.bin");
 //                            config.livenessGPUCache = FacePassModel.initModel(getApplicationContext().getAssets(), "liveness.GPU.AlgoPolicy.C.cache");
 
-                                config.searchModel = FacePassModel.initModel(MyApplication.myApplication.getAssets(), "feat2.arm.F.v1.0.1core.bin");
-                                config.detectModel = FacePassModel.initModel(MyApplication.myApplication.getAssets(), "detector.arm.C.bin");
-                                config.detectRectModel = FacePassModel.initModel(MyApplication.myApplication.getAssets(), "detector_rect.arm.C.bin");
-                                config.landmarkModel = FacePassModel.initModel(MyApplication.myApplication.getAssets(), "pf.lmk.float32.1015.bin");
+                                config.searchModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "feat2.arm.F.v1.0.1core.bin");
+                                config.detectModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "detector.arm.C.bin");
+                                config.detectRectModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "detector_rect.arm.C.bin");
+                                config.landmarkModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "pf.lmk.float32.1015.bin");
 
-                                config.mouthOccAttributeModel = FacePassModel.initModel(MyApplication.myApplication.getAssets(), "attribute.mouth.occ.gray.12M.190930.bin");
+                                config.mouthOccAttributeModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "attribute.mouth.occ.gray.12M.190930.bin");
                                 //config.smileModel = FacePassModel.initModel(getApplicationContext().getAssets(), "attr.smile.mgf29.0.1.1.181229.bin");
                                 //config.ageGenderModel = FacePassModel.initModel(getApplicationContext().getAssets(), "attr.age_gender.surveillance.nnie.av200.0.1.0.190630.bin");
                                 //config.occlusionFilterModel = FacePassModel.initModel(getApplicationContext().getAssets(), "occlusion.all_attr_configurable.occ.190816.bin");

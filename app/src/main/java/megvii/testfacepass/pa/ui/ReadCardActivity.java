@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.serialport.SerialPort;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -30,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +55,7 @@ import okhttp3.ResponseBody;
 
 
 public class ReadCardActivity extends AppCompatActivity {
-
+    private ReadThread mReadThread;
     private Button tijiao;
     private List<String> subjectList=new ArrayList<>();
     private UserListAdapter2 userListAdapter2;
@@ -71,7 +73,8 @@ public class ReadCardActivity extends AppCompatActivity {
 //				    .cookieJar(new CookiesManager())
             //        .retryOnConnectionFailure(true)
             .build();
-
+    private int jiqiType=-1;
+    private InputStream mInputStream;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +90,35 @@ public class ReadCardActivity extends AppCompatActivity {
         });
        baoCunBean= baoCunBeanBox.get(123456L);
         try {
-            lztek=Lztek.create(MyApplication.myApplication);
+            lztek=Lztek.create(MyApplication.ampplication);
         }catch (NoClassDefFoundError error){
             error.printStackTrace();
+        }
+
+        if (baoCunBean.getDangqianChengShi2()!=null){
+            switch (baoCunBean.getDangqianChengShi2()){
+                case "智连":
+                    jiqiType=0;
+                    break;
+                case "亮钻":
+                    jiqiType=1;
+                    break;
+                case "涂鸦":
+                    jiqiType=2;
+                    break;
+            }
+        }
+
+        if (jiqiType==2){
+            try {
+                SerialPort mSerialPort = MyApplication.myApplication.getSerialPort();
+                //mOutputStream = mSerialPort.getOutputStream();
+                mInputStream = mSerialPort.getInputStream();
+                mReadThread = new ReadThread();
+                mReadThread.start();
+            } catch (Exception e) {
+                Log.d("MianBanJiActivity", e.getMessage() + "dddddddd");
+            }
         }
 
 
@@ -183,62 +212,111 @@ public class ReadCardActivity extends AppCompatActivity {
             }
         });
 
-        try {
-            mFuncs = new Function(this, mHandler);
-            loc_readerHandle = mFuncs.lc_init_ex(1, "/dev/ttyS1".toCharArray(), Integer.parseInt("9600"));
-            if(loc_readerHandle == -1)
-            {
-                Toast.makeText(getApplicationContext(), "连接读卡器失败", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                int aa= mFuncs.lc_beep(loc_readerHandle, 2);
-                Log.d("MianBanJiActivity3", loc_readerHandle+"   "+ aa);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while (true){
-                            int st = 0;
-                            byte[] rData = new byte[128];
-                            int[] rlen = new int[2];
-                            if (loc_readerHandle!=-1){
-                                //Log.d("MianBanJiActivity3", "ffffffff:"+loc_readerHandle);
-                                st = mFuncs.lc_getAutoReturnedData(loc_readerHandle, rData, rlen);
-                                //  Log.d("MianBanJiActivity3", "hh哈哈:"+st);
-                                if (st == 0)
-                                {
-                                    StringBuilder showStr= new StringBuilder();
-                                    int len=rlen[0];
-                                    for(int i= 0; i<len; i++)
-                                        showStr.append(byteToHexString(rData[i]));
-                                    Log.d("MianBanJiActivity3", showStr.toString());
-                                  //  Log.d("ReadCardActivity", byteToString(rData));
-                                    Message message = new Message();
-                                    message.what = 222;
-                                    message.obj=showStr.toString();
-                                    mHandler.sendMessage(message);
-                                    SystemClock.sleep(500);
+        if (jiqiType==0 || jiqiType==1){
+            try {
+                mFuncs = new Function(this, mHandler);
+                loc_readerHandle = mFuncs.lc_init_ex(1, "/dev/ttyS1".toCharArray(), Integer.parseInt("9600"));
+                if(loc_readerHandle == -1)
+                {
+                    Toast.makeText(getApplicationContext(), "连接读卡器失败", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    int aa= mFuncs.lc_beep(loc_readerHandle, 2);
+                    Log.d("MianBanJiActivity3", loc_readerHandle+"   "+ aa);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true){
+                                int st = 0;
+                                byte[] rData = new byte[128];
+                                int[] rlen = new int[2];
+                                if (loc_readerHandle!=-1){
+                                    //Log.d("MianBanJiActivity3", "ffffffff:"+loc_readerHandle);
+                                    st = mFuncs.lc_getAutoReturnedData(loc_readerHandle, rData, rlen);
+                                    //  Log.d("MianBanJiActivity3", "hh哈哈:"+st);
+                                    if (st == 0)
+                                    {
+                                        StringBuilder showStr= new StringBuilder();
+                                        int len=rlen[0];
+                                        for(int i= 0; i<len; i++)
+                                            showStr.append(byteToHexString(rData[i]));
+                                        Log.d("MianBanJiActivity3", showStr.toString());
+                                        //  Log.d("ReadCardActivity", byteToString(rData));
+                                        Message message = new Message();
+                                        message.what = 222;
+                                        message.obj=showStr.toString();
+                                        mHandler.sendMessage(message);
+                                        SystemClock.sleep(500);
+                                    }
                                 }
+
                             }
 
                         }
+                    }).start();
 
-                    }
-                }).start();
 
-                Toast tastyToast = TastyToast.makeText(ReadCardActivity.this, "请刷卡！", TastyToast.LENGTH_LONG, TastyToast.INFO);
-                tastyToast.setGravity(Gravity.CENTER, 0, 0);
-                tastyToast.show();
 
+                }
+            }catch (NoClassDefFoundError error){
+                Log.d("MianBanJiActivity3", error.getMessage()+"");
             }
-        }catch (NoClassDefFoundError error){
-            Log.d("MianBanJiActivity3", error.getMessage()+"");
         }
 
-
-
+        Toast tastyToast = TastyToast.makeText(ReadCardActivity.this, "请刷卡！", TastyToast.LENGTH_LONG, TastyToast.INFO);
+        tastyToast.setGravity(Gravity.CENTER, 0, 0);
+        tastyToast.show();
 
     }
+
+
+
+    private void readdd(byte[] idid) {
+        String sdfds = byteToString(idid);
+        if (sdfds != null) {
+            sdfds = sdfds.substring(6, 14);
+        } else {
+            return;
+        }
+        sdfds = sdfds.toUpperCase();
+        Log.d("MianBanJiActivity3", sdfds);
+        Message message = new Message();
+        message.what = 222;
+        message.obj=sdfds;
+        mHandler.sendMessage(message);
+
+    }
+
+    private class ReadThread extends Thread {
+
+        @Override
+        public void run() {
+            super.run();
+            while (!isInterrupted()) {
+                int size;
+                try {
+                    final byte[] buffer = new byte[64];
+                    if (mInputStream == null) return;
+                    size = mInputStream.read(buffer);
+                    if (size > 0) {
+                        // Log.d("ReadThread", "buffer.length:" + byteToString(buffer));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                readdd(buffer);
+                            }
+                        });
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        }
+    }
+
+
 
     private String  byteToHexString(byte mByte)
     {

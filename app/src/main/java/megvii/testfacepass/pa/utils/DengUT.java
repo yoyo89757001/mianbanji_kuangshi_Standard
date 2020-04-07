@@ -199,7 +199,7 @@ public class DengUT {
         }
         if (jiqiType==1){
             try {
-                Lztek lztek=Lztek.create(MyApplication.myApplication);
+                Lztek lztek=Lztek.create(MyApplication.ampplication);
                 lztek.setLcdBackLight(false);
             }catch (NoClassDefFoundError e){
                 e.printStackTrace();
@@ -222,7 +222,7 @@ public class DengUT {
         }
         if (jiqiType==1){
             try {
-                Lztek lztek=Lztek.create(MyApplication.myApplication);
+                Lztek lztek=Lztek.create(MyApplication.ampplication);
                 lztek.setLcdBackLight(true);
             }catch (NoClassDefFoundError e){
                 e.printStackTrace();

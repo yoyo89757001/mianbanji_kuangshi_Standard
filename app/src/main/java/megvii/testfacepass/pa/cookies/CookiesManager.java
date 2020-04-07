@@ -19,7 +19,7 @@ import okhttp3.HttpUrl;
 public class CookiesManager implements CookieJar {
     private  PersistentCookieStore cookieStore=null;
     public CookiesManager() {
-         cookieStore = new PersistentCookieStore(MyApplication.myApplication);
+         cookieStore = new PersistentCookieStore(MyApplication.ampplication);
     }
 
 

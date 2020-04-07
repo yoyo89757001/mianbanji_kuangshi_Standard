@@ -402,35 +402,35 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         switch (requestCode) {
             //从相册选取照片后读取地址
             case REQUEST_CODE_CHOOSE_PICK:
-                if (resultCode == RESULT_OK) {
-                    String path = "";
-                    Uri uri = data.getData();
-                    String[] pojo = {MediaStore.Images.Media.DATA};
-                    CursorLoader cursorLoader = new CursorLoader(this, uri, pojo, null, null, null);
-                    Cursor cursor = cursorLoader.loadInBackground();
-                    if (cursor != null) {
-                        cursor.moveToFirst();
-                        path = cursor.getString(cursor.getColumnIndex(pojo[0]));
-                    }
-                    if (!TextUtils.isEmpty(path) && "file".equalsIgnoreCase(uri.getScheme())) {
-                        path = uri.getPath();
-                    }
-                    if (TextUtils.isEmpty(path)) {
-                        try {
-                            path = FileUtil.getPath(getApplicationContext(), uri);
-                        } catch (Exception e) {
-                            Log.d("YuLanActivity", e.getMessage());
-                        }
-                    }
-                    if (TextUtils.isEmpty(path)) {
-                        ToastUtils.show(YuLanActivity.this, "图片选取失败");
-                        return;
-                    }
-                    if (!TextUtils.isEmpty(path) && mFaceOperationDialog != null && mFaceOperationDialog.isShowing()) {
-                        EditText imagePathEdt = (EditText) mFaceOperationDialog.findViewById(R.id.et_face_image_path);
-                        imagePathEdt.setText(path);
-                    }
-                }
+//                if (resultCode == RESULT_OK) {
+//                    String path = "";
+//                    Uri uri = data.getData();
+//                    String[] pojo = {MediaStore.Images.Media.DATA};
+//                    CursorLoader cursorLoader = new CursorLoader(this, uri, pojo, null, null, null);
+//                    Cursor cursor = cursorLoader.loadInBackground();
+//                    if (cursor != null) {
+//                        cursor.moveToFirst();
+//                        path = cursor.getString(cursor.getColumnIndex(pojo[0]));
+//                    }
+//                    if (!TextUtils.isEmpty(path) && "file".equalsIgnoreCase(uri.getScheme())) {
+//                        path = uri.getPath();
+//                    }
+//                    if (TextUtils.isEmpty(path)) {
+//                        try {
+//                            path = FileUtil.getPath(getApplicationContext(), uri);
+//                        } catch (Exception e) {
+//                            Log.d("YuLanActivity", e.getMessage());
+//                        }
+//                    }
+//                    if (TextUtils.isEmpty(path)) {
+//                        ToastUtils.show(YuLanActivity.this, "图片选取失败");
+//                        return;
+//                    }
+//                    if (!TextUtils.isEmpty(path) && mFaceOperationDialog != null && mFaceOperationDialog.isShowing()) {
+//                        EditText imagePathEdt = (EditText) mFaceOperationDialog.findViewById(R.id.et_face_image_path);
+//                        imagePathEdt.setText(path);
+//                    }
+//                }
                 break;
         }
     }

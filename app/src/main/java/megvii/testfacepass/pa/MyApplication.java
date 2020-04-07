@@ -1,18 +1,28 @@
 package megvii.testfacepass.pa;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.serialport.SerialPort;
-import android.util.DisplayMetrics;
-import android.view.WindowManager;
+
+
+
+import androidx.multidex.MultiDex;
+
 import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection;
 import com.tencent.bugly.Bugly;
+import com.tencent.bugly.beta.Beta;
+import com.tencent.tinker.entry.DefaultApplicationLike;
+
+
+
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
@@ -35,7 +45,6 @@ import megvii.testfacepass.pa.beans.Subject;
 
 
 import megvii.testfacepass.pa.dialogall.CommonData;
-import megvii.testfacepass.pa.dialogall.CommonDialogService;
 import megvii.testfacepass.pa.dialogall.ToastUtils;
 
 
@@ -45,9 +54,10 @@ import megvii.testfacepass.pa.dialogall.ToastUtils;
  * Created by Administrator on 2018/8/3.
  */
 
-public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {
+public class MyApplication extends DefaultApplicationLike {
     private static FacePassHandler facePassHandler=null;
     public static MyApplication myApplication;
+    public static Application ampplication;
     //private Box<ChengShiIDBean> chengShiIDBeanBox=null;
     private Box<BaoCunBean> baoCunBeanBox=null;
     private Box<Subject> subjectBox=null;
@@ -72,9 +82,9 @@ public class MyApplication extends Application implements Application.ActivityLi
     public SerialPort getSerialPort() throws SecurityException, IOException, InvalidParameterException {
         if (mSerialPort == null) {
             /* Read serial port parameters */
-            SharedPreferences sp = getSharedPreferences("android_serialport_api.sample_preferences", MODE_PRIVATE);
+            SharedPreferences sp = getApplication().getSharedPreferences("android_serialport_api.sample_preferences", 0);
             String path = sp.getString("DEVICE", "/dev/ttyS2");
-            int baudrate = Integer.decode(Objects.requireNonNull(sp.getString("BAUDRATE", "9600")));
+            int baudrate = Integer.decode(Objects.requireNonNull(sp.getString("BAUDRATE", "115200")));
 
             /* Check parameters */
             if ( (path.length() == 0) || (baudrate == -1)) {
@@ -111,24 +121,48 @@ public class MyApplication extends Application implements Application.ActivityLi
 
 
 
+    public MyApplication(Application application, int tinkerFlags,
+                                 boolean tinkerLoadVerifyFlag, long applicationStartElapsedTime,
+                                 long applicationStartMillisTime, Intent tinkerResultIntent) {
+        super(application, tinkerFlags, tinkerLoadVerifyFlag, applicationStartElapsedTime, applicationStartMillisTime, tinkerResultIntent);
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Override
+    public void onBaseContextAttached(Context base) {
+        super.onBaseContextAttached(base);
+        // you must install multiDex whatever tinker is installed!
+        MultiDex.install(base);
+        // 安装tinker
+        // TinkerManager.installTinker(this); 替换成下面Bugly提供的方法
+        Beta.installTinker(this);
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public void registerActivityLifecycleCallback(Application.ActivityLifecycleCallbacks callbacks) {
+        getApplication().registerActivityLifecycleCallbacks(callbacks);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        myApplication = this;
-        BoxStore mBoxStore = MyObjectBox.builder().androidContext(this).build();
+        ampplication = getApplication();
+        myApplication=this;
 
-        Bugly.init(getApplicationContext(), "e92fdff61f", false);
+        BoxStore mBoxStore = MyObjectBox.builder().androidContext(getApplication()).build();
+
+        Bugly.init(getApplication(), "e92fdff61f", false);
 
       //  Log.d("MyApplication","机器码"+ FileUtil.getSerialNumber(this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(this));
         //全局dialog
-        this.registerActivityLifecycleCallbacks(this);//注册
-        CommonData.applicationContext = this;
-        DisplayMetrics metric = new DisplayMetrics();
-        WindowManager mWindowManager  = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
-        mWindowManager.getDefaultDisplay().getMetrics(metric);
-        CommonData.ScreenWidth = metric.widthPixels; // 屏幕宽度（像素）
-        Intent dialogservice = new Intent(this, CommonDialogService.class);
-        startService(dialogservice);
+//        registerActivityLifecycleCallbacks(this);//注册
+//        CommonData.applicationContext = this;
+//        DisplayMetrics metric = new DisplayMetrics();
+//        WindowManager mWindowManager  = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+//        mWindowManager.getDefaultDisplay().getMetrics(metric);
+//        CommonData.ScreenWidth = metric.widthPixels; // 屏幕宽度（像素）
+//        Intent dialogservice = new Intent(this, CommonDialogService.class);
+//        startService(dialogservice);
 
         baoCunBeanBox= mBoxStore.boxFor(BaoCunBean.class);
         subjectBox= mBoxStore.boxFor(Subject.class);
@@ -217,7 +251,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         }
 
 
-        FileDownloader.setupOnApplicationOnCreate(this)
+        FileDownloader.setupOnApplicationOnCreate(getApplication())
                 .connectionCreator(new FileDownloadUrlConnection
                         .Creator(new FileDownloadUrlConnection.Configuration()
                         .connectTimeout(15_000) // set connection timeout.
@@ -268,46 +302,6 @@ public class MyApplication extends Application implements Application.ActivityLi
     }
 
 
-    @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        if(activity.getParent()!=null){
-            CommonData.mNowContext = activity.getParent();
-        }else
-            CommonData.mNowContext = activity;
-    }
-
-    @Override
-    public void onActivityStarted(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-        if(activity.getParent()!=null){
-            CommonData.mNowContext = activity.getParent();
-        }else
-            CommonData.mNowContext = activity;
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-        ToastUtils.getInstances().cancel();
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-
-    }
 
     /**
      * 给外部的三方库 {@link Activity} 自定义适配参数, 因为三方库的 {@link Activity} 并不能通过实现

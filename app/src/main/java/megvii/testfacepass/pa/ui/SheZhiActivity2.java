@@ -268,11 +268,10 @@ public class SheZhiActivity2 extends Activity {
                     tastyToast.show();
                 }
 
-
             }
         });
 
-        guanPing();
+     //   guanPing();
     }
 
 
@@ -283,8 +282,9 @@ public class SheZhiActivity2 extends Activity {
         this.sendBroadcast(intent);
         sendBroadcast(new Intent("com.android.internal.policy.impl.hideNavigationBar"));
         sendBroadcast(new Intent("com.android.systemui.statusbar.phone.statusclose"));
+        //8寸防水面板机
         try {
-            Lztek lztek=Lztek.create(MyApplication.myApplication);
+            Lztek lztek=Lztek.create(MyApplication.ampplication);
             lztek.navigationBarSlideShow(false);
             lztek.hideNavigationBar();
         }catch (NoClassDefFoundError e){
@@ -292,7 +292,7 @@ public class SheZhiActivity2 extends Activity {
         }
         try {
             HwitManager.HwitSetHideSystemBar(SheZhiActivity2.this);
-            HwitManager.HwitSetDisableSlideShowSysBar(0);
+            HwitManager.HwitSetDisableSlideShowSysBar(1);
         }catch (NoClassDefFoundError error){
             error.printStackTrace();
         }
@@ -848,6 +848,7 @@ public class SheZhiActivity2 extends Activity {
 
 
         }
+
     }
 
     private void kaiPing() {
@@ -857,20 +858,17 @@ public class SheZhiActivity2 extends Activity {
         this.sendBroadcast(intent);
         sendBroadcast(new Intent("com.android.internal.policy.impl.showNavigationBar"));
         sendBroadcast(new Intent("com.android.systemui.statusbar.phone.statusopen"));
-        if (jiqiType==2){//8寸防水面板机
-            try {
-                Lztek lztek=Lztek.create(MyApplication.myApplication);
-                lztek.navigationBarSlideShow(true);
-            }catch (NoClassDefFoundError e){
-                e.printStackTrace();
-            }
-            try {
-                HwitManager.HwitSetShowSystemBar(SheZhiActivity2.this);
-                HwitManager.HwitSetDisableSlideShowSysBar(0);
-            }catch (NoClassDefFoundError error){
-                error.printStackTrace();
-            }
-
+        try {
+            Lztek lztek=Lztek.create(MyApplication.ampplication);
+            lztek.navigationBarSlideShow(true);
+        }catch (NoClassDefFoundError e){
+            e.printStackTrace();
+        }
+        try {
+            HwitManager.HwitSetShowSystemBar(SheZhiActivity2.this);
+            HwitManager.HwitSetDisableSlideShowSysBar(0);
+        }catch (NoClassDefFoundError error){
+            error.printStackTrace();
         }
 
     }
