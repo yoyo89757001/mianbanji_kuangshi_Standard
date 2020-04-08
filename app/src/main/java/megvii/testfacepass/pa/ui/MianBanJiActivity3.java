@@ -307,7 +307,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         intentFilter.addAction(Intent.ACTION_TIME_CHANGED);//设置了系统时间
         timeChangeReceiver = new TimeChangeReceiver();
         registerReceiver(timeChangeReceiver, intentFilter);
-        linkedBlockingQueue = new LinkedBlockingQueue<>();
+        linkedBlockingQueue = new LinkedBlockingQueue<>(1);
         EventBus.getDefault().register(this);//订阅
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -996,7 +996,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                 try {
                     //有动画 ，延迟到一秒一次
                     ZhiLingBean.ResultBean commandsBean = linkedBlockingQueue.take();
-                    isLink = true;
                     if (paAccessControl==null){
                         return;
                     }
@@ -1057,7 +1056,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                         commandsBean.getPepopleType(), "-1", "图片下载失败", commandsBean.getShortId(), JHM);
                                 huiFuBeanBox.put(huiFuBean);
                             }
-                            isLink = false;
                             break;
                         }
                         case 1002://修改
@@ -1136,7 +1134,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                         commandsBean.getPepopleType(), "-1", "未找到人员信息", commandsBean.getShortId(), JHM);
                                 huiFuBeanBox.put(huiFuBean);
                             }
-                            isLink = false;
                         }
                         break;
                         case 1003://删除
@@ -1162,7 +1159,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                         commandsBean.getPepopleType(), "-1", "未找到人员信息", commandsBean.getShortId(), JHM);
                                 huiFuBeanBox.put(huiFuBean);
                             }
-                            isLink = false;
                         }
                         break;
                         case 1004://数据同步
@@ -1198,13 +1194,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         }
                         break;
                     }
-
-                    while (isLink) {
-                        SystemClock.sleep(500);
-                    }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    isLink = false;
                 }
             }
         }
@@ -1759,9 +1750,10 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         for (ZhiLingBean.ResultBean resultBean : commandsBean.getResult()) {
                             linkedBlockingQueue.put(resultBean);
                         }
-                        if (linkedBlockingQueue.size()==0){
-                            isGET=true;
-                        }
+                      //  if (linkedBlockingQueue.size()==0){
+
+                     //   }
+                        isGET=true;
                     }else {
                         isGET=true;
                     }
