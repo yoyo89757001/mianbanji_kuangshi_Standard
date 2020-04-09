@@ -845,12 +845,10 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     @Override
     public void onStopped() {
         Log.d("MianBanJiActivity3", "小服务器停止");
-
     }
 
     @Override
     public void onException(Exception e) {
-
         Log.d("MianBanJiActivity3", "小服务器异常" + e);
     }
 
@@ -938,11 +936,14 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                 showUIResult(2,"","","");
                             }
                             mDetectResultQueue.offer(detectionResult);
+                            if (task2 != null)
+                                task2.cancel();
+                            Message message = new Message();
+                            message.what = 333;
+                            mHandler.sendMessage(message);
                             //   Log.d("ggggg", "1 mDetectResultQueue.size = " + mDetectResultQueue.size());
                         }
-                        Message message = new Message();
-                        message.what = 333;
-                        mHandler.sendMessage(message);
+
                     }
 
                     //     }
