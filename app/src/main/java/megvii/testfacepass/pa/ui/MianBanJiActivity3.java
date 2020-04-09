@@ -845,38 +845,12 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     @Override
     public void onStopped() {
         Log.d("MianBanJiActivity3", "小服务器停止");
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ZLoadingDialog zLoadingDialog = new ZLoadingDialog(MianBanJiActivity3.this);
-                zLoadingDialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
-                        .setLoadingColor(Color.parseColor("#0d2cf9"))//颜色
-                        .setHintText("服务器停止,请重启...")
-                        .setHintTextSize(20) // 设置字体大小 dp
-                        .setHintTextColor(Color.WHITE)  // 设置字体颜色
-                        .setDurationTime(0.5) // 设置动画时间百分比 - 0.5倍
-                        .setDialogBackgroundColor(Color.parseColor("#CC111111")) // 设置背景色，默认白色
-                        .show();
-            }
-        });
+
     }
 
     @Override
     public void onException(Exception e) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ZLoadingDialog zLoadingDialog = new ZLoadingDialog(MianBanJiActivity3.this);
-                zLoadingDialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
-                        .setLoadingColor(Color.parseColor("#0d2cf9"))//颜色
-                        .setHintText("服务器异常,请重启...")
-                        .setHintTextSize(20) // 设置字体大小 dp
-                        .setHintTextColor(Color.WHITE)  // 设置字体颜色
-                        .setDurationTime(0.5) // 设置动画时间百分比 - 0.5倍
-                        .setDialogBackgroundColor(Color.parseColor("#CC111111")) // 设置背景色，默认白色
-                        .show();
-            }
-        });
+
         Log.d("MianBanJiActivity3", "小服务器异常" + e);
     }
 
@@ -997,7 +971,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     //有动画 ，延迟到一秒一次
                     ZhiLingBean.ResultBean commandsBean = linkedBlockingQueue.take();
                     if (paAccessControl==null){
-                        return;
+                        continue;
                     }
                     switch (commandsBean.getCommand()) {
                         case 1001://新增
@@ -1556,6 +1530,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //        if (mReadThread != null) {
 //            mReadThread.interrupt();
 //        }
+        if (serverManager!=null)
+            serverManager.stopServer();
+
         if (mReadThread2 != null) {
             mReadThread2.interrupt();
         }
