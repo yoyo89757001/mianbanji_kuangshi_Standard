@@ -63,8 +63,16 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
         setContentView(R.layout.activity_base);
         baoCunBean=baoCunBeanBox.get(123456L);
         mSharedPreferences = getSharedPreferences("SP", Context.MODE_PRIVATE);
+        MyApplication.myApplication.init();
         methodRequiresTwoPermission();
+        MyApplication.myApplication.addActivity(this);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MyApplication.myApplication.removeActivity(this);
     }
 
     private final int RC_CAMERA_AND_LOCATION=10000;
@@ -81,6 +89,7 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
         if (EasyPermissions.hasPermissions(this, perms)) {
             // 已经得到许可，就去做吧 //第一次授权成功也会走这个方法
             Log.d("BaseActivity", "成功获得权限");
+
            start();
 
         } else {

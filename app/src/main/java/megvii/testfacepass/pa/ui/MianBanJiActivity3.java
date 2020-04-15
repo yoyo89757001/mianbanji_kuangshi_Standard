@@ -59,8 +59,6 @@ import com.hwit.HwitManager;
 import com.lztek.toolkit.Lztek;
 
 import com.sdsmdg.tastytoast.TastyToast;
-import com.zyao89.view.zloading.ZLoadingDialog;
-import com.zyao89.view.zloading.Z_TYPE;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -75,6 +73,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -91,6 +90,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.objectbox.Box;
+import io.objectbox.query.LazyList;
 import mcv.facepass.FacePassException;
 import mcv.facepass.FacePassHandler;
 import mcv.facepass.types.FacePassAddFaceResult;
@@ -167,8 +167,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     private PendingIntent mPendingIntent;
     private Box<IDCardBean> idCardBeanBox = MyApplication.myApplication.getIdCardBeanBox();
     private ServerManager serverManager;
-    private Bitmap msrBitmap = null;
-        private RequestOptions myOptions = new RequestOptions()
+   // private Bitmap msrBitmap = null;
+    private RequestOptions myOptions = new RequestOptions()
             .fitCenter()
             .error(R.drawable.erroy_bg)
            // .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
@@ -229,6 +229,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     private int pp = 0;
     private ReadThread mReadThread;
     private ReadThread2 mReadThread2;
+    private ReadThread3 mReadThread3;
+    private DogThread dogThread;
     private InputStream mInputStream;
     private int w, h, cameraH, cameraW;
     private float s1 = 0, s2 = 0;
@@ -279,14 +281,34 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         baoCunBean = baoCunBeanDao.get(123456L);
         mDetectResultQueue = new ArrayBlockingQueue<FacePassDetectionResult>(5);
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
+        MyApplication.myApplication.addActivity(this);
+        try {
+            lztek=Lztek.create(MyApplication.ampplication);
+            lztek.gpioEnable(218);
+            lztek.setGpioOutputMode(218);
+        }catch (NoClassDefFoundError error){
+            error.printStackTrace();
+        }
 
         if (baoCunBean.getDangqianChengShi2()!=null){
             switch (baoCunBean.getDangqianChengShi2()){
                 case "智连":
                     jiqiType=0;
+                    try {//启用软件看门狗，如果没有喂食，会重启系统
+                        HwitManager.HwitStartSoftWatchDog(this,10000,10000);
+                    }catch (NoClassDefFoundError error){
+                        error.printStackTrace();
+                    }
                     break;
                 case "亮钻":
                     jiqiType=1;
+                    if (lztek!=null){
+                        try {
+                            lztek.watchDogEnable();//打开硬件看门狗
+                        }catch (NoClassDefFoundError error){
+                            error.printStackTrace();
+                        }
+                    }
                     break;
                 case "涂鸦":
                     jiqiType=2;
@@ -333,13 +355,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         musicId.put(5, soundPool.load(this, R.raw.shuaka, 1));
         sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
-        try {
-            lztek=Lztek.create(MyApplication.ampplication);
-            lztek.gpioEnable(218);
-            lztek.setGpioOutputMode(218);
-        }catch (NoClassDefFoundError error){
-            error.printStackTrace();
-        }
+
 
         initView();
 
@@ -450,29 +466,17 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     case 333:
                         onP1 = true;
                         onP2 = true;
-                        if (!isCLOSDLED){//没有微波雷达
-                            DengUT.getInstance(baoCunBean).openLOED();
-                        }else {//有微波雷达
+                        DengUT.getInstance(baoCunBean).openLOED();
 
-                        }
                         break;
                     case 444:
                         onP1 = false;
                         onP2 = false;
-                        Log.d("MianBanJiActivity3", "444");
-                        if (!isCLOSDLED){//没有微波雷达
-                            DengUT.getInstance(baoCunBean).closeLOED();
-                        }else {//有微波雷达
-
-                        }
+                        DengUT.getInstance(baoCunBean).closeLOED();
 
                         break;
                     case 999:
-                        if (!isCLOSDLED){//没有微波雷达
-                            DengUT.getInstance(baoCunBean).openLOED();
-                        }else {//有微波雷达
-
-                        }
+                        DengUT.getInstance(baoCunBean).openLOED();
 
                         String card= (String) msg.obj;
                         if (card!=null){
@@ -578,6 +582,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //        }
 
         if (jiqiType==0 || jiqiType==1){
+            dogThread=new DogThread();
+            dogThread.start();
+
             try {
                 mFuncs = new Function(this, mHandler);
                 loc_readerHandle = mFuncs.lc_init_ex(1, "/dev/ttyS1".toCharArray(), Integer.parseInt("9600"));
@@ -591,7 +598,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     Log.d("MianBanJiActivity3", loc_readerHandle+"   "+ aa);
                     mReadThread2 = new ReadThread2();
                     mReadThread2.start();
-
                 }
             }catch (NoClassDefFoundError error){
                 Log.d("MianBanJiActivity3", error.getMessage()+"");
@@ -645,11 +651,11 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
 
     private class ReadThread extends Thread {
-
+        boolean isIterrupt;
         @Override
         public void run() {
             super.run();
-            while (!isInterrupted()) {
+            while (!isIterrupt) {
                 int size;
                 try {
                     final byte[] buffer = new byte[64];
@@ -670,14 +676,20 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                 }
             }
         }
+
+        @Override
+        public void interrupt() {
+            isIterrupt = true;
+            super.interrupt();
+        }
     }
 
     private class ReadThread2 extends Thread {
-
+        boolean isIterrupt;
         @Override
         public void run() {
             super.run();
-            while (!isInterrupted()) {
+            while (!isIterrupt) {
                 int st = 0;
                 byte[] rData = new byte[128];
                 int[] rlen = new int[2];
@@ -698,8 +710,122 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         mHandler.sendMessage(message);
                     }
                 }
+            }
+        }
+
+        @Override
+        public void interrupt() {
+            isIterrupt = true;
+            super.interrupt();
+        }
+    }
+
+
+    private static boolean isR=false;
+    private class ReadThread3 extends Thread {
+        boolean isIterrupt;
+        @Override
+        public void run() {
+            super.run();
+            while (!isIterrupt) {
+                if (lztek!=null){
+                        SystemClock.sleep(160);
+                        final int value = lztek.getGpioValue(218);
+                        // Log.d("MianBanJiActivity3", "value:" + value);
+                        if (value==1){//有人
+                            isCLOSDLED=true;
+                            // Log.d("MianBanJiActivity3", "value:" + value);
+                            isR=true;
+                            Message message = new Message();
+                            message.what = 333;
+                            mHandler.sendMessage(message);
+
+                            if (task != null)
+                                task.cancel();
+                            SystemClock.sleep(2000);
+
+                        }else {//没人
+                            if (isR){
+                                isR=false;
+                                //  Log.d("MianBanJiActivity3", "valuettttt:" + value);
+                                //启动定时器或重置定时器
+                                if (task != null) {
+                                    task.cancel();
+                                    //timer.cancel();
+                                    task = new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            if (isCLOSDLED){
+                                                Message message = new Message();
+                                                message.what = 444;
+                                                mHandler.sendMessage(message);
+                                            }
+                                        }
+                                    };
+                                    try {
+                                        timer.schedule(task, 10000);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    task = new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            if (isCLOSDLED){
+                                                Message message = new Message();
+                                                message.what = 444;
+                                                mHandler.sendMessage(message);
+                                            }
+                                        }
+                                    };
+                                    try {
+                                        timer.schedule(task, 10000);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                }
+
 
             }
+        }
+        @Override
+        public void interrupt() {
+            isIterrupt = true;
+            super.interrupt();
+        }
+    }
+
+    private class DogThread extends Thread {
+        boolean isIterrupt;
+        @Override
+        public void run() {
+            super.run();
+            while (!isIterrupt) {
+                if (jiqiType==0){
+                    try {//喂狗
+                        HwitManager.HwitFeedSoftWatchDog(MianBanJiActivity3.this);
+                    }catch (NoClassDefFoundError error){
+                        error.printStackTrace();
+                    }
+                }
+                if (jiqiType==1 && lztek!=null){
+                    try {//喂狗
+                        lztek.watchDogFeed();
+                    }catch (NoClassDefFoundError error){
+                        error.printStackTrace();
+                    }
+                }
+                SystemClock.sleep(5000);
+            }
+        }
+        @Override
+        public void interrupt() {
+            isIterrupt = true;
+            super.interrupt();
         }
     }
 
@@ -734,79 +860,66 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         }
 
 
-//        if (baoCunBean.getDangqianChengShi2() != null && baoCunBean.getDangqianChengShi2().equals("涂鸦") && paAccessControl != null) {
-//            Sensor defaultSensor = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-//            sm.registerListener(this, defaultSensor, SensorManager.SENSOR_DELAY_NORMAL);
-//            if (mTimerTask == null) {
-//                mTimerTask = new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        if (juli > 0) {
-//                            isPM2 = true;
-//                            //有人
-//                            if (isPM) {
-//                                isPM = false;
-//                                onP1 = true;
-//                                onP2 = true;
-//                                pm = 0;
-//                                Message message = new Message();
-//                                message.what = 333;
-//                                mHandler.sendMessage(message);
-//                            }
-//                        } else {
-//                            isPM = true;
-//                            if (isPM2) {
-//                                pm++;
-//                                if (pm == 8) {
-//                                    Message message = new Message();
-//                                    message.what = 444;
-//                                    mHandler.sendMessage(message);
-//                                    isPM2 = false;
-//                                    onP1 = false;
-//                                    onP2 = false;
-//                                    pm = 0;
-//
-//                                    if (DengUT.isOPENRed) {
-//                                        DengUT.isOPENRed = false;
-//                                        DengUT.getInstance(baoCunBean).closeRed();
-//                                    }
-//                                    if (DengUT.isOPENGreen) {
-//                                        DengUT.isOPENGreen = false;
-//                                        DengUT.getInstance(baoCunBean).closeGreen();
-//                                    }
-//                                    if (DengUT.isOPEN) {
-//                                        DengUT.isOPEN = false;
-//                                        DengUT.getInstance(baoCunBean).closeWrite();
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                };
-//            }
-//            if (mTimer == null) {
-//                mTimer = new Timer();
-//            }
-//            mTimer.schedule(mTimerTask, 0, 1000);
-//        }
-
-
-            if (lztek!=null){
-                new Thread(new Runnable() {
+        if (jiqiType==2) {
+            Sensor defaultSensor = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+            sm.registerListener(this, defaultSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            if (mTimerTask == null) {
+                mTimerTask = new TimerTask() {
                     @Override
                     public void run() {
-                        while (true) {
-                            SystemClock.sleep(180);
-                            final int value = lztek.getGpioValue(218);
-                            if (value==1){
-                                isCLOSDLED=true;
+                        if (juli > 0 && juli<8200) {
+                            isPM2 = true;
+                            //有人
+                            if (isPM) {
+                                isPM = false;
+                                onP1 = true;
+                                onP2 = true;
+                                pm = 0;
                                 Message message = new Message();
                                 message.what = 333;
                                 mHandler.sendMessage(message);
                             }
+                        } else {
+                            isPM = true;
+                            if (isPM2) {
+                                pm++;
+                                if (pm == 8) {
+                                    Message message = new Message();
+                                    message.what = 444;
+                                    mHandler.sendMessage(message);
+                                    isPM2 = false;
+                                    onP1 = false;
+                                    onP2 = false;
+                                    pm = 0;
+
+                                    if (DengUT.isOPENRed) {
+                                        DengUT.isOPENRed = false;
+                                        DengUT.getInstance(baoCunBean).closeRed();
+                                    }
+                                    if (DengUT.isOPENGreen) {
+                                        DengUT.isOPENGreen = false;
+                                        DengUT.getInstance(baoCunBean).closeGreen();
+                                    }
+                                    if (DengUT.isOPEN) {
+                                        DengUT.isOPEN = false;
+                                        DengUT.getInstance(baoCunBean).closeWrite();
+                                    }
+                                }
+                            }
                         }
                     }
-                }).start();
+                };
+            }
+            if (mTimer == null) {
+                mTimer = new Timer();
+            }
+            mTimer.schedule(mTimerTask, 0, 1000);
+        }
+
+
+            if (lztek!=null){
+                mReadThread3 = new ReadThread3();
+                mReadThread3.start();
             }
 
     }
@@ -879,7 +992,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         public void run() {
             while (!isIterrupt) {
                 try {
-
                     FacePassImage image = mFeedFrameQueue.take();
                     /* 将每一帧FacePassImage 送入SDK算法， 并得到返回结果 */
                     FacePassDetectionResult detectionResult = null;
@@ -903,9 +1015,11 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                 task2 = new TimerTask() {
                                     @Override
                                     public void run() {
-                                        Message message = new Message();
-                                        message.what = 444;
-                                        mHandler.sendMessage(message);
+                                        if (!isCLOSDLED && jiqiType!=2){
+                                            Message message = new Message();
+                                            message.what = 444;
+                                            mHandler.sendMessage(message);
+                                        }
                                     }
                                 };
                                 timer2.schedule(task2, 5000);
@@ -913,15 +1027,15 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                 task2 = new TimerTask() {
                                     @Override
                                     public void run() {
-                                        Message message = new Message();
-                                        message.what = 444;
-                                        mHandler.sendMessage(message);
-
+                                        if (!isCLOSDLED && jiqiType!=2){
+                                            Message message = new Message();
+                                            message.what = 444;
+                                            mHandler.sendMessage(message);
+                                        }
                                     }
                                 };
                                 timer2.schedule(task2, 5000);
                             }
-
                         }
                     }else {
                        // Log.d("FeedFrameThread", "detectionResult.faceList.length:" + detectionResult.faceList.length);
@@ -936,16 +1050,17 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                 showUIResult(2,"","","");
                             }
                             mDetectResultQueue.offer(detectionResult);
+                            //   Log.d("ggggg", "1 mDetectResultQueue.size = " + mDetectResultQueue.size());
+                        }
+
+                        if (!isCLOSDLED && jiqiType!=2){
                             if (task2 != null)
                                 task2.cancel();
                             Message message = new Message();
                             message.what = 333;
                             mHandler.sendMessage(message);
-                            //   Log.d("ggggg", "1 mDetectResultQueue.size = " + mDetectResultQueue.size());
                         }
-
                     }
-
                     //     }
 
                 } catch (InterruptedException | FacePassException e) {
@@ -1494,9 +1609,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
 
 
-
-
-
     @Override
     protected void onStop() {
         Log.d("MianBanJiActivity3", "停止");
@@ -1531,11 +1643,41 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //        if (mReadThread != null) {
 //            mReadThread.interrupt();
 //        }
+
+        if (jiqiType==0){
+            try {//停止喂狗
+                HwitManager.HwitStopSoftWatchDog(MianBanJiActivity3.this);
+            }catch (NoClassDefFoundError error){
+                error.printStackTrace();
+            }
+        }
+        if (jiqiType==1 && lztek!=null){
+            try {//停止喂狗
+               lztek.watchDogDisable();
+            }catch (NoClassDefFoundError error){
+                error.printStackTrace();
+            }
+        }
+
         if (serverManager!=null)
             serverManager.stopServer();
 
+        if (dogThread != null) {
+            dogThread.isIterrupt=true;
+            dogThread.interrupt();
+        }
+
+        if (mReadThread != null) {
+            mReadThread.isIterrupt=true;
+            mReadThread.interrupt();
+        }
         if (mReadThread2 != null) {
+            mReadThread2.isIterrupt=true;
             mReadThread2.interrupt();
+        }
+        if (mReadThread3 != null) {
+            mReadThread3.isIterrupt=true;
+            mReadThread3.interrupt();
         }
         if (linkedBlockingQueue != null) {
             linkedBlockingQueue.clear();
@@ -1577,6 +1719,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         DengUT.getInstance(baoCunBean).closeRed();
 
         super.onDestroy();
+        MyApplication.myApplication.removeActivity(this);
     }
 
     private static final int REQUEST_CODE_CHOOSE_PICK = 1;
@@ -1669,6 +1812,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     //mianBanJiView.setTime(DateUtils.time(System.currentTimeMillis()+""));
                     // String riqi11 = DateUtils.getWeek(System.currentTimeMillis()) + "   " + DateUtils.timesTwo(System.currentTimeMillis() + "");
                     //  riqi.setTypeface(tf);
+
                     String xiaoshiss = DateUtils.timeMinute(System.currentTimeMillis() + "");
                     if (xiaoshiss.split(":")[0].equals("03") && xiaoshiss.split(":")[1].equals("40")) {
                      Log.d("TimeChangeReceiver", "ssss");
@@ -1855,9 +1999,14 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     private void link_infoSync() {
         final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONArray array = new JSONArray();
-        List<HuiFuBean> huiFuBeanList = huiFuBeanBox.getAll();
-        if (huiFuBeanList != null) {
-            for (HuiFuBean bean : huiFuBeanList) {
+        LazyList<HuiFuBean> huiFuBeanList = huiFuBeanBox.query().build().findLazy();
+        if (huiFuBeanList.size()==0)
+            return;
+        List<HuiFuBean> huiFuBeans=new ArrayList<>();
+        for (HuiFuBean h:huiFuBeanList){
+            huiFuBeans.add(h);
+        }
+            for (HuiFuBean bean : huiFuBeans) {
                 JSONObject object = new JSONObject();
                 try {
                     object.put("pepopleId", bean.getPepopleId());
@@ -1871,10 +2020,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                 }
                 array.put(object);
             }
-        } else {
-            isLink = false;
-            return;
-        }
 
         Log.d("MianBanJiActivity3", "数据同步：" + array.toString());
         RequestBody body = RequestBody.create(array.toString(), JSON);
@@ -1902,7 +2047,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     Log.d("AllConnects", "数据同步:" + ss);
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
 
-                    for (HuiFuBean bean : huiFuBeanList) {
+                    for (HuiFuBean bean : huiFuBeans) {
                         huiFuBeanBox.remove(bean);
                     }
                 } catch (Exception e) {

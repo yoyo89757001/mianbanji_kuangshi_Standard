@@ -26,6 +26,7 @@ import com.tencent.tinker.entry.DefaultApplicationLike;
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Objects;
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
@@ -46,8 +47,7 @@ import megvii.testfacepass.pa.beans.Subject;
 
 import megvii.testfacepass.pa.dialogall.CommonData;
 import megvii.testfacepass.pa.dialogall.ToastUtils;
-
-
+import megvii.testfacepass.pa.utils.UnCeHandler;
 
 
 /**
@@ -55,6 +55,8 @@ import megvii.testfacepass.pa.dialogall.ToastUtils;
  */
 
 public class MyApplication extends DefaultApplicationLike {
+    ArrayList<Activity> list = new ArrayList<Activity>();
+    public static Context context;
     private static FacePassHandler facePassHandler=null;
     public static MyApplication myApplication;
     public static Application ampplication;
@@ -121,6 +123,37 @@ public class MyApplication extends DefaultApplicationLike {
 
 
 
+    public void init(){
+        //设置该CrashHandler为程序的默认处理器
+        UnCeHandler catchExcep = new UnCeHandler(this,getApplication());
+        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+    }
+
+    /**
+     * Activity关闭时，删除Activity列表中的Activity对象*/
+    public void removeActivity(Activity a){
+        list.remove(a);
+    }
+
+    /**
+     * 向Activity列表中添加Activity对象*/
+    public void addActivity(Activity a){
+        list.add(a);
+    }
+
+    /**
+     * 关闭Activity列表中的所有Activity*/
+    public void finishActivity(){
+        for (Activity activity : list) {
+            if (null != activity) {
+                activity.finish();
+            }
+        }
+        //杀死该应用进程
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+
     public MyApplication(Application application, int tinkerFlags,
                                  boolean tinkerLoadVerifyFlag, long applicationStartElapsedTime,
                                  long applicationStartMillisTime, Intent tinkerResultIntent) {
@@ -148,7 +181,7 @@ public class MyApplication extends DefaultApplicationLike {
         super.onCreate();
         ampplication = getApplication();
         myApplication=this;
-
+        context = this.getApplication();
         BoxStore mBoxStore = MyObjectBox.builder().androidContext(getApplication()).build();
 
         Bugly.init(getApplication(), "e92fdff61f", false);
