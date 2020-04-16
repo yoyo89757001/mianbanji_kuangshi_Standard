@@ -182,6 +182,7 @@ public class MyApplication extends DefaultApplicationLike {
         ampplication = getApplication();
         myApplication=this;
         context = this.getApplication();
+      //  init();
         BoxStore mBoxStore = MyObjectBox.builder().androidContext(getApplication()).build();
 
         Bugly.init(getApplication(), "e92fdff61f", false);

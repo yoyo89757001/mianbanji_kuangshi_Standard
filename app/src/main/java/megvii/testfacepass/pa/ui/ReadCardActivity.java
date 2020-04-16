@@ -237,17 +237,19 @@ public class ReadCardActivity extends AppCompatActivity {
                                     //  Log.d("MianBanJiActivity3", "hh哈哈:"+st);
                                     if (st == 0)
                                     {
-                                        StringBuilder showStr= new StringBuilder();
-                                        int len=rlen[0];
-                                        for(int i= 0; i<len; i++)
-                                            showStr.append(byteToHexString(rData[i]));
-                                        Log.d("MianBanJiActivity3", showStr.toString());
-                                        //  Log.d("ReadCardActivity", byteToString(rData));
+                                        String sdfds = new String(rData);
+                                        sdfds = sdfds.substring(0, 10);
+                                        Log.d("ReadThread2", sdfds);
+            //                        StringBuilder showStr= new StringBuilder();
+            //                        int len=rlen[0];
+            //                        for(int i= 0; i<len; i++)
+            //                            showStr.append(byteToHexString(rData[i]));
+            //                        Log.d("MianBanJiActivity3", showStr.toString());
                                         Message message = new Message();
                                         message.what = 222;
-                                        message.obj=showStr.toString();
+                                        message.obj=sdfds.trim();
                                         mHandler.sendMessage(message);
-                                        SystemClock.sleep(500);
+                                        SystemClock.sleep(100);
                                     }
                                 }
 
@@ -273,19 +275,40 @@ public class ReadCardActivity extends AppCompatActivity {
 
 
     private void readdd(byte[] idid) {
+        StringBuilder builder = new StringBuilder();
         String sdfds = byteToString(idid);
+        long d=0;
         if (sdfds != null) {
             sdfds = sdfds.substring(6, 14);
+            Log.d("ReadThread", sdfds);
+            if(sdfds.length() == 8) {
+                for(int i = 0; i<4; i++) {
+                    String str = sdfds.substring(sdfds.length()-2 * (i+1), sdfds.length()-2*i);
+                    builder.append(str);
+                }
+            }
+            d = Long.valueOf(builder.toString(),16);   //d=255
+            Log.d("ReadThread", "builder:" + d);
         } else {
             return;
         }
-        sdfds = sdfds.toUpperCase();
-        Log.d("MianBanJiActivity3", sdfds);
+      //  sdfds = sdfds.toUpperCase();
+      //  Log.d("MianBanJiActivity3", sdfds);
+
+        String str= addO(d+"");
         Message message = new Message();
         message.what = 222;
-        message.obj=sdfds;
+        message.obj=str;
         mHandler.sendMessage(message);
 
+    }
+
+    private String addO(String ss){
+        if (ss.length()>0 && ss.length()<10){
+            ss="0"+ss;
+            addO(ss);
+        }
+        return ss;
     }
 
     private class ReadThread extends Thread {

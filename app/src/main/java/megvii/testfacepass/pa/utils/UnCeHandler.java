@@ -6,9 +6,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import com.hwit.HwitManager;
+import com.lztek.toolkit.Lztek;
+
 import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.SampleApplication;
 import megvii.testfacepass.pa.ui.BaseActivity;
+import megvii.testfacepass.pa.ui.SheZhiActivity2;
 
 public class UnCeHandler implements Thread.UncaughtExceptionHandler {
 
@@ -30,7 +34,7 @@ public class UnCeHandler implements Thread.UncaughtExceptionHandler {
             //如果用户没有处理则让系统默认的异常处理器来处理
             mDefaultHandler.uncaughtException(thread, ex);
         }else{
-
+            kaiPing();
             Intent intent = new Intent(context.getApplicationContext(), BaseActivity.class);
             PendingIntent restartIntent = PendingIntent.getActivity(
                     context.getApplicationContext(), 0, intent,
@@ -41,6 +45,29 @@ public class UnCeHandler implements Thread.UncaughtExceptionHandler {
                     restartIntent); // 1秒钟后重启应用
             application.finishActivity();
         }
+    }
+
+
+    private void kaiPing() {
+        Intent intent = new Intent();
+        intent.setAction("LYD_SHOW_NAVIGATION_BAR");
+        intent.putExtra("type", 1);
+        context.sendBroadcast(intent);
+        context.sendBroadcast(new Intent("com.android.internal.policy.impl.showNavigationBar"));
+        context.sendBroadcast(new Intent("com.android.systemui.statusbar.phone.statusopen"));
+        try {
+            Lztek lztek=Lztek.create(MyApplication.ampplication);
+            lztek.navigationBarSlideShow(true);
+        }catch (NoClassDefFoundError e){
+            e.printStackTrace();
+        }
+        try {
+            HwitManager.HwitSetShowSystemBar(context);
+            HwitManager.HwitSetDisableSlideShowSysBar(0);
+        }catch (NoClassDefFoundError error){
+            error.printStackTrace();
+        }
+
     }
 
     /**

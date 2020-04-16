@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -63,7 +64,6 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
         setContentView(R.layout.activity_base);
         baoCunBean=baoCunBeanBox.get(123456L);
         mSharedPreferences = getSharedPreferences("SP", Context.MODE_PRIVATE);
-        MyApplication.myApplication.init();
         methodRequiresTwoPermission();
         MyApplication.myApplication.addActivity(this);
 
@@ -90,6 +90,14 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
             // 已经得到许可，就去做吧 //第一次授权成功也会走这个方法
             Log.d("BaseActivity", "成功获得权限");
 
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    SystemClock.sleep(10000);
+//                    int i=10/0;
+//
+//                }
+//            }).start();
            start();
 
         } else {
