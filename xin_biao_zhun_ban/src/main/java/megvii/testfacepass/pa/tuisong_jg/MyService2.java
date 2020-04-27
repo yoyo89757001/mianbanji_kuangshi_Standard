@@ -24,6 +24,7 @@ import com.yanzhenjie.andserver.http.HttpResponse;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -1055,7 +1056,6 @@ String findRecords(@RequestParam(name = "pass") String pass,
         return JSON.toJSONString(new ResBean(result,success,data));
     }
     private String requsBean(int result,boolean success,Object data,String msg){
-
         return JSON.toJSONString(new ResBean(result,success,data,msg));
     }
 
