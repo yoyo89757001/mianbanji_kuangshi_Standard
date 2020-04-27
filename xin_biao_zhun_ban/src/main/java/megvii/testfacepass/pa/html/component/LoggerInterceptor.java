@@ -40,9 +40,9 @@ public class LoggerInterceptor implements HandlerInterceptor {
         String path = request.getPath();
         HttpMethod method = request.getMethod();
         MultiValueMap<String, String> valueMap = request.getParameter();
-        Logger.i("Path: " + path);
-        Logger.i("Method: " + method.value());
-        Logger.i("Param: " + JsonUtils.toJsonString(valueMap));
+     //   Logger.i("Path: " + path);
+     //   Logger.i("Method: " + method.value());
+    //    Logger.i("Param: " + JsonUtils.toJsonString(valueMap));
         return false;
     }
 }

@@ -59,7 +59,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         boolean[] booleanType = addition.getBooleanType();
-        if (booleanType.length==0) {
+        if (booleanType==null ||booleanType.length==0) {
             return false;
         }
         return stringType[0].equalsIgnoreCase("login") && booleanType[0];
