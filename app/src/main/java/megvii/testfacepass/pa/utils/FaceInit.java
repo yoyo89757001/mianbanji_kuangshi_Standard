@@ -141,7 +141,7 @@ public class FaceInit {
 
     public void init(String registration, BaoCunBean baoCunBean){
         this.baoCunBean=baoCunBean;
-        link_uplod(registration,baoCunBean.getHoutaiDiZhi());
+        link_uplod(registration,baoCunBean.getTouxiangzhuji());
 
     }
 

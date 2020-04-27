@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':xin_biao_zhun_ban'
 rootProject.name='mianbanji_kuangshi_Standard'

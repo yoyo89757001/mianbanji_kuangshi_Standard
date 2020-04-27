@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.objectbox'
-apply from: 'tinker-support.gradle'
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -11,7 +11,7 @@ android {
 //             }
 
     defaultConfig {
-        applicationId "com.ruitong.mechanical.a555666"
+        applicationId "com.ruitong.mechanical.new12"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 10
@@ -120,8 +120,10 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.tencent.bugly:crashreport_upgrade:1.4.2'//腾讯bugly
     implementation 'com.tencent.bugly:nativecrashreport:3.7.1' //腾讯bugly
-    implementation 'com.tencent.tinker:tinker-android-lib:1.9.14'//腾讯tinker
+//    implementation 'com.tencent.tinker:tinker-android-lib:1.9.14'//腾讯tinker
     implementation "com.android.support:multidex:1.0.3" // 多dex配置
+//    api 'com.android.support:multidex:1.0.3'
+//    api 'com.android.support:multidex-instrumentation:1.0.3'
 
     implementation 'com.airbnb.android:lottie:3.0.7'
     implementation group: 'net.sourceforge.jexcelapi', name: 'jxl', version: '2.6.12' //导出wps

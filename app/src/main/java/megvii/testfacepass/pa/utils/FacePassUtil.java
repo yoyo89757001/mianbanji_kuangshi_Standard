@@ -74,9 +74,9 @@ public class FacePassUtil {
                                 config.faceMinThreshold = baoCunBean.getShibieFaceSize();
                                 config.poseThreshold = new FacePassPose(30f, 30f, 30f);
                                 config.blurThreshold = 0.5f;
-                                config.lowBrightnessThreshold = 70f;
-                                config.highBrightnessThreshold = 210f;
-                                config.brightnessSTDThreshold = 80f;
+                                config.lowBrightnessThreshold = 30f;
+                                config.highBrightnessThreshold = 300f;
+                                config.brightnessSTDThreshold = 90f;//阴阳脸
                                 config.retryCount = baoCunBean.getMoshengrenPanDing();
                                 config.maxFaceEnabled = true;
                                 config.fileRootPath = MyApplication.SDPATH2;
@@ -90,8 +90,8 @@ public class FacePassUtil {
                              //   boolean livenessEnabled2 = true;
                                 int faceMinThreshold2 = baoCunBean.getRuKuFaceSize();
                                 float blurThreshold2 = 0.3f;
-                                float lowBrightnessThreshold2 = 70f;
-                                float highBrightnessThreshold2 = 210f;
+                                float lowBrightnessThreshold2 = 50f;
+                                float highBrightnessThreshold2 = 250f;
                                 float brightnessSTDThreshold2 = 80f;
                                 FacePassConfig config1=new FacePassConfig(faceMinThreshold2,22f,22f,22f,blurThreshold2,
                                         lowBrightnessThreshold2,highBrightnessThreshold2,brightnessSTDThreshold2);

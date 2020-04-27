@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" type="text/css" href="css/login.css">
+    <script src="native_assest/vue.js"></script>
+    <title>Sign In</title>
+
+</head>
+<body class="sec_body">
+<div class="center_father">
+    <h1 class="center" style="margin:0 0;font-size:x-large;padding:0;">Sign In</h1>
+</div>
+<div id="app">
+    {{ message }}
+    <div id="example-2">
+        <!-- `greet` 是在下面定义的方法名 -->
+        <button v-on:click="greet">Greet</button>
+    </div>
+</div>
+
+<div id="app-2">
+  <span v-bind:title="message">
+    鼠标悬停几秒钟查看此处动态绑定的提示信息！
+
+       {{ message2 }}
+  </span>
+</div>
+
+<div id="app-3">
+    <p v-if="seen">现在你看到我了</p>
+</div>
+
+
+<script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello Vue!',
+        message2: 'Hello Vu22e!',
+        name: 'opkoi'
+
+      },
+      // 在 `methods` 对象中定义方法
+  methods: {
+    greet: function (event) {
+      // `this` 在方法里指向当前 Vue 实例
+      alert('Hello ' + this.name + '!')
+      // `event` 是原生 DOM 事件
+      if (event) {
+        alert(event.target.tagName)
+      }
+    }
+  }
+    })
+
+    var app2 = new Vue({
+  el: '#app-2',
+  data: {
+    message: '页面加载于 ' + new Date().toLocaleString()
+  }
+})
+
+var app3 = new Vue({
+  el: '#app-3',
+  data: {
+    seen: true
+  }
+})
+
+
+  </script>
+<form id="form1" method="post" action="/login.html">
+    <table align="center" cellpadding="0" cellspacing="0">
+        <tr>
+            <td width="100" align="right">Account:&nbsp;&nbsp;</td>
+            <td width="276"><input name="account" type="text" id="account" value="123"/></td>
+        </tr>
+        <tr>
+            <td width="100">&nbsp;&nbsp;</td>
+            <td width="276">&nbsp;&nbsp;</td>
+        </tr>
+        <tr>
+            <td align="right">Password:&nbsp;&nbsp;</td>
+            <td><input name="password" type="password" id="password" value="123"/></td>
+        </tr>
+        <tr>
+            <td width="100">&nbsp;&nbsp;</td>
+            <td width="276">&nbsp;&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <input type="submit" name="Submit" value="Sign In"/>
+            </td>
+        </tr>
+    </table>
+    <p>Account:&nbsp;123, Password:&nbsp;123</p>
+</form>
+</body>
+</html>
