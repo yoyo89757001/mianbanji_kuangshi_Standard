@@ -89,8 +89,10 @@ import mcv.facepass.FacePassException;
 import mcv.facepass.FacePassHandler;
 import mcv.facepass.types.FacePassAddFaceResult;
 import mcv.facepass.types.FacePassDetectionResult;
+import mcv.facepass.types.FacePassFace;
 import mcv.facepass.types.FacePassImage;
 import mcv.facepass.types.FacePassImageType;
+import mcv.facepass.types.FacePassMouthOccAttr;
 import mcv.facepass.types.FacePassRecognitionResult;
 import mcv.facepass.types.FacePassRecognitionResultType;
 import megvii.testfacepass.pa.MyApplication;
@@ -224,14 +226,14 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     private ReadThread mReadThread;
     private ReadThread2 mReadThread2;
     private ReadThread3 mReadThread3;
-    private DogThread dogThread;
+    //private DogThread dogThread;
     private InputStream mInputStream;
     private int w, h, cameraH, cameraW;
     private float s1 = 0, s2 = 0;
     private Timer mTimer;//距离感应
     private TimerTask mTimerTask;//距离感应
     private int pm = 0;
-    private boolean onP1 = true, onP2 = true;
+    //private boolean onP1 = true, onP2 = true;
     private boolean isPM = true;
     private boolean isPM2 = true;
     private float juli = 0;
@@ -288,21 +290,11 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
             switch (baoCunBean.getDangqianChengShi2()){
                 case "智连":
                     jiqiType=0;
-                    try {//启用软件看门狗，如果没有喂食，会重启系统
-                      //  HwitManager.HwitStartSoftWatchDog(this,10000,10000);
-                    }catch (NoClassDefFoundError error){
-                        error.printStackTrace();
-                    }
+
                     break;
                 case "亮钻":
                     jiqiType=1;
-                    if (lztek!=null){
-                        try {
-                         //   lztek.watchDogEnable();//打开硬件看门狗
-                        }catch (NoClassDefFoundError error){
-                            error.printStackTrace();
-                        }
-                    }
+
                     break;
                 case "涂鸦":
                     jiqiType=2;
@@ -458,15 +450,15 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         break;
                     }
                     case 333:
-                        onP1 = true;
-                        onP2 = true;
+
                         DengUT.getInstance(baoCunBean).openLOED();
+
 
                         break;
                     case 444:
-                        onP1 = false;
-                        onP2 = false;
+
                         DengUT.getInstance(baoCunBean).closeLOED();
+
 
                         break;
                     case 999:
@@ -581,8 +573,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //        }
 
         if (jiqiType==0 || jiqiType==1){
-            dogThread=new DogThread();
-            dogThread.start();
+          //  dogThread=new DogThread();
+          //  dogThread.start();
 
             try {
                 mFuncs = new Function(this, mHandler);
@@ -805,35 +797,35 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         }
     }
 
-    private class DogThread extends Thread {
-        boolean isIterrupt;
-        @Override
-        public void run() {
-            super.run();
-            while (!isIterrupt) {
-                if (jiqiType==0){
-                    try {//喂狗
-                        HwitManager.HwitFeedSoftWatchDog(MianBanJiActivity3.this);
-                    }catch (NoClassDefFoundError error){
-                        error.printStackTrace();
-                    }
-                }
-                if (jiqiType==1 && lztek!=null){
-                    try {//喂狗
-                        lztek.watchDogFeed();
-                    }catch (NoClassDefFoundError error){
-                        error.printStackTrace();
-                    }
-                }
-                SystemClock.sleep(5000);
-            }
-        }
-        @Override
-        public void interrupt() {
-            isIterrupt = true;
-            super.interrupt();
-        }
-    }
+//    private class DogThread extends Thread {
+//        boolean isIterrupt;
+//        @Override
+//        public void run() {
+//            super.run();
+//            while (!isIterrupt) {
+//                if (jiqiType==0){
+//                    try {//喂狗
+//                        HwitManager.HwitFeedSoftWatchDog(MianBanJiActivity3.this);
+//                    }catch (NoClassDefFoundError error){
+//                        error.printStackTrace();
+//                    }
+//                }
+//                if (jiqiType==1 && lztek!=null){
+//                    try {//喂狗
+//                        lztek.watchDogFeed();
+//                    }catch (NoClassDefFoundError error){
+//                        error.printStackTrace();
+//                    }
+//                }
+//                SystemClock.sleep(5000);
+//            }
+//        }
+//        @Override
+//        public void interrupt() {
+//            isIterrupt = true;
+//            super.interrupt();
+//        }
+//    }
 
     //涂鸦转10位10进制数字
     private void readdd(byte[] idid) {
@@ -898,8 +890,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                             //有人
                             if (isPM) {
                                 isPM = false;
-                                onP1 = true;
-                                onP2 = true;
+
                                 pm = 0;
                                 Message message = new Message();
                                 message.what = 333;
@@ -914,8 +905,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                     message.what = 444;
                                     mHandler.sendMessage(message);
                                     isPM2 = false;
-                                    onP1 = false;
-                                    onP2 = false;
+
                                     pm = 0;
 
                                     if (DengUT.isOPENRed) {
@@ -949,7 +939,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                 }
             }
 
-
     }
 
 
@@ -971,8 +960,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         // Log.d("SheZhiActivity2", "intent:" + intent);
         processIntent(intent);
     }
-
-
 
 
 
@@ -1035,7 +1022,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                             DengUT.isOPENRed = false;
                             DengUT.isOpenDOR = false;
                             DengUT.getInstance(baoCunBean).closeWrite();
-                            showUIResult(1,"","","");
+                            showUIResult(1,"","");
                             //启动定时器或重置定时器
                             if (task2 != null) {
                                 task2.cancel();
@@ -1066,8 +1053,35 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                             }
                         }
                     }else {
-                       // Log.d("FeedFrameThread", "detectionResult.faceList.length:" + detectionResult.faceList.length);
-                    //    Log.d("FeedFrameThread", "有人");
+                        final FacePassFace[] bufferFaceList = detectionResult.faceList;
+                        FacePassMouthOccAttr attr=bufferFaceList[0].mouthOccAttr;
+                        if (attr.is_valid){//有效
+                            String kouzhao="";
+                            switch (attr.mouth_occ_status){
+                                case 0:
+                                    kouzhao="未佩戴口罩";
+                                    break;
+                                case 1:
+                                    kouzhao="面具遮挡";
+                                    break;
+                                case 2:
+                                    kouzhao="已佩戴口罩";
+                                    break;
+                                case 3:
+                                    kouzhao="其他遮挡";
+                                    break;
+                                default:
+                                    kouzhao="";
+                                    break;
+                            }
+                            String finalKouzhao = kouzhao;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    tvFaceTips_Ir.setText(finalKouzhao);
+                                }
+                            });
+                        }
 
                         /*离线模式，将识别到人脸的，message不为空的result添加到处理队列中*/
                         if (detectionResult.message.length != 0) {
@@ -1075,7 +1089,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                             if (!DengUT.isOPEN) {
                                 DengUT.isOPEN = true;
                                 DengUT.getInstance(baoCunBean).openWrite();
-                                showUIResult(2,"","","");
+                                showUIResult(2,"","");
                             }
                             mDetectResultQueue.offer(detectionResult);
                             //   Log.d("ggggg", "1 mDetectResultQueue.size = " + mDetectResultQueue.size());
@@ -1437,7 +1451,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
             }
 
         }
-        showUIResult(1,"","","");
+        showUIResult(1,"","");
 
     }
 
@@ -1482,35 +1496,33 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                         DengUT.isOPENGreen = true;
                                         DengUT.getInstance(baoCunBean).openGreen();
                                     }
-                                    DengUT.isOPEN = true;
-
                                   //  long time=System.currentTimeMillis();
                                     for (int i = 0; i < detectionResult.faceList.length; i++) {
                                         FacePassImage images = detectionResult.images[i];
                                         if (images.trackId == result.trackId) {
                                        //     Log.d("RecognizeThread", "detectionResult.faceList[i].mouthOccAttr.is_valid:" + detectionResult.faceList[i].mouthOccAttr.is_valid);
                                          //   Log.d("RecognizeThread", "detectionResult.faceList[i].mouthOccAttr.mouth_occ_status:" + detectionResult.faceList[i].mouthOccAttr.mouth_occ_status);
-                                            if (detectionResult.faceList[i].mouthOccAttr.is_valid){
-                                                String kouzhao="";
-                                                switch (detectionResult.faceList[i].mouthOccAttr.mouth_occ_status){
-                                                    case 0:
-                                                        kouzhao="未佩戴口罩";
-                                                        break;
-                                                    case 1:
-                                                        kouzhao="面具遮挡";
-                                                        break;
-                                                    case 2:
-                                                        kouzhao="已佩戴口罩";
-                                                        break;
-                                                    case 3:
-                                                        kouzhao="其他遮挡";
-                                                        break;
-                                                    default:
-                                                         kouzhao="";
-                                                        break;
-                                                }
-                                                showUIResult(4,subject.getName(),subject.getDepartmentName(),kouzhao);
-                                            }
+//                                            if (detectionResult.faceList[i].mouthOccAttr.is_valid){
+//                                                String kouzhao="";
+//                                                switch (detectionResult.faceList[i].mouthOccAttr.mouth_occ_status){
+//                                                    case 0:
+//                                                        kouzhao="未佩戴口罩";
+//                                                        break;
+//                                                    case 1:
+//                                                        kouzhao="面具遮挡";
+//                                                        break;
+//                                                    case 2:
+//                                                        kouzhao="已佩戴口罩";
+//                                                        break;
+//                                                    case 3:
+//                                                        kouzhao="其他遮挡";
+//                                                        break;
+//                                                    default:
+//                                                         kouzhao="";
+//                                                        break;
+//                                                }
+//                                                showUIResult(4,subject.getName(),subject.getDepartmentName());
+//                                            }
                                             final Bitmap fileBitmap = nv21ToBitmap.nv21ToBitmap(images.image, images.width, images.height);
                                           //  String paths = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "ruitongzipmbj";
                                           //  boolean tt = nv21ToBitmap.saveBitmap(fileBitmap, paths, time + ".png");
@@ -1522,7 +1534,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                             break;
                                         }
                                     }
-                                    showUIResult(4,subject.getName(),subject.getDepartmentName(),"");
+                                    showUIResult(4,subject.getName(),subject.getDepartmentName());
+                                    DengUT.isOPEN = true;
+
                                  //   msrBitmap = nv21ToBitmap.nv21ToBitmap(result.feedback.rgbImage.image, result.feedback.rgbImage.width, result.feedback.rgbImage.height);
 
                                 } else {
@@ -1530,10 +1544,10 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                 }
 
                             } else {
-                                Log.d("RecognizeThread", "未识别");
+                               // Log.d("RecognizeThread", "未识别");
                                 //未识别的
                                 // 防止concurrentHashMap 数据过多 ,超过一定数据 删除没用的
-                                if (concurrentHashMap.size() > 10) {
+                                if (concurrentHashMap.size() > 20) {
                                     concurrentHashMap.clear();
                                 }
                                 if (concurrentHashMap.get(result.trackId) == null) {
@@ -1571,7 +1585,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                         DengUT.isOPENRed = true;
                                         DengUT.getInstance(baoCunBean).openRed();
                                     }
-                                    DengUT.isOPEN = true;
+
 
                                   //  long time=System.currentTimeMillis();
                                     for (int i = 0; i < detectionResult.faceList.length; i++) {
@@ -1579,27 +1593,27 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                         if (images.trackId == result.trackId) {
                                         //    Log.d("RecognizeThread", "detectionResult.faceList[i].mouthOccAttr.is_valid:" + detectionResult.faceList[i].mouthOccAttr.is_valid);
                                          //   Log.d("RecognizeThread", "detectionResult.faceList[i].mouthOccAttr.mouth_occ_status:" + detectionResult.faceList[i].mouthOccAttr.mouth_occ_status);
-                                            if (detectionResult.faceList[i].mouthOccAttr.is_valid){
-                                                String kouzhao="";
-                                                switch (detectionResult.faceList[i].mouthOccAttr.mouth_occ_status){
-                                                    case 0:
-                                                        kouzhao="未佩戴口罩";
-                                                        break;
-                                                    case 1:
-                                                        kouzhao="面具遮挡";
-                                                        break;
-                                                    case 2:
-                                                        kouzhao="已佩戴口罩";
-                                                        break;
-                                                    case 3:
-                                                        kouzhao="其他遮挡";
-                                                        break;
-                                                    default:
-                                                        kouzhao="";
-                                                        break;
-                                                }
-                                                showUIResult(3,"陌生人","",kouzhao);
-                                            }
+//                                            if (detectionResult.faceList[i].mouthOccAttr.is_valid){
+//                                                String kouzhao="";
+//                                                switch (detectionResult.faceList[i].mouthOccAttr.mouth_occ_status){
+//                                                    case 0:
+//                                                        kouzhao="未佩戴口罩";
+//                                                        break;
+//                                                    case 1:
+//                                                        kouzhao="面具遮挡";
+//                                                        break;
+//                                                    case 2:
+//                                                        kouzhao="已佩戴口罩";
+//                                                        break;
+//                                                    case 3:
+//                                                        kouzhao="其他遮挡";
+//                                                        break;
+//                                                    default:
+//                                                        kouzhao="";
+//                                                        break;
+//                                                }
+//                                                showUIResult(3,"陌生人","");
+//                                            }
                                          //   final Bitmap fileBitmap = nv21ToBitmap.nv21ToBitmap(images.image, images.width, images.height);
                                             //  String paths = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "ruitongzipmbj";
                                             //  boolean tt = nv21ToBitmap.saveBitmap(fileBitmap, paths, time + ".png");
@@ -1611,7 +1625,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                             break;
                                         }
                                     }
-                                    showUIResult(3,"陌生人","","");
+                                    showUIResult(3,"陌生人","");
+                                    DengUT.isOPEN = true;
                                     //   msrBitmap = nv21ToBitmap.nv21ToBitmap(result.feedback.rgbImage.image, result.feedback.rgbImage.width, result.feedback.rgbImage.height);
                                     //   Log.d("RecognizeThread", "入库"+tID);
                                 }
@@ -1672,28 +1687,28 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //            mReadThread.interrupt();
 //        }
 
-        if (jiqiType==0){
-            try {//停止喂狗
-                HwitManager.HwitStopSoftWatchDog(MianBanJiActivity3.this);
-            }catch (NoClassDefFoundError error){
-                error.printStackTrace();
-            }
-        }
-        if (jiqiType==1 && lztek!=null){
-            try {//停止喂狗
-               lztek.watchDogDisable();
-            }catch (NoClassDefFoundError error){
-                error.printStackTrace();
-            }
-        }
+//        if (jiqiType==0){
+//            try {//停止喂狗
+//                HwitManager.HwitStopSoftWatchDog(MianBanJiActivity3.this);
+//            }catch (NoClassDefFoundError error){
+//                error.printStackTrace();
+//            }
+//        }
+//        if (jiqiType==1 && lztek!=null){
+//            try {//停止喂狗
+//               lztek.watchDogDisable();
+//            }catch (NoClassDefFoundError error){
+//                error.printStackTrace();
+//            }
+//        }
 
         if (serverManager!=null)
             serverManager.stopServer();
 
-        if (dogThread != null) {
-            dogThread.isIterrupt=true;
-            dogThread.interrupt();
-        }
+//        if (dogThread != null) {
+//            dogThread.isIterrupt=true;
+//            dogThread.interrupt();
+//        }
 
         if (mReadThread != null) {
             mReadThread.isIterrupt=true;
@@ -2327,7 +2342,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
      *
      * @param state 状态 1 初始状态  2 识别中,出现提示语  3 识别失败  4 识别成功
      */
-    protected void showUIResult(final int state, final String name, final String detectFaceTime,String kouzhao) {
+    protected void showUIResult(final int state, final String name, final String detectFaceTime) {
         if (state==STATE){
             return;
         }else {
@@ -2385,7 +2400,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         tvFaceTips_Ir.setVisibility(View.VISIBLE);//识别提示
                         tvName_Ir.setText("");
                         tvTime_Ir.setText("无权限通过,请重试");
-                        tvFaceTips_Ir.setText(kouzhao);
+                     //   tvFaceTips_Ir.setText(kouzhao);
                         break;
                     }
                     case 4: {//识别成功
@@ -2402,7 +2417,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         tvFaceTips_Ir.setVisibility(View.VISIBLE);//识别提示
                         tvName_Ir.setText(name);
                         tvTime_Ir.setText("部门:"+detectFaceTime);
-                        tvFaceTips_Ir.setText(kouzhao);
+                     //   tvFaceTips_Ir.setText(kouzhao);
                         break;
                     }
                 }

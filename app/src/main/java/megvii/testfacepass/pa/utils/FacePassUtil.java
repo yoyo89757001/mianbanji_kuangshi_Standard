@@ -43,11 +43,11 @@ public class FacePassUtil {
                                 config = new FacePassConfig();
                                 config.poseBlurModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "attr.pose_blur.align.av200.190630.bin");
 
-                                config.livenessModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "liveness.3288CPU.rgb.int8.C.bin");
+                             //   config.livenessModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "liveness.3288CPU.rgb.int8.C.bin");
 
                                 //也可以使用GPU活体模型，GPU活体模型分两个，用于GPU加速的模型和CACHE，当使用CPU活体模型时，请传null，当使用GPU活体模型时，必须传入加速cache模型
-//                            config.livenessModel = FacePassModel.initModel(getApplicationContext().getAssets(), "liveness.3288GPU.rgb.C.bin");
-//                            config.livenessGPUCache = FacePassModel.initModel(getApplicationContext().getAssets(), "liveness.GPU.AlgoPolicy.C.cache");
+                                config.livenessModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "liveness.3288GPU.rgb.C.bin");
+                                config.livenessGPUCache = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "liveness.GPU.AlgoPolicy.C.cache");
 
                                 config.searchModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "feat2.arm.F.v1.0.1core.bin");
                                 config.detectModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "detector.arm.C.bin");
@@ -74,8 +74,8 @@ public class FacePassUtil {
                                 config.faceMinThreshold = baoCunBean.getShibieFaceSize();
                                 config.poseThreshold = new FacePassPose(30f, 30f, 30f);
                                 config.blurThreshold = 0.5f;
-                                config.lowBrightnessThreshold = 30f;
-                                config.highBrightnessThreshold = 300f;
+                                config.lowBrightnessThreshold = 60f;
+                                config.highBrightnessThreshold = 220f;
                                 config.brightnessSTDThreshold = 90f;//阴阳脸
                                 config.retryCount = baoCunBean.getMoshengrenPanDing();
                                 config.maxFaceEnabled = true;
@@ -90,8 +90,8 @@ public class FacePassUtil {
                              //   boolean livenessEnabled2 = true;
                                 int faceMinThreshold2 = baoCunBean.getRuKuFaceSize();
                                 float blurThreshold2 = 0.3f;
-                                float lowBrightnessThreshold2 = 50f;
-                                float highBrightnessThreshold2 = 250f;
+                                float lowBrightnessThreshold2 = 70f;
+                                float highBrightnessThreshold2 = 210f;
                                 float brightnessSTDThreshold2 = 80f;
                                 FacePassConfig config1=new FacePassConfig(faceMinThreshold2,22f,22f,22f,blurThreshold2,
                                         lowBrightnessThreshold2,highBrightnessThreshold2,brightnessSTDThreshold2);
