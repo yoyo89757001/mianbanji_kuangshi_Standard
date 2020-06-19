@@ -9,7 +9,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:typeface">serif</item>
     </style>
-
+    <style name="TransparentDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
     <style name="dialog_style" parent="android:style/Theme.Dialog">
         <!-- 背景颜色及透明程度 -->
         <item name="android:windowBackground">@android:color/transparent</item>

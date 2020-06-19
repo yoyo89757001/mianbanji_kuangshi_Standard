@@ -1722,6 +1722,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
             mReadThread3.isIterrupt=true;
             mReadThread3.interrupt();
         }
+
         if (linkedBlockingQueue != null) {
             linkedBlockingQueue.clear();
         }
@@ -1833,7 +1834,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-
             }
         }
 

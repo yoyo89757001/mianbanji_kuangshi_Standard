@@ -92,7 +92,7 @@ public class FaceInit {
 
     private  void singleCertification(String cert,String active, final String id, final String url2) throws IOException {
       //  String cert = readExternal(CERT_PATH).trim();
-         cert="\"{\"\"serial\"\":\"\"m00420764abde7861a9499f135641501301d9\"\",\"\"key\"\":\"\"1847df22d4a3ae83eb7a6781a17118c3d0dd21671b86455030196e6dfc01066d674266063ea6c43914b090531fa377d77602fc883f5cc8acdeedfd1e578bf539a35dca7f606b147d052ad9827e6d61c7510700964c150a5ae7b5783e371f745017fef5a068d914ed224460e3c77808e729f3e94735b1c7d1bd857fc33d0d8ba9d51fec0db3d37fd1f5f7d58f179c79f16b7e8a9eaff8a392b1aecd55598011c0c23ade589861e63f7c9daf62b803607690b7882ce3032c8f9563b04870483c88\"\"}\"\n";
+         cert="\"{\"\"serial\"\":\"\"m00420764abde7861a9499f135641501301d9\"\",\"\"key\"\":\"\"d773e499d7987dee4a3b9fe607853b364bf09504e148787d4c51e762bb029e165137f5a1b2533768ad64cde31cfc20fc0f818ac120de0cdfba564b6c052244e392c424d99ab6dd6028cc3f6a8ce8d21b7344bc1d6d4bf9e470dca6120fc3ced81b90c7899cc761b4daf30b181fb69881559f0c7689d37c8f575483ea5b353787502c2528f43b8f04181237dc9a88ddc97e4cb1ad4e56d77726a7efba9b57f07da19531c47609de8c017edac474a31e6b066f3fbc99fd01589257592ad5223ddb\"\",\"\"counting_logic\"\":\"\"\"\"}\"\n";
         if (TextUtils.isEmpty(cert)|| TextUtils.isEmpty(active)){
             EventBus.getDefault().post("授权文件为空");
             return;

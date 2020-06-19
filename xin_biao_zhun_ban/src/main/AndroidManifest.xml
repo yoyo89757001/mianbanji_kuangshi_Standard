@@ -66,7 +66,7 @@
         <!-- android:name=".tps401test.nfc.NFCActivity" -->
         <!-- android:launchMode="singleTask" /> -->
         <activity android:name=".ui.UserListActivity" />
-
+        <activity android:name=".ui.AddPersonActivity"/>
         <meta-data
             android:name="design_height_in_dp"
             android:value="1232" />

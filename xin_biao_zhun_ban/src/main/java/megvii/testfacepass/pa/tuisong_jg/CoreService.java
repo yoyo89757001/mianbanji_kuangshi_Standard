@@ -25,6 +25,8 @@ import com.yanzhenjie.andserver.AndServer;
 import com.yanzhenjie.andserver.Server;
 import java.util.concurrent.TimeUnit;
 
+import megvii.testfacepass.pa.MyApplication;
+import megvii.testfacepass.pa.beans.ConfigBean;
 import megvii.testfacepass.pa.utils.FileUtil;
 
 /**
@@ -33,16 +35,18 @@ import megvii.testfacepass.pa.utils.FileUtil;
 public class CoreService extends Service {
 
     private Server mServer;
+    private ConfigBean configBean= MyApplication.myApplication.getBaoCunBeanBox().get(123456);
+
 
     @Override
     public void onCreate() {
         mServer = AndServer.webServer(this)
-            .port(8080)
+            .port(configBean.getPort())
             .timeout(10, TimeUnit.SECONDS)
             .listener(new Server.ServerListener() {
                 @Override
                 public void onStarted() {
-                    String address = FileUtil.getIPAddress(getApplicationContext());
+                    String address = FileUtil.getIPAddress(getApplicationContext())+":"+configBean.getPort();
                     ServerManager.onServerStart(CoreService.this, address);
                 }
 
