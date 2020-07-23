@@ -93,8 +93,8 @@ public class SheZhiActivity2 extends Activity {
     RelativeLayout rl8;
     @BindView(R.id.switchs)
     Switch switchs;
-    @BindView(R.id.switchs5)
-    Switch switchs5;
+    @BindView(R.id.switchs5678)
+    Switch switchs5678;
     @BindView(R.id.rl5)
     RelativeLayout rl5;
     @BindView(R.id.rl9)
@@ -168,7 +168,7 @@ public class SheZhiActivity2 extends Activity {
                 case "亮钻":
                     jiqiType=1;
                     break;
-                case "涂鸦":
+                case "TY":
                     jiqiType=2;
                     break;
             }
@@ -225,25 +225,21 @@ public class SheZhiActivity2 extends Activity {
         });
 
 
-        switchs5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switchs5678.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                if (!isFF) {
-                    isFF = true;
-                    ZLoadingDialog zLoadingDialog = new ZLoadingDialog(SheZhiActivity2.this);
-
-                    zLoadingDialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
-                            .setLoadingColor(Color.parseColor("#0d2cf9"))//颜色
-                            .setHintText("请放入IC卡...")
-                            .setHintTextSize(16) // 设置字体大小 dp
-                            .setHintTextColor(Color.WHITE)  // 设置字体颜色
-                            .setDurationTime(0.5) // 设置动画时间百分比 - 0.5倍
-                            .setDialogBackgroundColor(Color.parseColor("#CC111111")) // 设置背景色，默认白色
-                            .show();
-
+                if (isChecked) {
+                    baoCunBean.setLight(true);
+                    baoCunBeanDao.put(baoCunBean);
+                    Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "屏幕常亮开启", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                    tastyToast.setGravity(Gravity.CENTER, 0, 0);
+                    tastyToast.show();
                 } else {
-                    isFF = false;
+                    baoCunBean.setLight(false);
+                    baoCunBeanDao.put(baoCunBean);
+                    Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "屏幕常亮关闭", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                    tastyToast.setGravity(Gravity.CENTER, 0, 0);
+                    tastyToast.show();
 
                 }
 
@@ -1176,7 +1172,7 @@ public class SheZhiActivity2 extends Activity {
                         case "亮钻":
                             jiqiType=1;
                             break;
-                        case "涂鸦":
+                        case "TY":
                             jiqiType=2;
                             break;
                     }

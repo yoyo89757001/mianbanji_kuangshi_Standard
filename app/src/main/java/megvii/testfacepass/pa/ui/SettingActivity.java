@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
-
 import megvii.testfacepass.pa.R;
 import megvii.testfacepass.pa.utils.SettingVar;
 

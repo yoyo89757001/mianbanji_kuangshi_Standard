@@ -236,7 +236,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     //private boolean onP1 = true, onP2 = true;
     private boolean isPM = true;
     private boolean isPM2 = true;
-    private float juli = 0;
+    private int juli = 0;
     private String JHM = null;
     TextView tvTitle_Ir;
     TextView tvName_Ir;//识别结果弹出信息的名字
@@ -296,7 +296,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     jiqiType=1;
 
                     break;
-                case "涂鸦":
+                case "TY":
                     jiqiType=2;
                     break;
             }
@@ -450,16 +450,13 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         break;
                     }
                     case 333:
-
                         DengUT.getInstance(baoCunBean).openLOED();
-
 
                         break;
                     case 444:
-
-                        DengUT.getInstance(baoCunBean).closeLOED();
-
-
+                        if (!baoCunBean.isLight()){
+                            DengUT.getInstance(baoCunBean).closeLOED();
+                        }
                         break;
                     case 999:
                         DengUT.getInstance(baoCunBean).openLOED();
@@ -492,8 +489,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                            message.what = 222;
                                            mHandler.sendMessage(message);
                                            //关屏
-                                           message.what = 444;
-                                           mHandler.sendMessage(message);
+                                           Message message2 = new Message();
+                                           message2.what = 444;
+                                           mHandler.sendMessage(message2);
                                        }
                                    };
                                    timer.schedule(task, jidianqi);
@@ -505,8 +503,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                            message.what = 222;
                                            mHandler.sendMessage(message);
                                             //关屏
-                                           message.what = 444;
-                                           mHandler.sendMessage(message);
+                                           Message message2 = new Message();
+                                           message2.what = 444;
+                                           mHandler.sendMessage(message2);
 
                                        }
                                    };
@@ -743,46 +742,46 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                             SystemClock.sleep(2000);
 
                         }else {//没人
-                            if (isR){
-                                isR=false;
-                                //  Log.d("MianBanJiActivity3", "valuettttt:" + value);
-                                //启动定时器或重置定时器
-                                if (task != null) {
-                                    task.cancel();
-                                    //timer.cancel();
-                                    task = new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            if (isCLOSDLED){
-                                                Message message = new Message();
-                                                message.what = 444;
-                                                mHandler.sendMessage(message);
-                                            }
-                                        }
-                                    };
-                                    try {
-                                        timer.schedule(task, 10000);
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
-                                } else {
-                                    task = new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            if (isCLOSDLED){
-                                                Message message = new Message();
-                                                message.what = 444;
-                                                mHandler.sendMessage(message);
-                                            }
-                                        }
-                                    };
-                                    try {
-                                        timer.schedule(task, 10000);
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
+//                            if (isR){
+//                                isR=false;
+//                                //  Log.d("MianBanJiActivity3", "valuettttt:" + value);
+//                                //启动定时器或重置定时器
+//                                if (task != null) {
+//                                    task.cancel();
+//                                    //timer.cancel();
+//                                    task = new TimerTask() {
+//                                        @Override
+//                                        public void run() {
+//                                            if (isCLOSDLED){
+//                                                Message message = new Message();
+//                                                message.what = 444;
+//                                                mHandler.sendMessage(message);
+//                                            }
+//                                        }
+//                                    };
+//                                    try {
+//                                        timer.schedule(task, 10000);
+//                                    }catch (Exception e){
+//                                        e.printStackTrace();
+//                                    }
+//                                } else {
+//                                    task = new TimerTask() {
+//                                        @Override
+//                                        public void run() {
+//                                            if (isCLOSDLED){
+//                                                Message message = new Message();
+//                                                message.what = 444;
+//                                                mHandler.sendMessage(message);
+//                                            }
+//                                        }
+//                                    };
+//                                    try {
+//                                        timer.schedule(task, 10000);
+//                                    }catch (Exception e){
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            }
                         }
 
                 }
@@ -797,35 +796,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         }
     }
 
-//    private class DogThread extends Thread {
-//        boolean isIterrupt;
-//        @Override
-//        public void run() {
-//            super.run();
-//            while (!isIterrupt) {
-//                if (jiqiType==0){
-//                    try {//喂狗
-//                        HwitManager.HwitFeedSoftWatchDog(MianBanJiActivity3.this);
-//                    }catch (NoClassDefFoundError error){
-//                        error.printStackTrace();
-//                    }
-//                }
-//                if (jiqiType==1 && lztek!=null){
-//                    try {//喂狗
-//                        lztek.watchDogFeed();
-//                    }catch (NoClassDefFoundError error){
-//                        error.printStackTrace();
-//                    }
-//                }
-//                SystemClock.sleep(5000);
-//            }
-//        }
-//        @Override
-//        public void interrupt() {
-//            isIterrupt = true;
-//            super.interrupt();
-//        }
-//    }
+
 
     //涂鸦转10位10进制数字
     private void readdd(byte[] idid) {
@@ -885,12 +856,12 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                 mTimerTask = new TimerTask() {
                     @Override
                     public void run() {
-                        if (juli > 0 && juli<8200) {
+                       // Log.d("MianBanJiActivity3", "juli:" + juli);
+                        if (juli > 0 && juli<11000) {
                             isPM2 = true;
                             //有人
                             if (isPM) {
                                 isPM = false;
-
                                 pm = 0;
                                 Message message = new Message();
                                 message.what = 333;
@@ -905,9 +876,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                     message.what = 444;
                                     mHandler.sendMessage(message);
                                     isPM2 = false;
-
                                     pm = 0;
-
                                     if (DengUT.isOPENRed) {
                                         DengUT.isOPENRed = false;
                                         DengUT.getInstance(baoCunBean).closeRed();
@@ -945,7 +914,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     @Override
     public void onSensorChanged(SensorEvent event) {
      //   Log.e("距离", "" + event.values[0]);
-        juli = event.values[0];
+        juli = (int) event.values[0];
     }
 
     @Override
@@ -1030,11 +999,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                 task2 = new TimerTask() {
                                     @Override
                                     public void run() {
-                                        if (!isCLOSDLED && jiqiType!=2){
-                                            Message message = new Message();
-                                            message.what = 444;
-                                            mHandler.sendMessage(message);
-                                        }
+                                        Message message = new Message();
+                                        message.what = 444;
+                                        mHandler.sendMessage(message);
                                     }
                                 };
                                 timer2.schedule(task2, 5000);
@@ -1042,11 +1009,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                 task2 = new TimerTask() {
                                     @Override
                                     public void run() {
-                                        if (!isCLOSDLED && jiqiType!=2){
-                                            Message message = new Message();
-                                            message.what = 444;
-                                            mHandler.sendMessage(message);
-                                        }
+                                        Message message = new Message();
+                                        message.what = 444;
+                                        mHandler.sendMessage(message);
                                     }
                                 };
                                 timer2.schedule(task2, 5000);
@@ -1086,22 +1051,15 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         /*离线模式，将识别到人脸的，message不为空的result添加到处理队列中*/
                         if (detectionResult.message.length != 0) {
                             //  Log.d("FeedFrameThread", "插入");
-                            if (!DengUT.isOPEN) {
-                                DengUT.isOPEN = true;
-                                DengUT.getInstance(baoCunBean).openWrite();
-                                showUIResult(2,"","");
-                            }
+                            DengUT.getInstance(baoCunBean).openWrite();
+                            showUIResult(2,"","");
                             mDetectResultQueue.offer(detectionResult);
                             //   Log.d("ggggg", "1 mDetectResultQueue.size = " + mDetectResultQueue.size());
                         }
-
-                        if (!isCLOSDLED && jiqiType!=2){
-                            if (task2 != null)
-                                task2.cancel();
-                            Message message = new Message();
-                            message.what = 333;
-                            mHandler.sendMessage(message);
+                        if (!DengUT.isOPEN) {
+                            DengUT.isOPEN = true;
                         }
+
                     }
                     //     }
 
@@ -1471,6 +1429,12 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                   //   Log.d("RecognizeThread", "识别线程");
                     if (recognizeResult != null && recognizeResult.length > 0) {
                         // Log.d("RecognizeThread", "recognizeResult.length:" + recognizeResult.length);
+                        if (task2 != null)
+                            task2.cancel();
+                        Message message = new Message();
+                        message.what = 333;
+                        mHandler.sendMessage(message);
+
                         for (FacePassRecognitionResult result : recognizeResult) {
                           //  Log.d("RecognizeThread", "result.trackId:" + result.trackId);
                             //String faceToken = new String(result.faceToken);

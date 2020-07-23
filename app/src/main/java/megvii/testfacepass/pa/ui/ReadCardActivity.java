@@ -17,8 +17,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.lztek.toolkit.Lztek;
 import com.sdsmdg.tastytoast.TastyToast;
@@ -42,7 +40,6 @@ import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.R;
 import megvii.testfacepass.pa.adapter.UserListAdapter2;
 import megvii.testfacepass.pa.beans.BaoCunBean;
-import megvii.testfacepass.pa.beans.ConﬁgsBean;
 import megvii.testfacepass.pa.utils.GsonUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -60,7 +57,6 @@ public class ReadCardActivity extends AppCompatActivity {
     private List<String> subjectList=new ArrayList<>();
     private UserListAdapter2 userListAdapter2;
     private ListView listView;
-    private Lztek lztek=null;
     private Function mFuncs = null;
     private int loc_readerHandle=-1;
     private Handler mHandler;
@@ -89,11 +85,6 @@ public class ReadCardActivity extends AppCompatActivity {
             }
         });
        baoCunBean= baoCunBeanBox.get(123456L);
-        try {
-            lztek=Lztek.create(MyApplication.ampplication);
-        }catch (NoClassDefFoundError error){
-            error.printStackTrace();
-        }
 
         if (baoCunBean.getDangqianChengShi2()!=null){
             switch (baoCunBean.getDangqianChengShi2()){
@@ -103,7 +94,7 @@ public class ReadCardActivity extends AppCompatActivity {
                 case "亮钻":
                     jiqiType=1;
                     break;
-                case "涂鸦":
+                case "TY":
                     jiqiType=2;
                     break;
             }

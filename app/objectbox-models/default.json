@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:5366325451361729334",
-      "lastPropertyId": "57:1878038183517961155",
+      "lastPropertyId": "58:101030648904808728",
       "name": "BaoCunBean",
       "properties": [
         {
@@ -235,6 +235,10 @@
         {
           "id": "57:1878038183517961155",
           "name": "configModel"
+        },
+        {
+          "id": "58:101030648904808728",
+          "name": "isLight"
         }
       ],
       "relations": []

@@ -89,7 +89,7 @@ public class FacePassUtil {
                               //  float livenessThreshold2 = 48f;
                              //   boolean livenessEnabled2 = true;
                                 int faceMinThreshold2 = baoCunBean.getRuKuFaceSize();
-                                float blurThreshold2 = 0.3f;
+                                float blurThreshold2 = 0.6f;
                                 float lowBrightnessThreshold2 = 70f;
                                 float highBrightnessThreshold2 = 210f;
                                 float brightnessSTDThreshold2 = 80f;

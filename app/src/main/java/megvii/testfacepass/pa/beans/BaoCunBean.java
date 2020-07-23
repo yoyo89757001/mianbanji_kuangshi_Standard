@@ -68,6 +68,15 @@ public class BaoCunBean {
     private int jidianqi;//继电器间隔时间关门
     private String logo;//
     private int configModel;
+    private boolean isLight;
+
+    public boolean isLight() {
+        return isLight;
+    }
+
+    public void setLight(boolean light) {
+        isLight = light;
+    }
 
     public int getConfigModel() {
         return configModel;

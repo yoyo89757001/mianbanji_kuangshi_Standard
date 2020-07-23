@@ -87,7 +87,7 @@ public class DengUT {
                 case "亮钻":
                     jiqiType=1;
                     break;
-                case "涂鸦":
+                case "TY":
                     jiqiType=2;
                     break;
 

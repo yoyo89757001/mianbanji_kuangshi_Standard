@@ -271,7 +271,7 @@ public class MyApplication extends DefaultApplicationLike {
             baoCunBean.setYusu(5);
             baoCunBean.setYudiao(5);
             baoCunBean.setMima2(123456);
-            baoCunBean.setJihuoma("0000-0000-0000-0000-0000");
+            baoCunBean.setJihuoma("1283-6120-9874-7928-5766");
             baoCunBean.setHuoTi(false);
             baoCunBean.setDangqianShiJian("2");
             baoCunBean.setTianQi(false);
@@ -280,6 +280,7 @@ public class MyApplication extends DefaultApplicationLike {
             baoCunBean.setMsrPanDing(true);
             baoCunBean.setConfigModel(1);
             baoCunBean.setMoshengrenPanDing(5);
+            baoCunBean.setLight(false);
 
             mBoxStore.boxFor(BaoCunBean.class).put(baoCunBean);
         }

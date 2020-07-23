@@ -1023,6 +1023,61 @@
                     android:layout_height="1px"/>
             </RelativeLayout>
 
+            <RelativeLayout
+                android:background="@drawable/jiaohu31"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <ImageView
+                    android:src="@drawable/huoti_bg"
+                    android:layout_width="25dp"
+                    android:id="@+id/im56"
+                    android:tint="#526ae2"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20px"
+                    android:layout_height="25dp" />
+
+                <TextView
+                    android:textSize="20sp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/im56"
+                    android:layout_marginLeft="16px"
+                    android:textColor="#6c020202"
+                    android:text="屏幕是否常亮"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="60px"
+                    android:textSize="20px"
+                    android:id="@+id/switchs5678"
+                    style="@style/TextAppearance.AppCompat.Widget.Switch"
+                    android:layout_marginRight="16px"
+                    android:layout_toLeftOf="@+id/ff3568"
+                    android:layout_centerVertical="true"
+                    android:switchMinWidth="70px"
+                    android:track="@drawable/zhongkong_tuhuang"/>
+
+                <ImageView
+                    android:src="@drawable/xiangyou"
+                    android:padding="10px"
+                    android:id="@+id/ff3568"
+                    android:tint="#526ae2"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16px"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="60px"
+                    android:layout_height="60px" />
+
+                <View
+                    android:background="#f5f5f5"
+                    android:layout_width="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:layout_height="1px"/>
+            </RelativeLayout>
+
+
             <View
                 android:background="#F5F5F5"
                 android:layout_width="match_parent"
