@@ -271,7 +271,7 @@ public class MyApplication extends DefaultApplicationLike {
             baoCunBean.setYusu(5);
             baoCunBean.setYudiao(5);
             baoCunBean.setMima2(123456);
-            baoCunBean.setJihuoma("1283-6120-9874-7928-5766");
+            baoCunBean.setJihuoma("1285-4601-0563-4349-0569");
             baoCunBean.setHuoTi(false);
             baoCunBean.setDangqianShiJian("2");
             baoCunBean.setTianQi(false);

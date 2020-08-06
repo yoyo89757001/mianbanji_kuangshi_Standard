@@ -20,8 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
-
-import megvii.testfacepass.pa.ui.MianBanJiActivity3;
+import megvii.testfacepass.pa.ui.MianBanJiActivity4;
 
 /**
  * Created by Zhenjie Yan on 2018/6/9.
@@ -75,10 +74,10 @@ public class ServerManager extends BroadcastReceiver {
         context.sendBroadcast(broadcast);
     }
 
-    private MianBanJiActivity3 mActivity;
+    private MianBanJiActivity4 mActivity;
     private Intent mService;
 
-    public ServerManager(MianBanJiActivity3 activity) {
+    public ServerManager(MianBanJiActivity4 activity) {
         this.mActivity = activity;
         mService = new Intent(activity, CoreService.class);
     }

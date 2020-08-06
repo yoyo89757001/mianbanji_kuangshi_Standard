@@ -42,7 +42,7 @@ public class AppMessageConverter implements MessageConverter {
 
     @Override
     public ResponseBody convert(@NonNull Object output, @Nullable MediaType mediaType) {
-     //   Log.d("AppMessageConverter", JsonUtils.successfulJson(output));
+        Log.d("AppExceptionResolver", JsonUtils.successfulJson(output));
         return new JsonBody(JsonUtils.successfulJson(output));
     }
 
@@ -52,10 +52,9 @@ public class AppMessageConverter implements MessageConverter {
         Charset charset = mediaType == null ? null : mediaType.getCharset();
 
         if (charset == null) {
-          //  Log.d("AppMessageConverter", IOUtils.toString(stream, charset+"dddddd"));
+           // Log.d("AppExceptionResolver", charset+"dddddd");
             return JsonUtils.parseJson(IOUtils.toString(stream), type);
         }
-      //  Log.d("AppMessageConverter", IOUtils.toString(stream, charset));
         return JsonUtils.parseJson(IOUtils.toString(stream, charset), type);
     }
 }

@@ -156,7 +156,7 @@ public class SheZhiActivity2 extends Activity {
         //在setContentView();后面加上适配语句
         options1Items.add(new JsonBean("智连"));
         options1Items.add(new JsonBean("亮钻"));
-        options1Items.add(new JsonBean("涂鸦"));
+        options1Items.add(new JsonBean("TY"));
         baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
         // chengShiIDBeanBox = MyApplication.myApplication.getChengShiIDBeanBox();
         baoCunBean = baoCunBeanDao.get(123456L);
@@ -198,6 +198,12 @@ public class SheZhiActivity2 extends Activity {
         } else {
             switchs56.setChecked(false);
         }
+        if (baoCunBean.isLight()) {
+            switchs5678.setChecked(true);
+        } else {
+            switchs5678.setChecked(false);
+        }
+
         switchs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

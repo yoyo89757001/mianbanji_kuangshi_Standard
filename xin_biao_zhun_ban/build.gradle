@@ -144,6 +144,7 @@ dependencies {
     implementation "com.qmuiteam:arch:$qmui_arch_version"
     annotationProcessor "com.qmuiteam:arch-compiler:$qmui_arch_version"
     implementation 'me.jessyan:autosize:1.2.1'//头条适配
+    implementation 'com.tencent:mmkv-static:1.2.2' //代替sharepreference
 }
 // 指定com.android.support 包的版本一致
 //configurations.all {

@@ -31,10 +31,7 @@
 //import com.yanzhenjie.andserver.http.cookie.Cookie;
 //import com.yanzhenjie.andserver.http.multipart.MultipartFile;
 //import com.yanzhenjie.andserver.http.session.Session;
-//import com.yanzhenjie.andserver.sample.component.LoginInterceptor;
-//import com.yanzhenjie.andserver.sample.model.UserInfo;
-//import com.yanzhenjie.andserver.sample.util.FileUtils;
-//import com.yanzhenjie.andserver.sample.util.Logger;
+//
 //import com.yanzhenjie.andserver.util.MediaType;
 //
 //import java.io.File;
@@ -42,12 +39,19 @@
 //import java.util.List;
 //import java.util.Locale;
 //
+//
+//import megvii.testfacepass.pa.html.model.UserInfo;
+//import megvii.testfacepass.pa.html.util.FileUtils;
+//import megvii.testfacepass.pa.html.util.Logger;
+//
 ///**
 // * Created by Zhenjie Yan on 2018/6/9.
 // */
 //@RestController
 //@RequestMapping(path = "/user")
 //class TestController {
+//
+//
 //
 //    @GetMapping(path = "/get/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 //    String info(@PathVariable(name = "userId") String userId) {
@@ -61,16 +65,16 @@
 //            age);
 //    }
 //
-//    @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//    String login(HttpRequest request, HttpResponse response, @RequestParam(name = "account") String account,
-//        @RequestParam(name = "password") String password) {
-//        Session session = request.getValidSession();
-//        session.setAttribute(LoginInterceptor.LOGIN_ATTRIBUTE, true);
-//
-//        Cookie cookie = new Cookie("account", account + "=" + password);
-//        response.addCookie(cookie);
-//        return "Login successful.";
-//    }
+////    @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+////    String login(HttpRequest request, HttpResponse response, @RequestParam(name = "account") String account,
+////        @RequestParam(name = "password") String password) {
+////        Session session = request.getValidSession();
+////        session.setAttribute(LoginInterceptor.LOGIN_ATTRIBUTE, true);
+////
+////        Cookie cookie = new Cookie("account", account + "=" + password);
+////        response.addCookie(cookie);
+////        return "Login successful.";
+////    }
 //
 //    @Addition(stringType = "login", booleanType = true)
 //    @GetMapping(path = "/userInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

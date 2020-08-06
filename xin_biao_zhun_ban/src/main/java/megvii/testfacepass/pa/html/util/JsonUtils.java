@@ -38,6 +38,7 @@ public class JsonUtils {
         returnData.setSuccess(true);
         returnData.setErrorCode(200);
         returnData.setData(data);
+        returnData.setErrorMsg("请求成功");
         return JSON.toJSONString(returnData);
     }
 

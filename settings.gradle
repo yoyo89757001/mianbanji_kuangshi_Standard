@@ -1,2 +1,3 @@
+include ':ceshi_room_shujuku'
 include ':app', ':xin_biao_zhun_ban'
 rootProject.name='mianbanji_kuangshi_Standard'

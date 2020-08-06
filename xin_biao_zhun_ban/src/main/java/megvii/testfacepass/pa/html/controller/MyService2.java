@@ -1,4 +1,4 @@
-package megvii.testfacepass.pa.tuisong_jg;
+package megvii.testfacepass.pa.html.controller;
 
 
 import android.graphics.Bitmap;
@@ -6,31 +6,29 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
-
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.lztek.toolkit.Lztek;
+import com.tencent.mmkv.MMKV;
 import com.yanzhenjie.andserver.annotation.GetMapping;
 import com.yanzhenjie.andserver.annotation.PostMapping;
 import com.yanzhenjie.andserver.annotation.QueryParam;
+import com.yanzhenjie.andserver.annotation.RequestBody;
+import com.yanzhenjie.andserver.annotation.RequestMapping;
 import com.yanzhenjie.andserver.annotation.RequestParam;
 import com.yanzhenjie.andserver.annotation.RestController;
 import com.yanzhenjie.andserver.framework.body.FileBody;
 import com.yanzhenjie.andserver.framework.body.StringBody;
 import com.yanzhenjie.andserver.http.HttpResponse;
-
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
 import io.objectbox.Box;
 import io.objectbox.query.LazyList;
 import jxl.write.WritableCellFormat;
@@ -46,18 +44,26 @@ import megvii.testfacepass.pa.beans.DaKaBean_;
 import megvii.testfacepass.pa.beans.FaceIDBean;
 import megvii.testfacepass.pa.beans.FaceIDBean_;
 import megvii.testfacepass.pa.beans.IdsBean;
+import megvii.testfacepass.pa.beans.Logingbean;
 import megvii.testfacepass.pa.beans.PersonsBean;
 import megvii.testfacepass.pa.beans.ResBean;
+import megvii.testfacepass.pa.beans.ResultBean;
 import megvii.testfacepass.pa.beans.Subject;
 import megvii.testfacepass.pa.beans.Subject_;
+import megvii.testfacepass.pa.beans.UserInfos;
 import megvii.testfacepass.pa.beans.WiﬁMsgBean;
 import megvii.testfacepass.pa.utils.BitmapUtil;
+import megvii.testfacepass.pa.utils.DateUtils;
+import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.FileUtil;
 import megvii.testfacepass.pa.utils.GsonUtil;
 import top.zibin.luban.Luban;
 
 
+
+
 @RestController
+@RequestMapping(path = "/app")
 public class MyService2 {
 
     private static final String TAG = "MyService";
@@ -81,12 +87,13 @@ public class MyService2 {
     private  final String group_name = "facepasstestx";
     private Box<Subject> subjectBox  = MyApplication.myApplication.getSubjectBox();
     private Box<DaKaBean> daKaBeanBox  = MyApplication.myApplication.getDaKaBeanBox();
-    private Box<FaceIDBean> faceIDBeanBox  = MyApplication.myApplication.getFaceIDBeanBox();
+ //   private Box<FaceIDBean> faceIDBeanBox  = MyApplication.myApplication.getFaceIDBeanBox();
    // private Box<IDCardTakeBean> idCardTakeBeanBox  = MyApplication.myApplication.getIdCardTakeBeanBox();
-    private Box<ConfigBean> baoCunBeanBox= MyApplication.myApplication.getBaoCunBeanBox();
-   // private  String serialnumber= MyApplication.myApplication.getBaoCunBeanBox().get(123456).getJihuoma();
-    private ConfigBean baoCunBean= MyApplication.myApplication.getBaoCunBeanBox().get(123456);
-    private  String pass= MyApplication.myApplication.getBaoCunBeanBox().get(123456).getJiaoyanmima();
+    //private ConfigBean MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class);
+   // private  String serialnumber= MyApplication.myApplication.getMMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)Box().get(123456).getJihuoma();
+   // private ConfigBean MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)= MyApplication.myApplication.getMMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)Box().get(123456);
+    private  String pass= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getJiaoyanmima();
+
 
 
 
@@ -99,8 +106,8 @@ public class MyService2 {
                     if (pass==null){
                         //第一次设置
                         if (newPass.equals(oldPass)){
-                            baoCunBean.setJiaoyanmima(newPass.trim());
-                            baoCunBeanBox.put(baoCunBean);
+                            MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setJiaoyanmima(newPass.trim());
+                            MMKV.defaultMMKV().encode("configBean",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
                             pass=newPass.trim();
                             return requsBean(1,true,oldPass);
                         }else {
@@ -109,8 +116,8 @@ public class MyService2 {
                     }else {
                         //修改密码
                         if (pass.equals(oldPass)){
-                            baoCunBean.setJiaoyanmima(newPass.trim());
-                            baoCunBeanBox.put(baoCunBean);
+                            MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setJiaoyanmima(newPass.trim());
+                            MMKV.defaultMMKV().encode("configBean",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
                             pass=newPass.trim();
                             return requsBean(1,true,newPass);
                         }else {
@@ -121,29 +128,57 @@ public class MyService2 {
 
     }
 
+    @PostMapping("/login")
+    String login(@RequestBody Logingbean logingbean){
+        if (logingbean.getPassword().equals(MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getLoginPassword()) && logingbean.getUsername().equals("admin")){
+            return com.alibaba.fastjson.JSONObject.toJSONString(new ResultBean(1,"登录成功","","token"+System.currentTimeMillis()));
+        }else {
+            return JSON.toJSONString(new ResultBean(0,"密码错误","",""));
+        }
+    }
+
+
+    @GetMapping("/logout")
+    String logout(@RequestParam(name = "token" ) String token){
+
+        return JSON.toJSONString(new ResultBean(1,"退出成功","",""));
+    }
+
 
     //    2.设备序列号获取
 //    请求地址：   http://设备IP:8090/getDeviceKey
 //    请求方法： POST
 //    请求说明：
-    @GetMapping("/getDeviceKey")
+    @GetMapping(path ="/getInfo")
+    String getuserInfo(@RequestParam(name = "token" ) String token){
+        Log.d("gggggggg", token);
+        return JSON.toJSONString(new ResultBean(1,"获取个人信息成功",JSON.toJSONString(new UserInfos("admin","https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"))));
+    }
+
+
+    //    2.设备序列号获取
+//    请求地址：   http://设备IP:8090/getDeviceKey
+//    请求方法： POST
+//    请求说明：
+    @GetMapping(path ="/getDeviceKey")
      String getDeviceKey(){
-       String ss= MyApplication.myApplication.getBaoCunBeanBox().get(123456).getJihuoma();
+       String ss= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getJihuoma();
        if (ss==null|| ss.equals("")){
              return requsBean(-1,true,"","获取序列号失败");
        }else {
-           return requsBean(1,true,ss,"获取序列号成功");
+           return JSON.toJSONString(ss);
        }
-
     }
+
+
+
 
 //3.设备配置
 //    请求地址：  http://设备IP:8090/setConfig
 //    请求方法： POST
     @PostMapping("/setConfig")
-    String setConfig(@RequestParam(name = "pass") String pass ,
-                       @RequestParam(name = "conﬁg") String conﬁg){
-        if (pass!=null && pass.equals(this.pass)){
+    String setConfig(@RequestParam(name = "conﬁg") String conﬁg){
+
             try {
                 if (conﬁg==null || conﬁg.equals("")){//为空
                     return requsBean(400,true,"","参数验证失败");
@@ -152,70 +187,70 @@ public class MyService2 {
                     Gson gson=new Gson();
                     ConﬁgsBean conﬁgsBean=gson.fromJson(jsonObject, ConﬁgsBean.class);
                     if (conﬁgsBean.getLivenessEnabled()==1){
-                        baoCunBean.setHuoTi(false);
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHuoTi(false);
                     }
                     if (conﬁgsBean.getLivenessEnabled()==0){
-                        baoCunBean.setHuoTi(true);
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHuoTi(true);
                     }
                     if (conﬁgsBean.getRetryCount()!=0){
-                     baoCunBean.setRetryCount(conﬁgsBean.getRetryCount());
+                     MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setRetryCount(conﬁgsBean.getRetryCount());
                     }
                    if (conﬁgsBean.getSearchThreshold()!=0){
-                       baoCunBean.setShibieFaZhi(conﬁgsBean.getSearchThreshold());
+                       MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setShibieFaZhi(conﬁgsBean.getSearchThreshold());
                    }
                    if (null==conﬁgsBean.getCompanyName()){//公司名称
                        Log.d(TAG, "kong");
                    }else {
-                       baoCunBean.setCompanyName(conﬁgsBean.getCompanyName());
+                       MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setCompanyName(conﬁgsBean.getCompanyName());
                    }
                     if (conﬁgsBean.getIsOpenDoor()==1){
-                        baoCunBean.setShowShiPingLiu(true);
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setShowShiPingLiu(true);
                     }
                     if (conﬁgsBean.getIsOpenDoor()==0){
-                        baoCunBean.setShowShiPingLiu(false);
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setShowShiPingLiu(false);
                     }
                     if (conﬁgsBean.getRelayInterval()!=0){
-                        baoCunBean.setJidianqi(conﬁgsBean.getRelayInterval());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setJidianqi(conﬁgsBean.getRelayInterval());
                     }
                     if (conﬁgsBean.getConfigModel()!=0){
-                        baoCunBean.setConfigModel(conﬁgsBean.getConfigModel());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setConfigModel(conﬁgsBean.getConfigModel());
                     }
                     if (conﬁgsBean.getLivenessThreshold()!=0){//活体阈值
-                        baoCunBean.setHuoTiFZ(conﬁgsBean.getLivenessThreshold());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHuoTiFZ(conﬁgsBean.getLivenessThreshold());
                     }
                     if (conﬁgsBean.getFaceMinThreshold()!=0){//识别最小人脸
-                        baoCunBean.setShibieFaceSize(conﬁgsBean.getFaceMinThreshold());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setShibieFaceSize(conﬁgsBean.getFaceMinThreshold());
                     }
                     if (conﬁgsBean.getLowBrightnessThreshold()!=0){//最小亮度
-                        baoCunBean.setLowBrightnessThreshold(conﬁgsBean.getLowBrightnessThreshold());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setLowBrightnessThreshold(conﬁgsBean.getLowBrightnessThreshold());
                     }
                     if (conﬁgsBean.getHighBrightnessThreshold()!=0){//最小亮度
-                        baoCunBean.setHighBrightnessThreshold(conﬁgsBean.getHighBrightnessThreshold());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHighBrightnessThreshold(conﬁgsBean.getHighBrightnessThreshold());
                     }
                     if (conﬁgsBean.getBrightnessSTDThreshold()!=0){//最小亮度
-                        baoCunBean.setBrightnessSTDThreshold(conﬁgsBean.getBrightnessSTDThreshold());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setBrightnessSTDThreshold(conﬁgsBean.getBrightnessSTDThreshold());
                     }
                     if (conﬁgsBean.getAddFaceMinThreshold()!=0){//入库最小人脸
-                        baoCunBean.setRuKuFaceSize(conﬁgsBean.getAddFaceMinThreshold());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setRuKuFaceSize(conﬁgsBean.getAddFaceMinThreshold());
                     }
                     if (conﬁgsBean.getAddFaceBlurThreshold()!=0){//入库模糊度
-                        baoCunBean.setRuKuMoHuDu(conﬁgsBean.getAddFaceBlurThreshold());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setRuKuMoHuDu(conﬁgsBean.getAddFaceBlurThreshold());
                     }
                     if (conﬁgsBean.getPwd1()!=0){//密码1
-                        baoCunBean.setMima(conﬁgsBean.getPwd1());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setMima(conﬁgsBean.getPwd1());
                     }
                     if (conﬁgsBean.getPwd2()!=0){//密码2
-                        baoCunBean.setMima2(conﬁgsBean.getPwd2());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setMima2(conﬁgsBean.getPwd2());
                     }
                     if (conﬁgsBean.getHeartbeatIntervalTime()!=0){//间隔
-                        baoCunBean.setHeartbeatIntervalTime(conﬁgsBean.getHeartbeatIntervalTime());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHeartbeatIntervalTime(conﬁgsBean.getHeartbeatIntervalTime());
                     }
                     if (conﬁgsBean.getTaskIntervalTime()!=0){//间隔
-                        baoCunBean.setTaskIntervalTime(conﬁgsBean.getTaskIntervalTime());
+                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setTaskIntervalTime(conﬁgsBean.getTaskIntervalTime());
                     }
 
 
-                    baoCunBeanBox.put(baoCunBean);
+                    MMKV.defaultMMKV().encode("configBean",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
                     //发送广播更新配置  还没实现
                     EventBus.getDefault().post("configs");
                     return requsBean(1,true,"","设置成功");
@@ -224,9 +259,6 @@ public class MyService2 {
             }catch (Exception e){
                 return requsBean(400,true,e.getMessage()+"","参数异常");
             }
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
     }
 
 //4.修改Logo
@@ -237,8 +269,8 @@ public class MyService2 {
                      @RequestParam(name = "imgBase64") String imgBase64){
         if (pass!=null && pass.equals(this.pass)){
             if (imgBase64!=null && !imgBase64.equals("")){
-                baoCunBean.setLogo(imgBase64);
-                baoCunBeanBox.put(baoCunBean);
+                MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setLogo(imgBase64);
+                MMKV.defaultMMKV().encode("configBean",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
                 EventBus.getDefault().post("configs");
                 return requsBean(1,true,"","设置成功");
             }else {
@@ -345,17 +377,14 @@ public class MyService2 {
 //    请求地址：   http://设备IP:8090/restartDevice
 //    请求方法： POST
 //    请求数据：
-    @PostMapping("/restartDevice")
-    String restartDevice(@RequestParam(name = "pass") String pass ){
-        if (pass!=null && pass.equals(this.pass)){
-          ;   if (lztek==null)
-                return  requsBean(400,true,"","设备没有该方法");
-            lztek.hardReboot();
-            return requsBean(1,true,"","设置成功");
+    @GetMapping(path = "/restartDevice")
+    String restartDevice(){
 
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
+//            if (lztek==null)
+//                return  requsBean(400,true,"","设备没有该方法");
+//            lztek.hardReboot();
+             DengUT.reboot();
+            return requsBean(1,true,"","设置成功");
     }
 
 
@@ -365,16 +394,13 @@ public class MyService2 {
     //    请求数据：
     @PostMapping("/device/reset")
     String reset(@RequestParam(name = "pass") String pass ){
-        if (pass!=null && pass.equals(this.pass)){
+
 
            // MyApplication.myApplication.getFacePassHandler().deleteFace()
             subjectBox.removeAll();
-
             return requsBean(1,true,"","重置成功");
 
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
+
     }
 
 //    7.设备开门
@@ -382,13 +408,10 @@ public class MyService2 {
 //    请求方法： POST
     @PostMapping("/openDoorControl")
     String openDoorControl(@RequestParam(name = "pass") String pass ){
-        if (pass!=null && pass.equals(this.pass)){
-            EventBus.getDefault().post("kaimen");
-            return requsBean(1,true,"","请求成功");
 
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
+        EventBus.getDefault().post("kaimen");
+        return requsBean(1,true,"","请求成功");
+
     }
 
 //    8.识别回调配置
@@ -400,8 +423,8 @@ public class MyService2 {
         if (pass!=null && pass.equals(this.pass)){
             ;if (url!=null && !url.equals("")){
                 if (isValidUrl(url)){//是url
-                    baoCunBean.setHoutaiDiZhi(url);
-                    baoCunBeanBox.put(baoCunBean);
+                    MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHoutaiDiZhi(url);
+                    MMKV.defaultMMKV().encode("configBean",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
                     EventBus.getDefault().post("kaimen");
                     return requsBean(1,true,"","设置成功");
                 }else {
@@ -414,6 +437,7 @@ public class MyService2 {
             return requsBean(401,true,"","签名校验失败");
         }
     }
+
     private boolean isValidUrl(String url){
         return !TextUtils.isEmpty(url) && url.matches(Patterns.WEB_URL.pattern());
     }
@@ -427,8 +451,8 @@ public class MyService2 {
         if (pass!=null && pass.equals(this.pass)){
             ;if (url!=null && !url.equals("")){
                 if (isValidUrl(url)){//是url
-                    baoCunBean.setXintiaoDIZhi(url);
-                    baoCunBeanBox.put(baoCunBean);
+                    MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setXintiaoDIZhi(url);
+                    MMKV.defaultMMKV().encode("configBean",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
                     EventBus.getDefault().post("kaimen");
                     return requsBean(1,true,"","设置成功");
                 }else {
@@ -472,14 +496,26 @@ public class MyService2 {
         }
     }
 
+    //获取陌生人图片
+    @GetMapping(path = "/getFaceBitmap3")
+    public void getFaceBitmap3(HttpResponse response, @QueryParam(name = "time",required = true) String time, @QueryParam(name = "id",required = true) String id){
+        File file=new File(MyApplication.SDPATH4+File.separator+time+File.separator+id+".png");
+        if (file.exists()){
+            FileBody body = new FileBody(file);
+            response.addHeader("Content-Disposition", "attachment;filename="+id+".png");
+            response.setBody(body);
+        }else {
+            StringBody body = new StringBody("文件不存在");
+            response.setBody(body);
+        }
+    }
+
 //    10.人员创建
 //    请求地址：   http://设备IP:8090/person/create
 //    请求方法： POST
     @PostMapping("/person/create")
-    String create(@RequestParam(name = "pass") String pass,
-                              @RequestParam(name = "person") String person){
-        if (pass!=null && pass.equals(this.pass)){
-            ;if (person!=null && !person.equals("")){
+    String create(@RequestParam(name = "person") String person){
+            if (person!=null && !person.equals("")){
                 try {
                     JsonObject jsonObject= GsonUtil.parse(person).getAsJsonObject();
                     Gson gson=new Gson();
@@ -493,8 +529,8 @@ public class MyService2 {
                     Subject subject=new Subject();
                     subject.setSid(personsBean.getId());
                     subject.setName(personsBean.getName());
-                    subject.setIdcardNum(personsBean.getIdcardNum().toUpperCase());
-                    subject.setEntryTime(personsBean.getExpireTime());
+                   // subject.setIdcardNum(personsBean.getIdcardNum().toUpperCase());
+                   // subject.setEntryTime(personsBean.getExpireTime());
                     subjectBox.put(subject);
                     return requsBean(1,true,personsBean.getId(),"创建成功");
                 }catch (Exception e){
@@ -504,19 +540,15 @@ public class MyService2 {
             }else {
                 return requsBean(400,true,"","参数验证失败");
             }
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
+
     }
 
 //11.人员更新
 //    请求地址：   http://设备IP:8090/person/update
 //    请求方法： POST
     @PostMapping("/person/update")
-    String update(@RequestParam(name = "pass") String pass,
-                  @RequestParam(name = "person") String person){
-        if (pass!=null && pass.equals(this.pass)){
-            ;if (person!=null && !person.equals("")){
+    String update(@RequestParam(name = "person") String person){
+            if (person!=null && !person.equals("")){
                 try {
                     JsonObject jsonObject= GsonUtil.parse(person).getAsJsonObject();
                     Gson gson=new Gson();
@@ -529,8 +561,8 @@ public class MyService2 {
                     }
                     subject.setSid(personsBean.getId());
                     subject.setName(personsBean.getName());
-                    subject.setIdcardNum(personsBean.getIdcardNum().toUpperCase());
-                    subject.setEntryTime(personsBean.getExpireTime());
+                   // subject.setIdcardNum(personsBean.getIdcardNum().toUpperCase());
+                   // subject.setEntryTime(personsBean.getExpireTime());
                     subjectBox.put(subject);
                     return requsBean(1,true,personsBean.getId(),"更新成功");
                 }catch (Exception e){
@@ -540,19 +572,14 @@ public class MyService2 {
             }else {
                 return requsBean(400,true,"","参数验证失败");
             }
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
     }
 
 //12.人员删除（批量）
 //    请求地址：   http://设备IP:8090/person/delete
 //    请求方法： POST
     @PostMapping("/person/delete")
-    String delete(@RequestParam(name = "pass") String pass,
-                  @RequestParam(name = "id") String id){
-        if (pass!=null && pass.equals(this.pass)){
-            ;if (id!=null && !id.equals("")){
+    String delete(@RequestParam(name = "id") String id){
+            if (id!=null && !id.equals("")){
                 try {
                     StringBuilder stringBuffer1=new StringBuilder();
                     StringBuilder stringBuffer2=new StringBuilder();
@@ -600,9 +627,6 @@ public class MyService2 {
             }else {
                 return requsBean(400,true,"","参数验证失败");
             }
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
     }
 
 
@@ -610,11 +634,9 @@ public class MyService2 {
 //    请求地址：   http://设备IP:8090/person/findByPage
 //    请求方法： post
     @PostMapping("/person/findByPage")
-    String findByPage(@RequestParam(name = "pass") String pass,
-                  @RequestParam(name = "length") String length,
-                      @RequestParam(name = "index") String index){
-        if (pass!=null && pass.equals(this.pass)){
-            ;if (length!=null){
+    String findByPage(@RequestParam(name = "size") String length,
+                      @RequestParam(name = "page") String index){
+            if (length!=null){
                 try {
                     int ind=Integer.parseInt(index);
                     int len=Integer.parseInt(length);
@@ -628,15 +650,14 @@ public class MyService2 {
 //                        personsBean.setExpireTime(subject.getEntryTime());
 //                        Log.d(TAG, JSON.toJSONString(personsBean));
                         JSONObject object=new JSONObject();
-                        object.put("id",subject.getTeZhengMa());
-                        object.put("name",subject.getName());
-                        object.put("idcardNum",subject.getIdcardNum());
-                        object.put("expireTime",subject.getEntryTime());
+                        object.put("id",subject.getSid()+"");//sid是id
+                        object.put("name",subject.getName()+"");
+                       // object.put("idcardNum",subject.getIdcardNum()+"");
+                       // object.put("expireTime", DateUtils.time(subject.getEntryTime()+""));
                         jsonArray.put(object);
                     }
                     JSONObject object=new JSONObject();
-                    object.put("result",1);
-                    object.put("success",1);
+                    object.put("total",subjectBox.query().build().findLazy().size());
                     object.put("data",jsonArray);
                     object.put("msg","查询成功");
                     return object.toString();
@@ -648,27 +669,23 @@ public class MyService2 {
             }else {
                 return requsBean(400,true,"","参数验证失败");
             }
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
+
     }
 
 //    18.人员信息查询
 //    请求地址：  http://设备IP:8090/person/find
 //    请求方法： POST
 @PostMapping("/person/find")
-String find(@RequestParam(name = "pass") String pass,
-                  @RequestParam(name = "id") String id){
-    if (pass!=null && pass.equals(this.pass)){
-        ;if (id!=null){
+String find(@RequestParam(name = "id") String id){
+        if (id!=null){
             try {
                 Subject subjectList= subjectBox.query().equal(Subject_.teZhengMa,id).build().findUnique();
                 if (subjectList!=null){
                     PersonsBean personsBean=new PersonsBean();
                     personsBean.setId(subjectList.getTeZhengMa());
                     personsBean.setName(subjectList.getName());
-                    personsBean.setIdcardNum(subjectList.getIdcardNum());
-                    personsBean.setExpireTime(subjectList.getEntryTime());
+                   // personsBean.setIdcardNum(subjectList.getIdcardNum());
+                   // personsBean.setExpireTime(subjectList.getEntryTime());
                     return requsBean(1,true,personsBean,"获取成功");
                 }else {
                     return requsBean(1,true,"","未找到该人员信息");
@@ -679,9 +696,7 @@ String find(@RequestParam(name = "pass") String pass,
         }else {
             return requsBean(400,true,"","参数验证失败");
         }
-    }else {
-        return requsBean(401,true,"","签名校验失败");
-    }
+
 }
 
 
@@ -689,16 +704,14 @@ String find(@RequestParam(name = "pass") String pass,
 //    请求地址：   http://设备IP:8090/person/permissionsCreate
 //    请求方法： POST
     @PostMapping("/person/permissionsCreate")
-    String permissionsCreate(@RequestParam(name = "pass") String pass,
-                            @RequestParam(name = "personId") String personId,
+    String permissionsCreate(@RequestParam(name = "personId") String personId,
                              @RequestParam(name = "time") String time){
-        if (pass!=null && pass.equals(this.pass)){
-            ;if (personId!=null && !personId.equals("") && time!=null && !time.equals("")){
+            if (personId!=null && !personId.equals("") && time!=null && !time.equals("")){
                 try {
                     long ti = Long.parseLong(time);
                     Subject subject= subjectBox.query().equal(Subject_.teZhengMa,personId).build().findUnique();
                    if (subject!=null){
-                        subject.setEntryTime(ti);
+                       // subject.setEntryTime(ti);
                        subjectBox.put(subject);
                        return requsBean(1,true,"","设置成功");
                     }else {
@@ -711,222 +724,199 @@ String find(@RequestParam(name = "pass") String pass,
             }else {
                 return requsBean(400,true,"","参数验证失败");
             }
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
+
     }
 
-//    20.照片注册（base64）
-//    请求地址：  http://设备IP:8090/face/create
-//    请求方法： POST
-    @PostMapping("/face/create")
-    String facecreate(@RequestParam(name = "pass") String pass,
-                             @RequestParam(name = "personId") String personId,
-                             @RequestParam(name = "faceId") String faceId,
-                            @RequestParam(name = "imgBase64") String imgBase64){
-        if (pass!=null && pass.equals(this.pass)){
-            ;if (personId!=null && !personId.equals("") && imgBase64!=null && !imgBase64.equals("") && faceId!=null && !faceId.equals("")){
-                try {
-                    Subject subject= subjectBox.query().equal(Subject_.sid,personId).build().findUnique();
-                    if (subject==null)
-                        return requsBean(-1, true, "", "未找到该人员");
-
-                    List<FaceIDBean> personIds=faceIDBeanBox.query().equal(FaceIDBean_.subjectId,personId).build().find();
-                    if (personIds.size()>3){//一个人超过3张
-                        return requsBean(-1, true, "", "注册失败,该人员超过三张注册照片,请先删除其中一张");
-                    }
-                    FacePassAddFaceResult detectResult = null;
-                    Bitmap bitmap= BitmapUtil.base64ToBitmap(imgBase64);
-                    BitmapUtil.saveBitmapToSD(bitmap, MyApplication.SDPATH3, "aaabbb.png");
-                    File file=  Luban.with(MyApplication.myApplication).load(MyApplication.SDPATH3+File.separator + "aaabbb.png")
-                            .ignoreBy(500)
-                            .setTargetDir(MyApplication.SDPATH3+File.separator)
-                            .get(MyApplication.SDPATH3+File.separator + "aaabbb.png");
-                    try {
-                        detectResult = MyApplication.myApplication.getFacePassHandler().addFace(BitmapFactory.decodeFile(file.getAbsolutePath()));
-                    } catch (FacePassException e) {
-                        e.printStackTrace();
-                    }
-                    if (detectResult != null && detectResult.result==0) {
-                        byte [] faceToken=detectResult.faceToken;
-                        //先查询有没有
-                        try {
-                           FaceIDBean faceIDBean=faceIDBeanBox.query().equal(FaceIDBean_.faceBitmapId,faceId).build().findUnique();
-                           if (faceIDBean==null){
-                               FaceIDBean fff = new FaceIDBean();
-                               fff.setTeZhengMa(new String(faceToken));
-                               fff.setSubjectId(personId);
-                               fff.setFaceBitmapId(faceId);
-                               MyApplication.myApplication.getFacePassHandler().bindGroup(group_name,faceToken);
-                               faceIDBeanBox.put(fff);
-                           }else {
-                               MyApplication.myApplication.getFacePassHandler().deleteFace(faceIDBean.getTeZhengMa().getBytes());
-                               faceIDBean.setTeZhengMa(new String(faceToken));
-                               MyApplication.myApplication.getFacePassHandler().bindGroup(group_name,faceToken);
-                               faceIDBeanBox.put(faceIDBean);
-                           }
-                            return requsBean(1, true, "", "注册成功");
-                        } catch (Exception e) {
-
-                            return requsBean(-1, true, e.getMessage() + "", "参数异常");
-                        }
-                    }else {
-                        return requsBean(-1, true, "", "照片不符合入库标准");
-                    }
-                } catch (Exception e) {
-                    return requsBean(-1, true, e.getMessage() + "", "参数异常");
-                }
-            }else {
-                return requsBean(400,true,"","参数验证失败");
-            }
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
-    }
+////    20.照片注册（base64）
+////    请求地址：  http://设备IP:8090/face/create
+////    请求方法： POST
+//    @PostMapping("/face/create")
+//    String facecreate(@RequestParam(name = "personId") String personId,
+//                             @RequestParam(name = "faceId") String faceId,
+//                            @RequestParam(name = "imgBase64") String imgBase64){
+//            if (personId!=null && !personId.equals("") && imgBase64!=null && !imgBase64.equals("") && faceId!=null && !faceId.equals("")){
+//                try {
+//                    Subject subject= subjectBox.query().equal(Subject_.sid,personId).build().findUnique();
+//                    if (subject==null)
+//                        return requsBean(-1, true, "", "未找到该人员");
+//
+//                    List<FaceIDBean> personIds=faceIDBeanBox.query().equal(FaceIDBean_.subjectId,personId).build().find();
+//                    if (personIds.size()>3){//一个人超过3张
+//                        return requsBean(-1, true, "", "注册失败,该人员超过三张注册照片,请先删除其中一张");
+//                    }
+//                    FacePassAddFaceResult detectResult = null;
+//                    Bitmap bitmap= BitmapUtil.base64ToBitmap(imgBase64);
+//                    BitmapUtil.saveBitmapToSD(bitmap, MyApplication.SDPATH3, "aaabbb.png");
+//                    File file=  Luban.with(MyApplication.myApplication).load(MyApplication.SDPATH3+File.separator + "aaabbb.png")
+//                            .ignoreBy(500)
+//                            .setTargetDir(MyApplication.SDPATH3+File.separator)
+//                            .get(MyApplication.SDPATH3+File.separator + "aaabbb.png");
+//                    //没有保存图片 上面只是为了做图片压缩
+//                    try {
+//                        detectResult = MyApplication.myApplication.getFacePassHandler().addFace(BitmapFactory.decodeFile(file.getAbsolutePath()));
+//                    } catch (FacePassException e) {
+//                        e.printStackTrace();
+//                    }
+//                    if (detectResult != null && detectResult.result==0) {
+//                        byte [] faceToken=detectResult.faceToken;
+//                        //先查询有没有
+//                        try {
+//                           FaceIDBean faceIDBean=faceIDBeanBox.query().equal(FaceIDBean_.faceBitmapId,faceId).build().findUnique();
+//                           if (faceIDBean==null){
+//                               FaceIDBean fff = new FaceIDBean();
+//                               fff.setTeZhengMa(new String(faceToken));
+//                               fff.setSubjectId(personId);
+//                               fff.setFaceBitmapId(faceId);
+//                               MyApplication.myApplication.getFacePassHandler().bindGroup(group_name,faceToken);
+//                               faceIDBeanBox.put(fff);
+//                           }else {
+//                               MyApplication.myApplication.getFacePassHandler().deleteFace(faceIDBean.getTeZhengMa().getBytes());
+//                               faceIDBean.setTeZhengMa(new String(faceToken));
+//                               MyApplication.myApplication.getFacePassHandler().bindGroup(group_name,faceToken);
+//                               faceIDBeanBox.put(faceIDBean);
+//                           }
+//                            return requsBean(1, true, "", "注册成功");
+//                        } catch (Exception e) {
+//
+//                            return requsBean(-1, true, e.getMessage() + "", "参数异常");
+//                        }
+//                    }else {
+//                        return requsBean(-1, true, "", "照片不符合入库标准");
+//                    }
+//                } catch (Exception e) {
+//                    return requsBean(-1, true, e.getMessage() + "", "参数异常");
+//                }
+//            }else {
+//                return requsBean(400,true,"","参数验证失败");
+//            }
+//    }
 
 
-//    23.照片删除
-//    请求地址：  http://设备IP:8090/face/delete
-//    请求方法： POST
-@PostMapping("/face/delete")
-String facedelete(@RequestParam(name = "pass") String pass,
-                         @RequestParam(name = "faceId") String faceId){
-    if (pass!=null && pass.equals(this.pass)){
-        ;if (faceId!=null && !faceId.equals("")){
-            FaceIDBean subject=null;
-            try {
-                subject= faceIDBeanBox.query().equal(FaceIDBean_.faceBitmapId,faceId).build().findUnique();
-                if (subject!=null){
-                  MyApplication.myApplication.getFacePassHandler().deleteFace(subject.getTeZhengMa().getBytes());
-                    return requsBean(1,true,"","删除成功");
-                }else {
-                    return requsBean(408,true,"","删除失败，未找到该faceId");
-                }
-            }catch (Exception e){
-                return requsBean(-1,true,e.getMessage()+"","参数异常");
-            }
-
-        }else {
-            return requsBean(400,true,"","参数验证失败");
-        }
-    }else {
-        return requsBean(401,true,"","签名校验失败");
-    }
-}
+////    23.照片删除
+////    请求地址：  http://设备IP:8090/face/delete
+////    请求方法： POST
+//@PostMapping("/face/delete")
+//String facedelete(@RequestParam(name = "faceId") String faceId){
+//        if (faceId!=null && !faceId.equals("")){
+//            FaceIDBean subject=null;
+//            try {
+//                subject= faceIDBeanBox.query().equal(FaceIDBean_.faceBitmapId,faceId).build().findUnique();
+//                if (subject!=null){
+//                  MyApplication.myApplication.getFacePassHandler().deleteFace(subject.getTeZhengMa().getBytes());
+//                    return requsBean(1,true,"","删除成功");
+//                }else {
+//                    return requsBean(408,true,"","删除失败，未找到该faceId");
+//                }
+//            }catch (Exception e){
+//                return requsBean(-1,true,e.getMessage()+"","参数异常");
+//            }
+//
+//        }else {
+//            return requsBean(400,true,"","参数验证失败");
+//        }
+//}
 
 //24.清空人员照片
 //    请求地址：   http://设备IP:8090/face/deletePerson
 //    请求方法： POST
 
-    @PostMapping("/face/deletePerson")
-    String facedeletePerson(@RequestParam(name = "pass") String pass,
-                      @RequestParam(name = "personId") String personId){
-        if (pass!=null && pass.equals(this.pass)){
-            ;if (personId!=null && !personId.equals("")){
-                try {
-                 List<FaceIDBean> subject = faceIDBeanBox.query().equal(FaceIDBean_.subjectId,personId).build().find();
-                    if (subject.size()==0){
-                        return requsBean(408,true,"","删除失败，未找到该personId");
-                    }else {
-                        for (FaceIDBean f:subject){
-                            faceIDBeanBox.remove(f);
-                        }
-                        return requsBean(1,true,"","删除成功");
-                    }
-                }catch (Exception e){
-                    return requsBean(-1,true,e.getMessage()+"","参数异常");
-                }
-            }else {
-                return requsBean(400,true,"","参数验证失败");
-            }
-        }else {
-            return requsBean(401,true,"","签名校验失败");
-        }
-    }
+//    @PostMapping("/face/deletePerson")
+//    String facedeletePerson(@RequestParam(name = "personId") String personId){
+//            if (personId!=null && !personId.equals("")){
+//                try {
+//                 List<FaceIDBean> subject = faceIDBeanBox.query().equal(FaceIDBean_.subjectId,personId).build().find();
+//                    if (subject.size()==0){
+//                        return requsBean(408,true,"","删除失败，未找到该personId");
+//                    }else {
+//                        for (FaceIDBean f:subject){
+//                            faceIDBeanBox.remove(f);
+//                        }
+//                        return requsBean(1,true,"","删除成功");
+//                    }
+//                }catch (Exception e){
+//                    return requsBean(-1,true,e.getMessage()+"","参数异常");
+//                }
+//            }else {
+//                return requsBean(400,true,"","参数验证失败");
+//            }
+//    }
 
 //    21.照片注册（url）
 //    请求地址：   http://设备IP:8090/face/createByUrl
 //    请求方法： POST
 
-@PostMapping("/face/createByUrl")
-String createByUrl(@RequestParam(name = "pass") String pass,
-                  @RequestParam(name = "personId") String personId,
-                  @RequestParam(name = "faceId") String faceId,
-                  @RequestParam(name = "imgUrl") String imgBase64){
-    if (pass!=null && pass.equals(this.pass)){
-        ;if (personId!=null && !personId.equals("") && imgBase64!=null && !imgBase64.equals("") && faceId!=null && !faceId.equals("")){
-            try {
-                Bitmap bitmap=null;
-                try {
-                    bitmap = Glide.with(MyApplication.myApplication).asBitmap()
-                            .load(imgBase64)
-                            // .sizeMultiplier(0.5f)
-                            .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                            .get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-                if (bitmap==null)
-                    return requsBean(408, true, "", "下载图片失败");
-                List<FaceIDBean> personIds=faceIDBeanBox.query().equal(FaceIDBean_.subjectId,personId).build().find();
-                if (personIds.size()>3){//一个人超过3张
-                    return requsBean(-1, true, "", "注册失败,该人员超过三张注册照片,请先删除其中一张");
-                }
-                FacePassAddFaceResult detectResult = null;
-                BitmapUtil.saveBitmapToSD(bitmap, MyApplication.SDPATH3, "aaabbb.png");
-                File file=  Luban.with(MyApplication.myApplication).load(MyApplication.SDPATH3+File.separator + "aaabbb.png")
-                        .ignoreBy(500)
-                        .setTargetDir(MyApplication.SDPATH3+File.separator)
-                        .get(MyApplication.SDPATH3+File.separator + "aaabbb.png");
-                try {
-                    detectResult = MyApplication.myApplication.getFacePassHandler().addFace(BitmapFactory.decodeFile(file.getAbsolutePath()));
-                } catch (FacePassException e) {
-                    e.printStackTrace();
-                }
-                if (detectResult != null && detectResult.result==0) {
-                    byte [] faceToken=detectResult.faceToken;
-                    //先查询有没有
-                    try {
-                        FaceIDBean faceIDBean=faceIDBeanBox.query().equal(FaceIDBean_.faceBitmapId,faceId).build().findUnique();
-                        if (faceIDBean==null){
-                            FaceIDBean fff = new FaceIDBean();
-                            fff.setTeZhengMa(new String(faceToken));
-                            fff.setSubjectId(personId);
-                            fff.setFaceBitmapId(faceId);
-                            MyApplication.myApplication.getFacePassHandler().bindGroup(group_name,faceToken);
-                            faceIDBeanBox.put(fff);
-                        }else {
-                            MyApplication.myApplication.getFacePassHandler().deleteFace(faceIDBean.getTeZhengMa().getBytes());
-                            faceIDBean.setTeZhengMa(new String(faceToken));
-                            MyApplication.myApplication.getFacePassHandler().bindGroup(group_name,faceToken);
-                            faceIDBeanBox.put(faceIDBean);
-                        }
-                        return requsBean(1, true, "", "注册成功");
-                    } catch (Exception e) {
-                        return requsBean(-1, true, e.getMessage() + "", "参数异常");
-                    }
-                }else {
-                    return requsBean(-1, true, "", "照片不符合入库标准");
-                }
-            } catch (Exception e) {
-                return requsBean(-1, true, e.getMessage() + "", "参数异常");
-            }
-        }else {
-            return requsBean(400,true,"","参数验证失败");
-        }
-    }else {
-        return requsBean(401,true,"","签名校验失败");
-    }
-}
+//@PostMapping("/face/createByUrl")
+//String createByUrl(@RequestParam(name = "personId") String personId,
+//                  @RequestParam(name = "faceId") String faceId,
+//                  @RequestParam(name = "imgUrl") String imgBase64){
+//        if (personId!=null && !personId.equals("") && imgBase64!=null && !imgBase64.equals("") && faceId!=null && !faceId.equals("")){
+//            try {
+//                Bitmap bitmap=null;
+//                try {
+//                    bitmap = Glide.with(MyApplication.myApplication).asBitmap()
+//                            .load(imgBase64)
+//                            // .sizeMultiplier(0.5f)
+//                            .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+//                            .get();
+//                } catch (InterruptedException | ExecutionException e) {
+//                    e.printStackTrace();
+//                }
+//                if (bitmap==null)
+//                    return requsBean(408, true, "", "下载图片失败");
+//                List<FaceIDBean> personIds=faceIDBeanBox.query().equal(FaceIDBean_.subjectId,personId).build().find();
+//                if (personIds.size()>3){//一个人超过3张
+//                    return requsBean(-1, true, "", "注册失败,该人员超过三张注册照片,请先删除其中一张");
+//                }
+//                FacePassAddFaceResult detectResult = null;
+//                BitmapUtil.saveBitmapToSD(bitmap, MyApplication.SDPATH3, "aaabbb.png");
+//                File file=  Luban.with(MyApplication.myApplication).load(MyApplication.SDPATH3+File.separator + "aaabbb.png")
+//                        .ignoreBy(500)
+//                        .setTargetDir(MyApplication.SDPATH3+File.separator)
+//                        .get(MyApplication.SDPATH3+File.separator + "aaabbb.png");
+//                try {
+//                    detectResult = MyApplication.myApplication.getFacePassHandler().addFace(BitmapFactory.decodeFile(file.getAbsolutePath()));
+//                } catch (FacePassException e) {
+//                    e.printStackTrace();
+//                }
+//                if (detectResult != null && detectResult.result==0) {
+//                    byte [] faceToken=detectResult.faceToken;
+//                    //先查询有没有
+//                    try {
+//                        FaceIDBean faceIDBean=faceIDBeanBox.query().equal(FaceIDBean_.faceBitmapId,faceId).build().findUnique();
+//                        if (faceIDBean==null){
+//                            FaceIDBean fff = new FaceIDBean();
+//                            fff.setTeZhengMa(new String(faceToken));
+//                            fff.setSubjectId(personId);
+//                            fff.setFaceBitmapId(faceId);
+//                            MyApplication.myApplication.getFacePassHandler().bindGroup(group_name,faceToken);
+//                            faceIDBeanBox.put(fff);
+//                        }else {
+//                            MyApplication.myApplication.getFacePassHandler().deleteFace(faceIDBean.getTeZhengMa().getBytes());
+//                            faceIDBean.setTeZhengMa(new String(faceToken));
+//                            MyApplication.myApplication.getFacePassHandler().bindGroup(group_name,faceToken);
+//                            faceIDBeanBox.put(faceIDBean);
+//                        }
+//                        return requsBean(1, true, "", "注册成功");
+//                    } catch (Exception e) {
+//                        return requsBean(-1, true, e.getMessage() + "", "参数异常");
+//                    }
+//                }else {
+//                    return requsBean(-1, true, "", "照片不符合入库标准");
+//                }
+//            } catch (Exception e) {
+//                return requsBean(-1, true, e.getMessage() + "", "参数异常");
+//            }
+//        }else {
+//            return requsBean(400,true,"","参数验证失败");
+//        }
+//}
 
 //22.照片查询
 //    请求地址：  http://设备IP:8090/face/find
 //    请求方法： POST
 @PostMapping("/face/find")
-Object facefind(@RequestParam(name = "pass") String pass,
-              @RequestParam(name = "personId") String person){
-    if (pass!=null && pass.equals(this.pass)){
-        ;if (person!=null && !person.equals("")){
+Object facefind(@RequestParam(name = "personId") String person){
+        if (person!=null && !person.equals("")){
             try {
                 Subject subject= subjectBox.query().equal(Subject_.teZhengMa,person).build().findUnique();
                 if (subject!=null){
@@ -935,21 +925,21 @@ Object facefind(@RequestParam(name = "pass") String pass,
                     if (subject.getFaceIds1()!=null){
                         JSONObject object=new JSONObject();
                         object.put("faceId",subject.getFaceIds1());
-                        object.put("path","http://" + FileUtil.getIPAddress(MyApplication.myApplication) + ":" + baoCunBean.getPort() + "/getFaceBitmap?id=" + subject.getFaceIds1());
+                        object.put("path","http://" + FileUtil.getIPAddress(MyApplication.myApplication) + ":" + MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getPort() + "/getFaceBitmap?id=" + subject.getFaceIds1());
                         object.put("personId",subject.getTeZhengMa());
                         array.put(object);
                     }
                     if (subject.getFaceIds2()!=null){
                         JSONObject object=new JSONObject();
                         object.put("faceId",subject.getFaceIds2());
-                        object.put("path","http://" + FileUtil.getIPAddress(MyApplication.myApplication) + ":" + baoCunBean.getPort() + "/getFaceBitmap?id=" + subject.getFaceIds2());
+                        object.put("path","http://" + FileUtil.getIPAddress(MyApplication.myApplication) + ":" + MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getPort() + "/getFaceBitmap?id=" + subject.getFaceIds2());
                         object.put("personId",subject.getTeZhengMa());
                         array.put(object);
                     }
                     if (subject.getFaceIds3()!=null){
                         JSONObject object=new JSONObject();
                         object.put("faceId",subject.getFaceIds3());
-                        object.put("path","http://" + FileUtil.getIPAddress(MyApplication.myApplication) + ":" + baoCunBean.getPort() + "/getFaceBitmap?id=" + subject.getFaceIds3());
+                        object.put("path","http://" + FileUtil.getIPAddress(MyApplication.myApplication) + ":" + MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getPort() + "/getFaceBitmap?id=" + subject.getFaceIds3());
                         object.put("personId",subject.getTeZhengMa());
                         array.put(object);
                     }
@@ -970,9 +960,6 @@ Object facefind(@RequestParam(name = "pass") String pass,
         }else {
             return requsBean(400,true,"","参数验证失败");
         }
-    }else {
-        return requsBean(401,true,"","签名校验失败");
-    }
 }
 
 
@@ -980,14 +967,12 @@ Object facefind(@RequestParam(name = "pass") String pass,
 //    请求地址：  http://设备IP:8090/findRecords
 //    请求方法： POST
 @PostMapping("/findRecords")
-String findRecords(@RequestParam(name = "pass") String pass,
-                  @RequestParam(name = "personId") String personId,
+String findRecords(@RequestParam(name = "personId") String personId,
                   @RequestParam(name = "length") String length,
                    @RequestParam(name = "index") String index,
                    @RequestParam(name = "startTime") String startTime,
                    @RequestParam(name = "endTime") String endTime,
                    @RequestParam(name = "type") String type){
-    if (pass!=null && pass.equals(this.pass)){
             try {
                 int ind=Integer.parseInt(index);
                 int len=Integer.parseInt(length);
@@ -1020,7 +1005,7 @@ String findRecords(@RequestParam(name = "pass") String pass,
                     object.put("id",subject.getId());
                     object.put("path",subject.getPath());
                     object.put("personId",subject.getPersonId());
-                    object.put("state",subject.getState());
+                   // object.put("state",subject.getState());
                     object.put("time",subject.getTime());
                     object.put("type",subject.getType());
                     jsonArray.put(object);
@@ -1031,15 +1016,11 @@ String findRecords(@RequestParam(name = "pass") String pass,
                 object.put("data",jsonArray);
                 object.put("msg","查询成功");
                 return object.toString();
-
                 //  return requsBean(1,true,jsonArray.toString(),"获取成功");
             }catch (Exception e){
                 return requsBean(-1,true,e.getMessage()+"","参数异常");
             }
 
-    }else {
-        return requsBean(401,true,"","签名校验失败");
-    }
 }
 
 //26.照片更新（base64）

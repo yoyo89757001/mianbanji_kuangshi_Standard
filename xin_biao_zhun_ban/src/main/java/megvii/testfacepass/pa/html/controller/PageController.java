@@ -29,5 +29,6 @@ public class PageController {
     public String index() {
         // Equivalent to [return "/index"].
         return "forward:/index.html";
+       // return "forward:/index.html";
     }
 }

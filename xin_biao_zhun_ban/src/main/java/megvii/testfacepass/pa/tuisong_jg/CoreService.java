@@ -21,6 +21,7 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+import com.tencent.mmkv.MMKV;
 import com.yanzhenjie.andserver.AndServer;
 import com.yanzhenjie.andserver.Server;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +36,7 @@ import megvii.testfacepass.pa.utils.FileUtil;
 public class CoreService extends Service {
 
     private Server mServer;
-    private ConfigBean configBean= MyApplication.myApplication.getBaoCunBeanBox().get(123456);
+    private ConfigBean configBean= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class);
 
 
     @Override

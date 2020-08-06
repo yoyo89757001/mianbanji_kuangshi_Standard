@@ -12,6 +12,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/ceshi_room_shujuku" />
             <option value="$PROJECT_DIR$/xin_biao_zhun_ban" />
           </set>
         </option>

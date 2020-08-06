@@ -48,7 +48,7 @@ public class AppExceptionResolver implements ExceptionResolver {
             response.setStatus(StatusCode.SC_INTERNAL_SERVER_ERROR);
         }
         String body = JsonUtils.failedJson(response.getStatus(), e.getMessage());
-       // Log.d("AppExceptionResolver", body);
+        Log.d("AppExceptionResolver", body);
         response.setBody(new JsonBody(body));
     }
 }

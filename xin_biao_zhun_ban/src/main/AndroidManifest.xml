@@ -42,7 +42,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.ReadCardActivity" android:windowSoftInputMode="adjustUnspecified|stateHidden"/>
+<!--        <activity android:name=".ui.ReadCardActivity" android:windowSoftInputMode="adjustUnspecified|stateHidden"/>-->
         <!-- <activity android:name=".ui.NFCActivity" android:launchMode="singleTask"/> -->
         <activity
             android:name=".ui.BaseActivity"
@@ -55,10 +55,10 @@
             </intent-filter>
         </activity> <!-- <activity android:name=".ui.MianBanJiActivity2"/> -->
         <activity
-            android:name=".ui.MianBanJiActivity3"
+            android:name=".ui.MianBanJiActivity4"
             android:launchMode="singleTask" />
         <activity android:name=".ui.SettingActivity" />
-        <activity android:name=".ui.YuLanActivity" />
+
         <activity
             android:name=".ui.SheZhiActivity2"
             android:screenOrientation="fullSensor" /> <!-- <activity -->
