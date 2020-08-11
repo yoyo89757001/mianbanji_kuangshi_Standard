@@ -36,7 +36,7 @@ public class FaceWork {//只刷脸
                 //本地保存一份
                 DaKaBean daKaBean=new DaKaBean();
                 daKaBean.setId(bitmapId);
-                daKaBean.setPath("http://" + FileUtil.getIPAddress(MyApplication.ampplication) + ":8090"  + "/getFaceBitmap2?time=" +riqi+"&id="+bitmapId);
+                daKaBean.setPath("http://" + FileUtil.getLocalHostIp() + ":8090"  + "/app/getFaceBitmap2?time=" +riqi+"&id="+bitmapId);
                 daKaBean.setPersonId(subject.getSid());
                 daKaBean.setTime(bitmapId);
                 daKaBean.setType(1);

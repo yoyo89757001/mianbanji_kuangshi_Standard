@@ -18,6 +18,7 @@ package megvii.testfacepass.pa.tuisong_jg;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -47,7 +48,9 @@ public class CoreService extends Service {
             .listener(new Server.ServerListener() {
                 @Override
                 public void onStarted() {
-                    String address = FileUtil.getIPAddress(getApplicationContext())+":"+configBean.getPort();
+                    String ip=FileUtil.getLocalHostIp();
+                    Log.d("CoreService", ip+"获取开启服务的IP地址");
+                    String address =ip +":"+configBean.getPort();
                     ServerManager.onServerStart(CoreService.this, address);
                 }
 

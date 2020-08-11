@@ -114,6 +114,8 @@ public class ServerManager extends BroadcastReceiver {
                 case CMD_VALUE_START: {
                     String ip = intent.getStringExtra(MESSAGE_KEY);
                    Log.d("ServerManager", "服务开启ip:"+ip);
+
+
                     break;
                 }
                 case CMD_VALUE_ERROR: {
