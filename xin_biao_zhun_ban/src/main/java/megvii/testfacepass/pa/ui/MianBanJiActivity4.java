@@ -478,6 +478,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                         } else {
                             //  Log.d("MianBanJiActivity3", "ddd4");
                             soundPool.play(musicId.get(2), 1, 1, 0, 0, 1);
+                            //
                             //faceView.setTC(BitmapUtil.rotateBitmap(msrBitmap, SettingVar.msrBitmapRotation), subject.getName(), subject.getDepartmentName());
                         }
 
