@@ -516,7 +516,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                       //  if (configBean.getConfigModel()==2){//2是刷脸加刷卡都可以
                             try {
                                 //  Log.d("MianBanJiActivity3", icdata.toUpperCase());
-                                List<Subject> subjectList= subjectBox.query().equal(Subject_.idcard,icdata.toUpperCase()).build().find();
+                                List<Subject> subjectList= subjectBox.query().equal(Subject_.icCard,icdata.toUpperCase()).build().find();
                                 if (subjectList.size()>1){
                                     StringBuilder builder=new StringBuilder();
                                     for (Subject subject:subjectList){
@@ -524,7 +524,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                         builder.append(",");
                                     }
                                     showToase("此ID卡被 "+builder.toString()+" 多人绑定.",TastyToast.ERROR);
-
                                 }else if (subjectList.size()==1){
                                     long bitmapId=System.currentTimeMillis();
                                    // String riqi=DateUtils.timeNYR(bitmapId+"");
@@ -1226,7 +1225,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                         subject.setId(System.currentTimeMillis());
                                         subject.setPeopleType(commandsBean.getPepopleType());//0是员工 1是访客
                                         subject.setName(commandsBean.getName());
-                                        subject.setDepartmentName(commandsBean.getDepartmentName());
+                                        subject.setDepartment(commandsBean.getDepartmentName());
                                         subject.setWorkNumber(commandsBean.getCardID());
                                         subjectBox.put(subject);
                                         paAccessControl.bindGroup(group_name,faceToken);
@@ -1276,7 +1275,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                             if (commandsBean.getName() != null)
                                                 subject.setName(commandsBean.getName());
                                             if (commandsBean.getDepartmentName() != null) {
-                                                subject.setDepartmentName(commandsBean.getDepartmentName());
+                                                subject.setDepartment(commandsBean.getDepartmentName());
                                             }
                                             if (commandsBean.getPepopleType() != 0) {
                                                 subject.setPeopleType(commandsBean.getPepopleType());
@@ -1299,7 +1298,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                     if (name != null)
                                         subject.setName(name);
                                     if (bumen != null) {
-                                        subject.setDepartmentName(bumen);
+                                        subject.setDepartment(bumen);
                                     }
                                     if (pepopleType != 0) {
                                         subject.setPeopleType(pepopleType);
@@ -1615,7 +1614,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                     // subject1.setTxBytes(BitmapUtil.bitmabToBytes(bitmap));
                                     subject1.setName("陌生人");
                                     subject1.setSid(null);
-                                    subject1.setDepartmentName("暂无进入权限!");
+                                    subject1.setDepartment("暂无进入权限!");
                                     // linkedBlockingQueue.offer(subject1);
                                     Message message2 = Message.obtain();
                                     message2.what = 111;

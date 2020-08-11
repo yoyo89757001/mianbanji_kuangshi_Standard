@@ -407,18 +407,18 @@ public class MyService3 {
                     subject.setSid(peopleId+"");
                     subject.setName(name);
                     subject.setSex(sex);
-                    subject.setIdcard(icCard);
+                    subject.setIcCard(icCard);
                     subject.setPhone(phone);
                     subject.setCreatTime(System.currentTimeMillis());
-                    subject.setDepartmentName(department);
-                    subject.setRemark(remarks);
+                    subject.setDepartment(department);
+                    subject.setRemarks(remarks);
                     subject.setPhoto("http://" + FileUtil.getLocalHostIp() + ":8090"  + "/app/getFaceBitmap?id="+peopleId);
                     try {
                         if (peopleType!=null && !peopleType.equals("")){
                             subject.setPeopleType(Integer.parseInt(peopleType));
                         }
                         if (birthday!=null && !birthday.equals("") && !birthday.equals("NaN")){
-                            subject.setBirthday(birthday);
+                            subject.setBirthday(Long.parseLong(birthday));
                         }
                         if (startTime!=null && !startTime.equals("") && !startTime.equals("NaN")){
                             subject.setStartTime(Long.parseLong(startTime));
@@ -477,33 +477,86 @@ public class MyService3 {
 //11.人员更新
 //    请求地址：   http://设备IP:8090/person/update
 //    请求方法： POST
-    @PostMapping("/person/update")
-    String update(@RequestParam(name = "person") String person){
-            if (person!=null && !person.equals("")){
-                try {
-                    JsonObject jsonObject= GsonUtil.parse(person).getAsJsonObject();
-                    Gson gson=new Gson();
-                    PersonsBean personsBean=gson.fromJson(jsonObject, PersonsBean.class);
-                    if (null==personsBean.getId() || null==personsBean.getName())
-                        return requsBean(400,true,"id为空","参数验证失败");
-                    Subject subject=  subjectBox.query().equal(Subject_.sid,personsBean.getId()).build().findUnique();
-                    if (subject==null){
-                        return requsBean(400,true,personsBean.getId(),"该人员不存在");
-                    }
-                    subject.setSid(personsBean.getId());
-                    subject.setName(personsBean.getName());
-                   // subject.setIdcardNum(personsBean.getIdcardNum().toUpperCase());
-                   // subject.setEntryTime(personsBean.getExpireTime());
-                    subjectBox.put(subject);
-                    return requsBean(1,true,personsBean.getId(),"更新成功");
-                }catch (Exception e){
-                    return requsBean(-1,true,e.getMessage()+"","参数异常");
-                }
-
-            }else {
-                return requsBean(400,true,"","参数验证失败");
+//     10.人员创建
+//    请求地址：   http://设备IP:8090/person/create
+//    请求方法： POST
+@PostMapping("/person/updata2")
+String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(name = "file",required = false) MultipartFile file,
+                    @RequestParam(name = "department",required = false) String department,@RequestParam(name = "sex",required = false) String sex,
+                    @RequestParam(name = "peopleType",required = false) String peopleType,@RequestParam(name = "birthday",required = false) String birthday,
+                    @RequestParam(name = "startTime",required = false) String startTime,@RequestParam(name = "endTime",required = false) String endTime,
+                    @RequestParam(name = "remarks",required = false) String remarks,@RequestParam(name = "phone",required = false) String phone,
+                    @RequestParam(name = "icCard",required = false) String icCard,@RequestParam(name = "id") String sid){
+    try {
+        if (MyApplication.myApplication.getFacePassHandler()==null){
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"机器算法未初始化"));
+        }
+        Log.d(TAG, icCard+" return com.alibaba.fast");
+        // Log.d(TAG, "更新时传过来的file:" + file);
+        Subject subject=subjectBox.query().equal(Subject_.sid,sid).build().findUnique();
+        if (subject==null){
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"更新失败,未找到该人员信息"));
+        }
+        if (file!=null){
+            Bitmap bitmap=readInputStreamToBitmap(file.getStream(),file.getSize());
+            FacePassAddFaceResult detectResult = null;
+            BitmapUtil.saveBitmapToSD(bitmap, MyApplication.SDPATH, sid+".png");
+//              File file=  Luban.with(MyApplication.myApplication).load(MyApplication.SDPATH3+File.separator + "aaabbb.png")
+//                        .ignoreBy(500)
+//                        .setTargetDir(MyApplication.SDPATH3+File.separator)
+//                        .get(MyApplication.SDPATH3+File.separator + "aaabbb.png");
+            try {
+                detectResult = MyApplication.myApplication.getFacePassHandler().addFace(bitmap);
+            } catch (FacePassException e) {
+                e.printStackTrace();
             }
+            if (detectResult != null && detectResult.result==0) {
+                byte[] faceToken = detectResult.faceToken;
+                subject.setName(name);
+                subject.setSex(sex);
+                subject.setIcCard(icCard);
+                subject.setPhone(phone);
+                if (department!=null && !department.equals("")){
+                    subject.setDepartment(department);
+                }
+                if (remarks!=null && !remarks.equals("")){
+                    subject.setRemarks(remarks);
+                }
+                try {
+                    if (peopleType!=null && !peopleType.equals("")){
+                        subject.setPeopleType(Integer.parseInt(peopleType));
+                    }
+                    if (birthday!=null && !birthday.equals("") && !birthday.equals("NaN")){
+                        subject.setBirthday(Long.parseLong(birthday));
+                    }
+                    if (startTime!=null && !startTime.equals("") && !startTime.equals("NaN")){
+                        subject.setStartTime(Long.parseLong(startTime));
+                    }
+                    if (endTime!=null && !endTime.equals("") && !endTime.equals("NaN")){
+                        subject.setEndTime(Long.parseLong(endTime));
+                    }
+                }catch (Exception e){
+                    Log.d(TAG, e.getMessage()+"时间转换异常");
+                }
+                subject.setTeZhengMa(new String(faceToken));
+                MyApplication.myApplication.getFacePassHandler().bindGroup(group_name,faceToken);
+                subjectBox.put(subject);
+                Log.d(TAG, "人员创建成功 "+subject.toString());
+                return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"创建成功"));
+            }else {
+                return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"图片不符合入库要求"));
+            }
+        }else {
+            Log.d(TAG, icCard+" return com.alibaba.fast"+phone);
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"图片不符合入库要求"));
+        }
+
+
+    }catch (Exception e){
+        Log.d(TAG, e.getMessage()+"创建异常");
+        return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"创建异常"));
     }
+}
 
 
 
@@ -573,10 +626,11 @@ public class MyService3 {
                         object.put("name",subject.getName());
                         object.put("photo",subject.getPhoto());
                         object.put("phone",subject.getPhone());
-                        object.put("icCard",subject.getIdcard());
+                        object.put("icCard",subject.getIcCard());
                         object.put("sex",subject.getSex());
-                        object.put("department",subject.getDepartmentName());
-                        if (subject.getBirthday()!=null && !subject.getBirthday().equals("")){
+                        object.put("remarks",subject.getRemarks());
+                        object.put("department",subject.getDepartment());
+                        if (subject.getBirthday()!=0){
                             object.put("birthday",subject.getBirthday());
                         }
                         if (subject.getStartTime()!=0){
@@ -704,6 +758,10 @@ String findRecords(@RequestParam(name = "personId") String personId,
             }else {
                 String c=MyApplication.card;
                 MyApplication.card=null;
+                List<Subject> subjects=subjectBox.query().equal(Subject_.icCard,c).build().find();
+                if (subjects.size()>0){
+                    return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"此卡已经被其他人绑定"));
+                }
                 JSONObject object=new JSONObject();
                 try {
                     object.put("code",1);
