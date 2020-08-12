@@ -112,6 +112,7 @@ import megvii.testfacepass.pa.utils.FacePassUtil;
 import megvii.testfacepass.pa.utils.FileUtil;
 import megvii.testfacepass.pa.utils.GsonUtil;
 import megvii.testfacepass.pa.utils.NV21ToBitmap;
+import megvii.testfacepass.pa.utils.RestartAPPTool;
 import megvii.testfacepass.pa.utils.ScanGunKeyEventHelper;
 import megvii.testfacepass.pa.utils.SettingVar;
 import megvii.testfacepass.pa.view.FaceView;
@@ -386,9 +387,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
 
         initView();
 
-
         try {
-
             if (configBean.getJidianqi()!=0){
                 jidianqi= configBean.getJidianqi();
             }
@@ -513,6 +512,10 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                             MyApplication.card=icdata;
                            break ;
                         }
+                        if (!configBean.isOpenCard()){
+                            break;
+                        }
+
                       //  if (configBean.getConfigModel()==2){//2是刷脸加刷卡都可以
                             try {
                                 //  Log.d("MianBanJiActivity3", icdata.toUpperCase());
@@ -1373,13 +1376,13 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         SharedPreferences preferences = getSharedPreferences(SettingVar.SharedPrefrence, Context.MODE_PRIVATE);
         SettingVar.isSettingAvailable = preferences.getBoolean("isSettingAvailable", SettingVar.isSettingAvailable);
-        SettingVar.cameraId = preferences.getInt("cameraId", SettingVar.cameraId);
-        SettingVar.faceRotation = preferences.getInt("faceRotation", SettingVar.faceRotation);
-        SettingVar.cameraPreviewRotation = preferences.getInt("cameraPreviewRotation", SettingVar.cameraPreviewRotation);
+        SettingVar.cameraId = configBean.getCameraId();
+        SettingVar.faceRotation =configBean.getFaceRotation();
+        SettingVar.cameraPreviewRotation = configBean.getCameraPreviewRotation();
         cameraFacingFront = preferences.getBoolean("cameraFacingFront", cameraFacingFront);
-        SettingVar.cameraPreviewRotation2 = preferences.getInt("cameraPreviewRotation2", SettingVar.cameraPreviewRotation2);
-        SettingVar.faceRotation2 = preferences.getInt("faceRotation2", SettingVar.faceRotation2);
-        SettingVar.msrBitmapRotation = preferences.getInt("msrBitmapRotation", SettingVar.msrBitmapRotation);
+        SettingVar.cameraPreviewRotation2 = configBean.getCameraPreviewRotation2();
+        SettingVar.faceRotation2 = configBean.getFaceRotation2();
+        SettingVar.msrBitmapRotation = configBean.getMsrBitmapRotation();
 
         setContentView(R.layout.activity_mianbanji3);
         ButterKnife.bind(this);
@@ -1797,6 +1800,23 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
             if (configBean.getRetryCount()!=0){
                 cishu= configBean.getRetryCount();
             }
+            return;
+        }
+        if (event.equals("configs2")){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SystemClock.sleep(2000);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                            RestartAPPTool.restartAPP(MianBanJiActivity4.this);
+                        }
+                    });
+                }
+            }).start();
+            return;
         }
 
         if (event.equals("mFacePassHandler")) {
@@ -1813,7 +1833,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
 
             String address = FileUtil.getLocalHostIp()+":"+configBean.getPort();
             logo.setText("本机后端地址 http://"+address);
-
             return;
         }
         if (event.equals("openCard")){//读卡返回给后台

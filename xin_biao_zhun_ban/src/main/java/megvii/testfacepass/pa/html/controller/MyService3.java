@@ -3,21 +3,19 @@ package megvii.testfacepass.pa.html.controller;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
+
 import android.os.SystemClock;
-import android.serialport.SerialPort;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+
+
 
 import com.alibaba.fastjson.JSON;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+
+
 import com.lztek.toolkit.Lztek;
 import com.tencent.mmkv.MMKV;
 import com.yanzhenjie.andserver.annotation.GetMapping;
@@ -43,7 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import Lib.Reader.MT.Function;
+
 import io.objectbox.Box;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
@@ -51,23 +49,21 @@ import mcv.facepass.FacePassException;
 import mcv.facepass.types.FacePassAddFaceResult;
 import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.beans.ConfigBean;
-import megvii.testfacepass.pa.beans.ConﬁgsBean;
 import megvii.testfacepass.pa.beans.DaKaBean;
 import megvii.testfacepass.pa.beans.DaKaBean_;
 import megvii.testfacepass.pa.beans.Logingbean;
 import megvii.testfacepass.pa.beans.PeoplePage;
 import megvii.testfacepass.pa.beans.PeopleReques;
-import megvii.testfacepass.pa.beans.PersonsBean;
 import megvii.testfacepass.pa.beans.ResBean;
 import megvii.testfacepass.pa.beans.ResultBean;
+import megvii.testfacepass.pa.beans.SouSuob;
 import megvii.testfacepass.pa.beans.Subject;
 import megvii.testfacepass.pa.beans.Subject_;
 import megvii.testfacepass.pa.beans.UserInfos;
-import megvii.testfacepass.pa.ui.MianBanJiActivity4;
 import megvii.testfacepass.pa.utils.BitmapUtil;
 import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.FileUtil;
-import megvii.testfacepass.pa.utils.GsonUtil;
+
 
 
 @RestController
@@ -149,94 +145,107 @@ public class MyService3 {
 
 
 
+    @GetMapping(path = "/getConfig")
+    String getConfig(){
+
+        return com.alibaba.fastjson.JSONObject.toJSONString(MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
+    }
+
+
+
 
 //3.设备配置
 //    请求地址：  http://设备IP:8090/setConfig
 //    请求方法： POST
     @PostMapping("/setConfig")
-    String setConfig(@RequestParam(name = "conﬁg") String conﬁg){
-
+    String setConfig(@RequestParam(name = "mqPort",required = false) String mqPort,@RequestParam(name = "isLive",required = false) boolean isLive,
+                     @RequestParam(name = "mima",required = false) String mima,@RequestParam(name = "cameraId",required = false) String cameraId,
+                     @RequestParam(name = "faceRotation",required = false) String faceRotation,@RequestParam(name = "faceRotation2",required = false) String faceRotation2,
+                     @RequestParam(name = "cameraPreviewRotation",required = false) String cameraPreviewRotation,@RequestParam(name = "cameraPreviewRotation2",required = false) String cameraPreviewRotation2,
+                     @RequestParam(name = "msrBitmapRotation",required = false) String msrBitmapRotation,@RequestParam(name = "shibieFaZhi",required = false) String shibieFaZhi,
+                     @RequestParam(name = "companyName",required = false) String companyName,@RequestParam(name = "shibieFaceSize",required = false) String shibieFaceSize,
+                     @RequestParam(name = "ruKuMoHuDu",required = false) String ruKuMoHuDu,@RequestParam(name = "ruKuFaceSize",required = false) String ruKuFaceSize,
+                     @RequestParam(name = "dangqianChengShi2",required = false) String dangqianChengShi2,@RequestParam(name = "gpio",required = false) String gpio,
+                     @RequestParam(name = "isOpenCard",required = false) boolean isOpenCard){
             try {
-                if (conﬁg==null || conﬁg.equals("")){//为空
-                    return requsBean(400,true,"","参数验证失败");
-                }else {
-                    JsonObject jsonObject= GsonUtil.parse(conﬁg).getAsJsonObject();
-                    Gson gson=new Gson();
-                    ConﬁgsBean conﬁgsBean=gson.fromJson(jsonObject, ConﬁgsBean.class);
-                    if (conﬁgsBean.getLivenessEnabled()==1){
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHuoTi(false);
-                    }
-                    if (conﬁgsBean.getLivenessEnabled()==0){
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHuoTi(true);
-                    }
-                    if (conﬁgsBean.getRetryCount()!=0){
-                     MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setRetryCount(conﬁgsBean.getRetryCount());
-                    }
-                   if (conﬁgsBean.getSearchThreshold()!=0){
-                       MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setShibieFaZhi(conﬁgsBean.getSearchThreshold());
-                   }
-                   if (null==conﬁgsBean.getCompanyName()){//公司名称
-                       Log.d(TAG, "kong");
-                   }else {
-                       MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setCompanyName(conﬁgsBean.getCompanyName());
-                   }
-                    if (conﬁgsBean.getIsOpenDoor()==1){
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setShowShiPingLiu(true);
-                    }
-                    if (conﬁgsBean.getIsOpenDoor()==0){
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setShowShiPingLiu(false);
-                    }
-                    if (conﬁgsBean.getRelayInterval()!=0){
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setJidianqi(conﬁgsBean.getRelayInterval());
-                    }
-                    if (conﬁgsBean.getConfigModel()!=0){
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setConfigModel(conﬁgsBean.getConfigModel());
-                    }
-                    if (conﬁgsBean.getLivenessThreshold()!=0){//活体阈值
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHuoTiFZ(conﬁgsBean.getLivenessThreshold());
-                    }
-                    if (conﬁgsBean.getFaceMinThreshold()!=0){//识别最小人脸
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setShibieFaceSize(conﬁgsBean.getFaceMinThreshold());
-                    }
-                    if (conﬁgsBean.getLowBrightnessThreshold()!=0){//最小亮度
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setLowBrightnessThreshold(conﬁgsBean.getLowBrightnessThreshold());
-                    }
-                    if (conﬁgsBean.getHighBrightnessThreshold()!=0){//最小亮度
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHighBrightnessThreshold(conﬁgsBean.getHighBrightnessThreshold());
-                    }
-                    if (conﬁgsBean.getBrightnessSTDThreshold()!=0){//最小亮度
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setBrightnessSTDThreshold(conﬁgsBean.getBrightnessSTDThreshold());
-                    }
-                    if (conﬁgsBean.getAddFaceMinThreshold()!=0){//入库最小人脸
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setRuKuFaceSize(conﬁgsBean.getAddFaceMinThreshold());
-                    }
-                    if (conﬁgsBean.getAddFaceBlurThreshold()!=0){//入库模糊度
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setRuKuMoHuDu(conﬁgsBean.getAddFaceBlurThreshold());
-                    }
-                    if (conﬁgsBean.getPwd1()!=0){//密码1
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setMima(conﬁgsBean.getPwd1());
-                    }
-                    if (conﬁgsBean.getPwd2()!=0){//密码2
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setMima2(conﬁgsBean.getPwd2());
-                    }
-                    if (conﬁgsBean.getHeartbeatIntervalTime()!=0){//间隔
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHeartbeatIntervalTime(conﬁgsBean.getHeartbeatIntervalTime());
-                    }
-                    if (conﬁgsBean.getTaskIntervalTime()!=0){//间隔
-                        MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setTaskIntervalTime(conﬁgsBean.getTaskIntervalTime());
-                    }
+                ConfigBean configBean=MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class);
+                boolean ii =false;
 
-
-                    MMKV.defaultMMKV().encode("configBean",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
-                    //发送广播更新配置  还没实现
-                    EventBus.getDefault().post("configs");
-                    return requsBean(1,true,"","设置成功");
+                if (mqPort!=null && !mqPort.equals("")){
+                    configBean.setMqProt(Integer.parseInt(mqPort));
                 }
-
+                //Log.d(TAG, "isLive:" + isLive);
+                if (configBean.isHuoTi()!=isLive){
+                    ii=true;
+                    configBean.setHuoTi(isLive);
+                }
+                configBean.setOpenCard(isOpenCard);
+                if (mima!=null && !mima.equals("")){
+                    configBean.setMima(Integer.parseInt(mima));
+                }
+                if (cameraId!=null && !cameraId.equals("")){
+                    configBean.setCameraId(Integer.parseInt(cameraId));
+                    ii=true;
+                }
+                if (faceRotation!=null && !faceRotation.equals("")){
+                    configBean.setFaceRotation(Integer.parseInt(faceRotation));
+                    ii=true;
+                }
+                if (faceRotation2!=null && !faceRotation2.equals("")){
+                    configBean.setFaceRotation2(Integer.parseInt(faceRotation2));
+                    ii=true;
+                }
+                if (cameraPreviewRotation!=null && !cameraPreviewRotation.equals("")){
+                    configBean.setCameraPreviewRotation(Integer.parseInt(cameraPreviewRotation));
+                    ii=true;
+                }
+                if (cameraPreviewRotation2!=null && !cameraPreviewRotation2.equals("")){
+                    configBean.setCameraPreviewRotation2(Integer.parseInt(cameraPreviewRotation2));
+                    ii=true;
+                }
+                if (msrBitmapRotation!=null && !msrBitmapRotation.equals("")){
+                    configBean.setMsrBitmapRotation(Integer.parseInt(msrBitmapRotation));
+                }
+                if (shibieFaZhi!=null && !shibieFaZhi.equals("")){
+                    configBean.setShibieFaZhi(Float.parseFloat(shibieFaZhi));
+                    ii=true;
+                }
+                if (shibieFaceSize!=null && !shibieFaceSize.equals("")){
+                    configBean.setShibieFaceSize(Integer.parseInt(shibieFaceSize));
+                    ii=true;
+                }
+                if (ruKuMoHuDu!=null && !ruKuMoHuDu.equals("")){
+                    configBean.setRuKuMoHuDu(Float.parseFloat(ruKuMoHuDu));
+                    ii=true;
+                }
+                if (ruKuFaceSize!=null && !ruKuFaceSize.equals("")){
+                    configBean.setRuKuFaceSize(Integer.parseInt(ruKuFaceSize));
+                    ii=true;
+                }
+                if (gpio!=null && !gpio.equals("")){
+                    configBean.setGpio(Integer.parseInt(gpio));
+                }
+                if (dangqianChengShi2!=null && !dangqianChengShi2.equals("")){
+                    configBean.setDangqianChengShi2(dangqianChengShi2);
+                }
+                if (companyName!=null && !companyName.equals("")){
+                    configBean.setCompanyName(companyName);
+                }
+                MMKV.defaultMMKV().encode("configBean",configBean);
+                //发送广播更新配置  还没实现
+                if (ii){
+                    EventBus.getDefault().post("configs2");
+                    return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"设置成功,APP重启中"));
+                }else {
+                    EventBus.getDefault().post("configs");
+                    return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"设置成功"));
+                }
             }catch (Exception e){
-                return requsBean(400,true,e.getMessage()+"","参数异常");
+                return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"设置异常"+e.getMessage()));
             }
     }
+
+
 
 
 //    5.设置设备时间
@@ -369,9 +378,6 @@ public class MyService3 {
     }
 
 
-
-
-
    //     10.人员创建
 //    请求地址：   http://设备IP:8090/person/create
 //    请求方法： POST
@@ -412,6 +418,7 @@ public class MyService3 {
                     subject.setCreatTime(System.currentTimeMillis());
                     subject.setDepartment(department);
                     subject.setRemarks(remarks);
+                    subject.setPhotoId(peopleId);
                     subject.setPhoto("http://" + FileUtil.getLocalHostIp() + ":8090"  + "/app/getFaceBitmap?id="+peopleId);
                     try {
                         if (peopleType!=null && !peopleType.equals("")){
@@ -486,7 +493,7 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                     @RequestParam(name = "peopleType",required = false) String peopleType,@RequestParam(name = "birthday",required = false) String birthday,
                     @RequestParam(name = "startTime",required = false) String startTime,@RequestParam(name = "endTime",required = false) String endTime,
                     @RequestParam(name = "remarks",required = false) String remarks,@RequestParam(name = "phone",required = false) String phone,
-                    @RequestParam(name = "icCard",required = false) String icCard,@RequestParam(name = "id") String sid){
+                    @RequestParam(name = "icCard",required = false) String icCard,@RequestParam(name = "sid") String sid){
     try {
         if (MyApplication.myApplication.getFacePassHandler()==null){
             return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"机器算法未初始化"));
@@ -500,7 +507,8 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
         if (file!=null){
             Bitmap bitmap=readInputStreamToBitmap(file.getStream(),file.getSize());
             FacePassAddFaceResult detectResult = null;
-            BitmapUtil.saveBitmapToSD(bitmap, MyApplication.SDPATH, sid+".png");
+            long photoID=System.currentTimeMillis();
+            BitmapUtil.saveBitmapToSD(bitmap, MyApplication.SDPATH, photoID+".png");
 //              File file=  Luban.with(MyApplication.myApplication).load(MyApplication.SDPATH3+File.separator + "aaabbb.png")
 //                        .ignoreBy(500)
 //                        .setTargetDir(MyApplication.SDPATH3+File.separator)
@@ -511,11 +519,20 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                 e.printStackTrace();
             }
             if (detectResult != null && detectResult.result==0) {
+                //删除旧的照片
+                File f=new File(MyApplication.SDPATH+File.separator+subject.getPhotoId()+".png");
+                if (f.exists()){
+                    Log.d(TAG, "删除底库文件:" + f.delete());
+                }
                 byte[] faceToken = detectResult.faceToken;
                 subject.setName(name);
                 subject.setSex(sex);
-                subject.setIcCard(icCard);
-                subject.setPhone(phone);
+                subject.setPhoto("http://" + FileUtil.getLocalHostIp() + ":8090"  + "/app/getFaceBitmap?id="+photoID);
+                subject.setPhotoId(photoID);//设置新的照片id
+                if (icCard!=null && !icCard.equals(""))
+                    subject.setIcCard(icCard);
+                if (phone!=null && !phone.equals(""))
+                    subject.setPhone(phone);
                 if (department!=null && !department.equals("")){
                     subject.setDepartment(department);
                 }
@@ -538,17 +555,47 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                 }catch (Exception e){
                     Log.d(TAG, e.getMessage()+"时间转换异常");
                 }
+                MyApplication.myApplication.getFacePassHandler().deleteFace(subject.getTeZhengMa().getBytes());
                 subject.setTeZhengMa(new String(faceToken));
                 MyApplication.myApplication.getFacePassHandler().bindGroup(group_name,faceToken);
                 subjectBox.put(subject);
-                Log.d(TAG, "人员创建成功 "+subject.toString());
-                return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"创建成功"));
+                Log.d(TAG, "人员修改成功 "+subject.toString());
+                return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"修改成功"));
             }else {
                 return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"图片不符合入库要求"));
             }
         }else {
-            Log.d(TAG, icCard+" return com.alibaba.fast"+phone);
-            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"图片不符合入库要求"));
+            subject.setName(name);
+            subject.setSex(sex);
+            if (icCard!=null && !icCard.equals(""))
+                subject.setIcCard(icCard);
+            if (phone!=null && !phone.equals(""))
+                subject.setPhone(phone);
+            if (department!=null && !department.equals("")){
+                subject.setDepartment(department);
+            }
+            if (remarks!=null && !remarks.equals("")){
+                subject.setRemarks(remarks);
+            }
+            try {
+                if (peopleType!=null && !peopleType.equals("")){
+                    subject.setPeopleType(Integer.parseInt(peopleType));
+                }
+                if (birthday!=null && !birthday.equals("") && !birthday.equals("NaN")){
+                    subject.setBirthday(Long.parseLong(birthday));
+                }
+                if (startTime!=null && !startTime.equals("") && !startTime.equals("NaN")){
+                    subject.setStartTime(Long.parseLong(startTime));
+                }
+                if (endTime!=null && !endTime.equals("") && !endTime.equals("NaN")){
+                    subject.setEndTime(Long.parseLong(endTime));
+                }
+            }catch (Exception e){
+                Log.d(TAG, e.getMessage()+"时间转换异常");
+            }
+            subjectBox.put(subject);
+            Log.d(TAG, "人员修改成功 "+subject.toString());
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"修改成功"));
         }
 
 
@@ -578,7 +625,7 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                         Subject subject=subjectBox.query().equal(Subject_.sid,s).build().findUnique();
                         if (subject!=null){
                             MyApplication.myApplication.getFacePassHandler().deleteFace(subject.getTeZhengMa().getBytes());
-                            File f=new File(MyApplication.SDPATH+File.separator+s+".png");
+                            File f=new File(MyApplication.SDPATH+File.separator+subject.getPhotoId()+".png");
                             if (f.exists()){
                                 Log.d(TAG, "删除底库文件:" + f.delete());
                             }
@@ -613,7 +660,7 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                            .orderDesc(Subject_.creatTime)//降序 按时间排序
                            .build()
                            .find(peoplePage.getPage()*peoplePage.getSize(),peoplePage.getSize());
-                   Log.d(TAG, "subjectList.size():" + subjectList.size());
+                 //  Log.d(TAG, "subjectList.size():" + subjectList.size());
                     for (Subject subject:subjectList){
 //                        PersonsBean personsBean=new PersonsBean();
 //                        personsBean.setId(subject.getTeZhengMa());
@@ -622,7 +669,7 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
 //                        personsBean.setExpireTime(subject.getEntryTime());
 //                        Log.d(TAG, JSON.toJSONString(personsBean));
                         JSONObject object=new JSONObject();
-                        object.put("id",subject.getSid());//sid是id
+                        object.put("sid",subject.getSid());//sid是id
                         object.put("name",subject.getName());
                         object.put("photo",subject.getPhoto());
                         object.put("phone",subject.getPhone());
@@ -630,6 +677,7 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                         object.put("sex",subject.getSex());
                         object.put("remarks",subject.getRemarks());
                         object.put("department",subject.getDepartment());
+                        object.put("photoID",subject.getPhotoId());
                         if (subject.getBirthday()!=0){
                             object.put("birthday",subject.getBirthday());
                         }
@@ -678,6 +726,26 @@ String find(@RequestParam(name = "id") String id){
         }
 }
 
+    //    18.人员信息搜索
+//    请求地址：  http://设备IP:8090/person/find
+//    请求方法： POST
+    @PostMapping(path = "/person/finds")
+    String finds(@RequestBody SouSuob souSuob){
+        if (souSuob!=null){
+            try {
+                List<Subject> subjectList= subjectBox.query().equal(Subject_.peopleType,souSuob.getType()).contains(Subject_.name,souSuob.getName()).build().find();
+                if (subjectList.size()>0){
+                    return com.alibaba.fastjson.JSONObject.toJSONString(subjectList);
+                }else {
+                    return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"没有该人员信息"));
+                }
+            }catch (Exception e){
+                return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"搜索异常"+e.getMessage()));
+            }
+        }else {
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"参数异常"));
+        }
+    }
 
 
 //25.刷脸记录查询
