@@ -56,6 +56,7 @@ import megvii.testfacepass.pa.beans.PeoplePage;
 import megvii.testfacepass.pa.beans.PeopleReques;
 import megvii.testfacepass.pa.beans.ResBean;
 import megvii.testfacepass.pa.beans.ResultBean;
+import megvii.testfacepass.pa.beans.SSHistroy;
 import megvii.testfacepass.pa.beans.SouSuob;
 import megvii.testfacepass.pa.beans.Subject;
 import megvii.testfacepass.pa.beans.Subject_;
@@ -226,6 +227,7 @@ public class MyService3 {
                     configBean.setGpio(Integer.parseInt(gpio));
                 }
                 if (dangqianChengShi2!=null && !dangqianChengShi2.equals("")){
+                    ii=true;
                     configBean.setDangqianChengShi2(dangqianChengShi2);
                 }
                 if (companyName!=null && !companyName.equals("")){
@@ -751,65 +753,113 @@ String find(@RequestParam(name = "id") String id){
 //25.刷脸记录查询
 //    请求地址：  http://设备IP:8090/findRecords
 //    请求方法： POST
-@PostMapping("/findRecords")
-String findRecords(@RequestParam(name = "personId") String personId,
-                  @RequestParam(name = "length") String length,
-                   @RequestParam(name = "index") String index,
-                   @RequestParam(name = "startTime") String startTime,
-                   @RequestParam(name = "endTime") String endTime,
-                   @RequestParam(name = "type") String type){
-            try {
-                int ind=Integer.parseInt(index);
-                int len=Integer.parseInt(length);
-                JSONArray jsonArray=new JSONArray();
-                long min=0,max=0;
-                min=Long.parseLong(startTime);
-                max=Long.parseLong(endTime);
-                List<DaKaBean> subjectList=null;
-                if (personId.equals("-1")){
-                    if (type.equals("all")){
-                        subjectList= daKaBeanBox.query().between(DaKaBean_.time,min,max).build().find(ind,len);
-                    }else {
-                        subjectList= daKaBeanBox.query().equal(DaKaBean_.type,type).between(DaKaBean_.time,min,max).build().find(ind,len);
+    @PostMapping(path = "/findRecords")
+    String findRecords(@RequestBody SSHistroy ssHistroy){
+                try {
+                    if (ssHistroy==null){
+                        return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"参数异常"));
                     }
-                }else {
-                    if (type.equals("all")){
-                        subjectList= daKaBeanBox.query().equal(DaKaBean_.personId,personId).between(DaKaBean_.time,min,max).build().find(ind,len);
+                    Log.d(TAG, ssHistroy.toString());
+                    if (ssHistroy.getName()!=null && !ssHistroy.getName().equals("") && ssHistroy.getStartTime()!=0 && ssHistroy.getEndTime()!=0){
+                       List<DaKaBean> daKaBeanList= daKaBeanBox.query().contains(DaKaBean_.name,ssHistroy.getName())
+                                .between(DaKaBean_.time,ssHistroy.getStartTime(),ssHistroy.getEndTime())
+                                .equal(DaKaBean_.type,ssHistroy.getType())
+                                .orderDesc(DaKaBean_.time)//降序 按时间排序
+                                .build()
+                                .find(ssHistroy.getPage()*ssHistroy.getSize(),ssHistroy.getSize());
+                        JSONArray jsonArray=new JSONArray();
+                        for (DaKaBean daKaBean : daKaBeanList) {
+                            JSONObject object=new JSONObject();
+                            object.put("name",daKaBean.getName());
+                            object.put("path",daKaBean.getPath());
+                            object.put("department",daKaBean.getDepartment());
+                            object.put("icCard",daKaBean.getIcCard());
+                            object.put("peopleType",daKaBean.getPeopleType());
+                            object.put("time",daKaBean.getTime());
+                            jsonArray.put(object);
+                        }
+                        JSONObject object=new JSONObject();
+                        object.put("total",daKaBeanBox.query().equal(DaKaBean_.type,ssHistroy.getType()).build().findLazy().size());
+                        object.put("requestData",jsonArray);
+                        object.put("msg","查询成功");
+                        return object.toString();
+                    }else if (ssHistroy.getName()!=null && !ssHistroy.getName().equals("")){
+                        List<DaKaBean> daKaBeanList= daKaBeanBox.query().contains(DaKaBean_.name,ssHistroy.getName())
+                                .equal(DaKaBean_.type,ssHistroy.getType())
+                                .orderDesc(DaKaBean_.time)//降序 按时间排序
+                                .build()
+                                .find(ssHistroy.getPage()*ssHistroy.getSize(),ssHistroy.getSize());
+                        JSONArray jsonArray=new JSONArray();
+                        for (DaKaBean daKaBean : daKaBeanList) {
+                            JSONObject object=new JSONObject();
+                            object.put("name",daKaBean.getName());
+                            object.put("path",daKaBean.getPath());
+                            object.put("department",daKaBean.getDepartment());
+                            object.put("icCard",daKaBean.getIcCard());
+                            object.put("peopleType",daKaBean.getPeopleType());
+                            object.put("time",daKaBean.getTime());
+                            jsonArray.put(object);
+                        }
+                        JSONObject object=new JSONObject();
+                        object.put("total",daKaBeanBox.query().equal(DaKaBean_.type,ssHistroy.getType()).build().findLazy().size());
+                        object.put("requestData",jsonArray);
+                        object.put("msg","查询成功");
+                        return object.toString();
+                    } else if (ssHistroy.getStartTime()!=0 && ssHistroy.getEndTime()!=0){
+                        List<DaKaBean> daKaBeanList= daKaBeanBox.query()
+                                .between(DaKaBean_.time,ssHistroy.getStartTime(),ssHistroy.getEndTime())
+                                .equal(DaKaBean_.type,ssHistroy.getType())
+                                .orderDesc(DaKaBean_.time)//降序 按时间排序
+                                .build()
+                                .find(ssHistroy.getPage()*ssHistroy.getSize(),ssHistroy.getSize());
+                        JSONArray jsonArray=new JSONArray();
+                        for (DaKaBean daKaBean : daKaBeanList) {
+                            JSONObject object=new JSONObject();
+                            object.put("name",daKaBean.getName());
+                            object.put("path",daKaBean.getPath());
+                            object.put("department",daKaBean.getDepartment());
+                            object.put("icCard",daKaBean.getIcCard());
+                            object.put("peopleType",daKaBean.getPeopleType());
+                            object.put("time",daKaBean.getTime());
+                            jsonArray.put(object);
+                        }
+                        JSONObject object=new JSONObject();
+                        object.put("total",daKaBeanBox.query().equal(DaKaBean_.type,ssHistroy.getType()).build().findLazy().size());
+                        object.put("requestData",jsonArray);
+                        object.put("msg","查询成功");
+                        return object.toString();
                     }else {
-                        subjectList= daKaBeanBox.query().equal(DaKaBean_.personId,personId).equal(DaKaBean_.type,type).between(DaKaBean_.time,min,max).build().find(ind,len);
+                        List<DaKaBean> daKaBeanList= daKaBeanBox.query()
+                                .equal(DaKaBean_.type,ssHistroy.getType())
+                                .orderDesc(DaKaBean_.time)//降序 按时间排序
+                                .build()
+                                .find(ssHistroy.getPage()*ssHistroy.getSize(),ssHistroy.getSize());
+                        JSONArray jsonArray=new JSONArray();
+                        for (DaKaBean daKaBean : daKaBeanList) {
+                            JSONObject object=new JSONObject();
+                            object.put("name",daKaBean.getName());
+                            object.put("path",daKaBean.getPath());
+                            object.put("department",daKaBean.getDepartment());
+                            object.put("icCard",daKaBean.getIcCard());
+                            object.put("peopleType",daKaBean.getPeopleType());
+                            object.put("time",daKaBean.getTime());
+                            jsonArray.put(object);
+                        }
+                        JSONObject object=new JSONObject();
+                        object.put("total",daKaBeanBox.query().equal(DaKaBean_.type,ssHistroy.getType()).build().findLazy().size());
+                        object.put("requestData",jsonArray);
+                        object.put("msg","查询成功");
+                        return object.toString();
                     }
+
+                }catch (Exception e){
+                    return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"参数异常"+e.getMessage()));
                 }
-                for (DaKaBean subject:subjectList){
-//                        PersonsBean personsBean=new PersonsBean();
-//                        personsBean.setId(subject.getTeZhengMa());
-//                        personsBean.setName(subject.getName());
-//                        personsBean.setIdcardNum(subject.getIdcardNum());
-//                        personsBean.setExpireTime(subject.getEntryTime());
-//                        Log.d(TAG, JSON.toJSONString(personsBean));
-                    JSONObject object=new JSONObject();
-                    object.put("id",subject.getId());
-                    object.put("path",subject.getPath());
-                    object.put("personId",subject.getPersonId());
-                   // object.put("state",subject.getState());
-                    object.put("time",subject.getTime());
-                    object.put("type",subject.getType());
-                    jsonArray.put(object);
-                }
-                JSONObject object=new JSONObject();
-                object.put("result",1);
-                object.put("success",1);
-                object.put("data",jsonArray);
-                object.put("msg","查询成功");
-                return object.toString();
-                //  return requsBean(1,true,jsonArray.toString(),"获取成功");
-            }catch (Exception e){
-                return requsBean(-1,true,e.getMessage()+"","参数异常");
-            }
 
-}
+    }
 
 
-    //25.刷脸记录查询
+    //25.绑卡
 //    请求地址：  http://设备IP:8090/findRecords
 //    请求方法： POST
     @GetMapping(path = "/icCard/openCard")

@@ -569,8 +569,12 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                     daKaBean.setPersonId(subjectList.get(0).getSid());
                                     daKaBean.setTime(bitmapId);
                                     daKaBean.setType(2);
+                                    daKaBean.setIcCard(icdata);
+                                    daKaBean.setDepartment(subjectList.get(0).getDepartment());
                                     daKaBean.setPeopleType(subjectList.get(0).getPeopleType());
                                     daKaBeanBox.put(daKaBean);
+                                    Log.d("MianBanJiActivity4", "daKaBeanBox.query().build().findLazy().size():" + daKaBeanBox.query().build().findLazy().size());
+
                                     //mq发送一份
                                 } else {
                                     showToase("找不到此卡信息",TastyToast.ERROR);
@@ -1632,17 +1636,20 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                     for (int i = 0; i < detectionResult.faceList.length; i++) {//保存陌生人记录
                                         FacePassImage images = detectionResult.images[i];
                                         if (images.trackId == result.trackId) {
-                                            final Bitmap fileBitmap = nv21ToBitmap.nv21ToBitmap(images.image, images.width, images.height);
+                                            Bitmap fileBitmap = nv21ToBitmap.nv21ToBitmap(images.image, images.width, images.height);
                                             long bitmapId=System.currentTimeMillis();
                                             String riqi= DateUtils.timeNYR(bitmapId+"");
+                                            fileBitmap=BitmapUtil.rotateBitmap(fileBitmap, SettingVar.msrBitmapRotation);
                                             BitmapUtil.saveBitmapToSD(fileBitmap, MyApplication.SDPATH4+ File.separator+riqi,bitmapId+".png");
                                             //本地保存一份
                                             DaKaBean daKaBean=new DaKaBean();
+                                            daKaBean.setName("未知");
                                             daKaBean.setId(bitmapId);
                                             daKaBean.setPath("http://" + FileUtil.getLocalHostIp() + ":8090"  + "/app/getFaceBitmap3?time=" +riqi+"&id="+bitmapId);
                                             daKaBean.setTime(bitmapId);
                                             daKaBean.setType(1);
                                             daKaBean.setPeopleType(-1);
+                                            daKaBean.setDepartment("");
                                             daKaBeanBox.put(daKaBean);
                                             break;
                                         }
