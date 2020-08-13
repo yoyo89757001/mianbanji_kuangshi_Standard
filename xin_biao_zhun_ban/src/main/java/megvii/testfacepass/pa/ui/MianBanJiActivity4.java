@@ -373,17 +373,10 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         musicId.put(4, soundPool.load(this, R.raw.xianshibie, 1));
         musicId.put(5, soundPool.load(this, R.raw.shuaka, 1));
         musicId.put(6, soundPool.load(this, R.raw.shualianyanz, 1));//请刷脸
+        musicId.put(7, soundPool.load(this, R.raw.xinxiguoqi, 1));//过期
 
         sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
-
-        //过期删除
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                deleteFaceByTime();
-            }
-        }).start();
 
         initView();
 
@@ -476,7 +469,11 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                             soundPool.play(musicId.get(1), 1, 1, 0, 0, 1);
                         } else {
                             //  Log.d("MianBanJiActivity3", "ddd4");
-                            soundPool.play(musicId.get(2), 1, 1, 0, 0, 1);
+                            if (subject.getDepartment().equals("时间已过期!")){
+                                soundPool.play(musicId.get(7), 1, 1, 0, 0, 1);
+                            }else {
+                                soundPool.play(musicId.get(2), 1, 1, 0, 0, 1);
+                            }
                             //
                             //faceView.setTC(BitmapUtil.rotateBitmap(msrBitmap, SettingVar.msrBitmapRotation), subject.getName(), subject.getDepartmentName());
                         }
@@ -513,6 +510,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                            break ;
                         }
                         if (!configBean.isOpenCard()){
+                            showToase("刷卡模式未开启",TastyToast.ERROR);
                             break;
                         }
 
@@ -565,6 +563,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                     //保存一份刷卡记录
                                     DaKaBean daKaBean=new DaKaBean();
                                     daKaBean.setId(bitmapId);
+                                    daKaBean.setName(subjectList.get(0).getName());
                                     daKaBean.setPath(null);
                                     daKaBean.setPersonId(subjectList.get(0).getSid());
                                     daKaBean.setTime(bitmapId);
@@ -573,7 +572,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                     daKaBean.setDepartment(subjectList.get(0).getDepartment());
                                     daKaBean.setPeopleType(subjectList.get(0).getPeopleType());
                                     daKaBeanBox.put(daKaBean);
-                                    Log.d("MianBanJiActivity4", "daKaBeanBox.query().build().findLazy().size():" + daKaBeanBox.query().build().findLazy().size());
+                                   // Log.d("MianBanJiActivity4", "daKaBeanBox.query().build().findLazy().size():" + daKaBeanBox.query().build().findLazy().size());
 
                                     //mq发送一份
                                 } else {
@@ -1828,6 +1827,13 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
 
         if (event.equals("mFacePassHandler")) {
             paAccessControl = MyApplication.myApplication.getFacePassHandler();
+            //过期删除
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    deleteFaceByTime();
+                }
+            }).start();
             return;
         }
         if (event.equals("youwang")){
@@ -1979,8 +1985,22 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
             }
         }
         daKaBeanBox.remove(subjectList);
-
-
+        //删掉过期访客
+       List<Subject> subjectList1= subjectBox.query().equal(Subject_.peopleType,2).build().findLazy();
+        for (Subject subject : subjectList1) {
+            Log.d("MianBanJiActivity4", "System.currentTimeMillis():" + System.currentTimeMillis());
+            Log.d("MianBanJiActivity4", subject.toString());
+            try {
+                if (subject.getEndTime()<System.currentTimeMillis()){
+                    Log.d("MianBanJiActivity4", "ddddd");
+                    paAccessControl.deleteFace(subject.getTeZhengMa().getBytes());
+                    subjectBox.remove(subject);
+                }//1597312427062
+                 //1597311300000
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
 
     }
 

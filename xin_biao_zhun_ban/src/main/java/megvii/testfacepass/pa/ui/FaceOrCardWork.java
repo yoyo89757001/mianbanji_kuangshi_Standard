@@ -107,7 +107,7 @@ public class FaceOrCardWork {//刷脸或者刷卡都可以
                     //本地保存一份
                     DaKaBean daKaBean=new DaKaBean();
                     daKaBean.setId(bitmapId);
-                    daKaBean.setName("未知");
+                    daKaBean.setName(subject.getName());
                     daKaBean.setPath("http://" + FileUtil.getLocalHostIp() + ":8090"  + "/app/getFaceBitmap2?time=" +riqi+"&id="+bitmapId);
                     daKaBean.setPersonId(subject.getSid());
                     daKaBean.setTime(bitmapId);

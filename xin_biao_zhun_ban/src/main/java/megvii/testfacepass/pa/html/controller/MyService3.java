@@ -180,6 +180,7 @@ public class MyService3 {
                     ii=true;
                     configBean.setHuoTi(isLive);
                 }
+                Log.d("hgftrteda", "isOpenCard:" + isOpenCard);
                 configBean.setOpenCard(isOpenCard);
                 if (mima!=null && !mima.equals("")){
                     configBean.setMima(Integer.parseInt(mima));
