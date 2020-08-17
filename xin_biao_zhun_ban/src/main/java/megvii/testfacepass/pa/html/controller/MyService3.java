@@ -51,6 +51,8 @@ import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.beans.ConfigBean;
 import megvii.testfacepass.pa.beans.DaKaBean;
 import megvii.testfacepass.pa.beans.DaKaBean_;
+import megvii.testfacepass.pa.beans.DepartmentBean;
+import megvii.testfacepass.pa.beans.DepartmentBean_;
 import megvii.testfacepass.pa.beans.Logingbean;
 import megvii.testfacepass.pa.beans.PeoplePage;
 import megvii.testfacepass.pa.beans.PeopleReques;
@@ -92,12 +94,12 @@ public class MyService3 {
     private  final String group_name = "facepasstestx";
     private Box<Subject> subjectBox  = MyApplication.myApplication.getSubjectBox();
     private Box<DaKaBean> daKaBeanBox  = MyApplication.myApplication.getDaKaBeanBox();
- //   private Box<FaceIDBean> faceIDBeanBox  = MyApplication.myApplication.getFaceIDBeanBox();
+    private Box<DepartmentBean> departmentBeanBox  = MyApplication.myApplication.getDepartmentBeanBox();
    // private Box<IDCardTakeBean> idCardTakeBeanBox  = MyApplication.myApplication.getIdCardTakeBeanBox();
     //private ConfigBean MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class);
    // private  String serialnumber= MyApplication.myApplication.getMMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)Box().get(123456).getJihuoma();
    // private ConfigBean MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)= MyApplication.myApplication.getMMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)Box().get(123456);
-    private  String pass= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getJiaoyanmima();
+  //  private  String pass= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getJiaoyanmima();
 
 
 
@@ -257,22 +259,19 @@ public class MyService3 {
     @PostMapping("/setTime")
         String setTime(@RequestParam(name = "pass") String pass ,
                           @RequestParam(name = "timestamp") String timestamp){
-            if (pass!=null && pass.equals(this.pass)){
-                if (timestamp!=null && !timestamp.equals("")){
-                    try {
-                        if (lztek==null)
-                            return  requsBean(400,true,"","设备没有该方法");
-                        lztek.setSystemTime(Long.parseLong(timestamp));
-                        return requsBean(1,true,"","设置成功");
-                    }catch (Exception e){
-                        return requsBean(-1,true,e.getMessage()+"","设置失败");
-                    }
-                }else {
-                    return requsBean(400,true,"","参数验证失败");
+            if (timestamp!=null && !timestamp.equals("")){
+                try {
+                    if (lztek==null)
+                        return  requsBean(400,true,"","设备没有该方法");
+                    lztek.setSystemTime(Long.parseLong(timestamp));
+                    return requsBean(1,true,"","设置成功");
+                }catch (Exception e){
+                    return requsBean(-1,true,e.getMessage()+"","设置失败");
                 }
             }else {
-                return requsBean(401,true,"","签名校验失败");
+                return requsBean(400,true,"","参数验证失败");
             }
+
         }
 
 
@@ -313,22 +312,19 @@ public class MyService3 {
     @PostMapping("/setIdentifyCallBack")
     String setIdentifyCallBack(@RequestParam(name = "pass") String pass,
                                @RequestParam(name = "url") String url){
-        if (pass!=null && pass.equals(this.pass)){
-            ;if (url!=null && !url.equals("")){
-                if (isValidUrl(url)){//是url
-                    MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHoutaiDiZhi(url);
-                    MMKV.defaultMMKV().encode("configBean",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
-                    EventBus.getDefault().post("kaimen");
-                    return requsBean(1,true,"","设置成功");
-                }else {
-                    return requsBean(400,true,"","参数验证失败");
-                }
+        if (url!=null && !url.equals("")){
+            if (isValidUrl(url)){//是url
+                MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHoutaiDiZhi(url);
+                MMKV.defaultMMKV().encode("configBean",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
+                EventBus.getDefault().post("kaimen");
+                return requsBean(1,true,"","设置成功");
             }else {
                 return requsBean(400,true,"","参数验证失败");
             }
         }else {
-            return requsBean(401,true,"","签名校验失败");
+            return requsBean(400,true,"","参数验证失败");
         }
+
     }
 
     private boolean isValidUrl(String url){
@@ -892,6 +888,95 @@ String find(@RequestParam(name = "id") String id){
             }
         }
     }
+
+
+    @PostMapping("/person/createDepartment")
+    String createDepartment(@RequestParam(name = "name") String name){
+        DepartmentBean bean=new DepartmentBean();
+        bean.setName(name);
+        bean.setSid(System.currentTimeMillis()+"");
+        departmentBeanBox.put(bean);
+        return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"创建成功"));
+    }
+
+    //12.部门删除
+//    请求地址：   http://设备IP:8090/person/delete
+//    请求方法： get
+    @GetMapping(path = "/person/deleteDepartment")
+    String deleteoneDe(@RequestParam(name = "id") String id){
+        if (id!=null && !id.equals("")){
+            try {
+                Log.d(TAG, id+"要删除的ID");
+                String [] ids=id.split(",");
+                int size=ids.length;
+                if (size>0){
+                    for (String s : ids) {
+                        DepartmentBean subject=departmentBeanBox.query().equal(DepartmentBean_.sid,s).build().findUnique();
+                        if (subject!=null){
+                            departmentBeanBox.remove(subject);
+                        }
+                    }
+                    return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"删除成功"));
+                }else {
+                    return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"删除失败,参数错误"));
+                }
+            }catch (Exception e){
+                return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"删除异常"+e.getMessage()));
+            }
+        }else {
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"参数验证失败"));
+        }
+    }
+
+    @PostMapping("/person/updataDepartment")
+    String reatePeoplewww(@RequestParam(name = "name") String name,@RequestParam(name = "sid") String sid){
+        Log.d(TAG, sid);
+        DepartmentBean subject=departmentBeanBox.query().equal(DepartmentBean_.sid,sid).build().findUnique();
+        if (subject!=null){
+            subject.setName(name);
+            departmentBeanBox.put(subject);
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"修改成功"));
+        }else {
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"修改失败"));
+        }
+    }
+
+   ///    13.部门分页查询
+//    请求地址：   http://设备IP:8090/person/findByPage
+//    请求方法： post
+    @PostMapping("/department/findByPage")
+    String findByPage22(@RequestBody PeoplePage peoplePage){
+        if (peoplePage!=null){
+            Log.d(TAG, peoplePage.toString());
+            try {
+                JSONArray jsonArray=new JSONArray();
+                List<DepartmentBean> subjectList= departmentBeanBox.query()
+                        .orderDesc(DepartmentBean_.creatTime)//降序 按时间排序
+                        .build()
+                        .find(peoplePage.getPage()*peoplePage.getSize(),peoplePage.getSize());
+                  Log.d(TAG, "DepartmentBean.size():" + subjectList.size());
+                for (DepartmentBean subject:subjectList){
+                    JSONObject object=new JSONObject();
+                    object.put("sid",subject.getSid());//sid是id
+                    object.put("name",subject.getName());
+                    object.put("num",subjectBox.query().equal(Subject_.department,subject.getName()).build().findLazy().size());
+                    jsonArray.put(object);
+                }
+                JSONObject object=new JSONObject();
+                object.put("total",departmentBeanBox.query().build().findLazy().size());
+                object.put("requestData",jsonArray);
+                object.put("msg","查询成功");
+                return object.toString();
+
+            }catch (Exception e){
+                return requsBean(-1,true,e.getMessage()+"","参数异常");
+            }
+        }else {
+            return requsBean(400,true,"","参数验证失败");
+        }
+
+    }
+
 
 
     private String requsBean(int result,boolean success,Object data,String msg){

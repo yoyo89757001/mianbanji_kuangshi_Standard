@@ -378,6 +378,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
 
+
         initView();
 
         try {
