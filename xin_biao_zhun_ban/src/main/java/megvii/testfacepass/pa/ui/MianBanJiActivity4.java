@@ -296,6 +296,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
             }
         }
 
+        //
 
 //        DateUtils.execSuCmd("date " + DateUtils.datas(1234567899876L)
 //                + "\n busybox hwclock -w\n");
