@@ -43,6 +43,7 @@ import java.util.List;
 
 
 import io.objectbox.Box;
+import io.objectbox.query.LazyList;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import mcv.facepass.FacePassException;
@@ -391,8 +392,8 @@ public class MyService3 {
                 if (MyApplication.myApplication.getFacePassHandler()==null){
                     return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"机器算法未初始化"));
                 }
-                Log.d(TAG, name+"peopleType:"+peopleType+"startTime:"+startTime+"birthday"+birthday);
-               // Log.d(TAG, "file.getSize():" + file.getSize());
+               // Log.d(TAG, name+"peopleType:"+peopleType+"startTime:"+startTime+"birthday"+birthday);
+              //  Log.d(TAG, "file.getSize():" + department);
                 long peopleId=System.currentTimeMillis();
                 Bitmap bitmap=readInputStreamToBitmap(file.getStream(),file.getSize());
                 FacePassAddFaceResult detectResult = null;
@@ -497,7 +498,7 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
         if (MyApplication.myApplication.getFacePassHandler()==null){
             return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"机器算法未初始化"));
         }
-        Log.d(TAG, icCard+" return com.alibaba.fast");
+       // Log.d(TAG, department+" return com.alibaba.fast");
         // Log.d(TAG, "更新时传过来的file:" + file);
         Subject subject=subjectBox.query().equal(Subject_.sid,sid).build().findUnique();
         if (subject==null){
@@ -931,10 +932,15 @@ String find(@RequestParam(name = "id") String id){
     @PostMapping("/person/updataDepartment")
     String reatePeoplewww(@RequestParam(name = "name") String name,@RequestParam(name = "sid") String sid){
         Log.d(TAG, sid);
-        DepartmentBean subject=departmentBeanBox.query().equal(DepartmentBean_.sid,sid).build().findUnique();
-        if (subject!=null){
-            subject.setName(name);
-            departmentBeanBox.put(subject);
+        DepartmentBean departmentBean=departmentBeanBox.query().equal(DepartmentBean_.sid,sid).build().findUnique();
+        if (departmentBean!=null && name!=null && !name.equals("")){
+            departmentBean.setName(name);
+            departmentBeanBox.put(departmentBean);
+            LazyList<Subject> subjectLazyList=subjectBox.query().equal(Subject_.department,name).build().findLazy();
+            for (Subject subject : subjectLazyList) {
+                subject.setDepartment(name);
+                subjectBox.put(subject);
+            }
             return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"修改成功"));
         }else {
             return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"修改失败"));
@@ -977,6 +983,31 @@ String find(@RequestParam(name = "id") String id){
 
     }
 
+
+    @GetMapping(path = "/person/getDashboard")
+    String getDashboard(){
+        try {
+            JSONObject jsonObject=new JSONObject();
+            LazyList<DepartmentBean> departmentBeanLazyList= departmentBeanBox.query().build().findLazy();
+            JSONArray jsonArrayString=new JSONArray();
+            JSONArray jsonArrayInt=new JSONArray();
+            for (DepartmentBean bean : departmentBeanLazyList) {
+                jsonArrayString.put(bean.getName());
+                jsonArrayInt.put(subjectBox.query().equal(Subject_.department,bean.getName()).build().findLazy().size());
+            }
+            jsonObject.put("sex1",subjectBox.query().equal(Subject_.sex,"1").build().findLazy().size());
+            jsonObject.put("sex2",subjectBox.query().equal(Subject_.sex,"2").build().findLazy().size());
+            jsonObject.put("yg",subjectBox.query().equal(Subject_.peopleType,1).build().findLazy().size());
+            jsonObject.put("fk",subjectBox.query().equal(Subject_.peopleType,2).build().findLazy().size());
+            jsonObject.put("xDataString",jsonArrayString);
+            jsonObject.put("xDataInt",jsonArrayInt);
+            jsonObject.put("msg","查询成功");
+            return jsonObject.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            return requsBean(-1,true,e.getMessage()+"","参数异常");
+        }
+    }
 
 
     private String requsBean(int result,boolean success,Object data,String msg){
