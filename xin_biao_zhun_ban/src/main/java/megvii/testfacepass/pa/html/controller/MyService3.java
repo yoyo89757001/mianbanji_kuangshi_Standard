@@ -995,6 +995,8 @@ String find(@RequestParam(name = "id") String id){
                 jsonArrayString.put(bean.getName());
                 jsonArrayInt.put(subjectBox.query().equal(Subject_.department,bean.getName()).build().findLazy().size());
             }
+
+            jsonObject.put("total",subjectBox.query().build().findLazy().size());
             jsonObject.put("sex1",subjectBox.query().equal(Subject_.sex,"1").build().findLazy().size());
             jsonObject.put("sex2",subjectBox.query().equal(Subject_.sex,"2").build().findLazy().size());
             jsonObject.put("yg",subjectBox.query().equal(Subject_.peopleType,1).build().findLazy().size());
