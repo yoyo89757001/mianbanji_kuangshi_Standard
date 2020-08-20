@@ -11,7 +11,7 @@ import android.util.Log;
 import android.util.Patterns;
 
 
-
+import androidx.exifinterface.media.ExifInterface;
 
 import com.alibaba.fastjson.JSON;
 
@@ -67,7 +67,7 @@ import megvii.testfacepass.pa.beans.UserInfos;
 import megvii.testfacepass.pa.utils.BitmapUtil;
 import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.FileUtil;
-
+import top.zibin.luban.Luban;
 
 
 @RestController
@@ -116,6 +116,19 @@ public class MyService3 {
     }
 
 
+    //修改密码
+    @PostMapping("/xiugaimima")
+    String logindsds(@RequestParam(name = "mima1" ) String mima1,@RequestParam(name = "mimanew" ) String mimanew){
+        if (mima1.equals(MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getLoginPassword()) && !mimanew.equals("")){
+           ConfigBean bean= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class);
+           bean.setLoginPassword(mimanew);
+            MMKV.defaultMMKV().encode("configBean",bean);
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"修改密码成功"));
+        }else {
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"旧密码不对，或新密码为空"));
+        }
+    }
+
     @GetMapping("/logout")
     String logout(@RequestParam(name = "token" ) String token){
         return JSON.toJSONString(new ResultBean(1,"退出成功","",""));
@@ -130,6 +143,22 @@ public class MyService3 {
     String getuserInfo(@RequestParam(name = "token" ) String token){
         Log.d("gggggggg", token);
         return JSON.toJSONString(new ResultBean(1,"获取个人信息成功",JSON.toJSONString(new UserInfos("admin","https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"))));
+    }
+
+    //    2.重启
+//    请求地址：   http://设备IP:8090/getDeviceKey
+//    请求方法： POST
+//    请求说明：
+    @GetMapping(path ="/chongqi")
+    String getuserIdddnfo(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SystemClock.sleep(1000);
+                DengUT.reboot();
+            }
+        }).start();
+        return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"重启成功"));
     }
 
 
@@ -272,10 +301,7 @@ public class MyService3 {
             }else {
                 return requsBean(400,true,"","参数验证失败");
             }
-
         }
-
-
 
 
 
@@ -285,7 +311,6 @@ public class MyService3 {
 //    请求数据：
     @GetMapping(path = "/restartDevice")
     String restartDevice(){
-
 //            if (lztek==null)
 //                return  requsBean(400,true,"","设备没有该方法");
 //            lztek.hardReboot();
@@ -306,7 +331,6 @@ public class MyService3 {
     }
 
 
-
 //    8.识别回调配置
 //    请求地址：   http://设备IP:8090/setIdentifyCallBack
 //    请求方法： POST
@@ -325,14 +349,11 @@ public class MyService3 {
         }else {
             return requsBean(400,true,"","参数验证失败");
         }
-
     }
 
     private boolean isValidUrl(String url){
         return !TextUtils.isEmpty(url) && url.matches(Patterns.WEB_URL.pattern());
     }
-
-
 
 
     //获取图片
@@ -387,21 +408,32 @@ public class MyService3 {
                         @RequestParam(name = "peopleType",required = false) String peopleType,@RequestParam(name = "birthday",required = false) String birthday,
                         @RequestParam(name = "startTime",required = false) String startTime,@RequestParam(name = "endTime",required = false) String endTime,
                         @RequestParam(name = "remarks",required = false) String remarks,@RequestParam(name = "phone",required = false) String phone,
-                        @RequestParam(name = "icCard",required = false) String icCard){
+                        @RequestParam(name = "icCard",required = false) String icCard,@RequestParam(name = "orient",required = false) String orient){//orient
             try {
                 if (MyApplication.myApplication.getFacePassHandler()==null){
                     return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"机器算法未初始化"));
                 }
                // Log.d(TAG, name+"peopleType:"+peopleType+"startTime:"+startTime+"birthday"+birthday);
-              //  Log.d(TAG, "file.getSize():" + department);
+                Log.d(TAG, "file.getSize():" + file.getSize());
                 long peopleId=System.currentTimeMillis();
                 Bitmap bitmap=readInputStreamToBitmap(file.getStream(),file.getSize());
                 FacePassAddFaceResult detectResult = null;
+                if (orient!=null && !orient.equals("undefined") && !orient.equals("")){
+                    if (orient.equals("6")){//ios相册竖向拍照 传过来是转了90度的，旋转修正
+                        bitmap=BitmapUtil.rotateBitmap(bitmap,90);
+                    }
+                    if (orient.equals("3")){//ios相册横向拍照 传过来是转了180度的，旋转修正
+                        bitmap=BitmapUtil.rotateBitmap(bitmap,180);
+                    }
+                }
                 BitmapUtil.saveBitmapToSD(bitmap, MyApplication.SDPATH, peopleId+".png");
-//              File file=  Luban.with(MyApplication.myApplication).load(MyApplication.SDPATH3+File.separator + "aaabbb.png")
+
+//                File fileTemp=  Luban.with(MyApplication.myApplication).load(MyApplication.SDPATH3+File.separator + "aaabbb.png")
 //                        .ignoreBy(500)
 //                        .setTargetDir(MyApplication.SDPATH3+File.separator)
 //                        .get(MyApplication.SDPATH3+File.separator + "aaabbb.png");
+
+
                 try {
                     detectResult = MyApplication.myApplication.getFacePassHandler().addFace(bitmap);
                 } catch (FacePassException e) {
@@ -442,6 +474,9 @@ public class MyService3 {
                     Log.d(TAG, "人员创建成功 "+subject.toString());
                     return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"创建成功"));
                 }else {
+//                    File fff=new File(MyApplication.SDPATH+File.separator+peopleId+".png");
+//                    if (fff.exists())
+//                    Log.d(TAG, "fff.delete():" + fff.delete());
                     return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"图片不符合入库要求"));
                 }
             }catch (Exception e){
@@ -449,6 +484,7 @@ public class MyService3 {
                 return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"创建异常"));
             }
     }
+
 
         private Bitmap readInputStreamToBitmap(InputStream ins, long fileSize) {
         if (ins == null) {
@@ -493,7 +529,7 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                     @RequestParam(name = "peopleType",required = false) String peopleType,@RequestParam(name = "birthday",required = false) String birthday,
                     @RequestParam(name = "startTime",required = false) String startTime,@RequestParam(name = "endTime",required = false) String endTime,
                     @RequestParam(name = "remarks",required = false) String remarks,@RequestParam(name = "phone",required = false) String phone,
-                    @RequestParam(name = "icCard",required = false) String icCard,@RequestParam(name = "sid") String sid){
+                    @RequestParam(name = "icCard",required = false) String icCard,@RequestParam(name = "sid") String sid,@RequestParam(name = "orient",required = false) String orient){
     try {
         if (MyApplication.myApplication.getFacePassHandler()==null){
             return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"机器算法未初始化"));
@@ -508,6 +544,14 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
             Bitmap bitmap=readInputStreamToBitmap(file.getStream(),file.getSize());
             FacePassAddFaceResult detectResult = null;
             long photoID=System.currentTimeMillis();
+            if (orient!=null && !orient.equals("undefined") && !orient.equals("")){
+                if (orient.equals("6")){//ios相册竖向拍照 传过来是转了90度的，旋转修正
+                    bitmap=BitmapUtil.rotateBitmap(bitmap,90);
+                }
+                if (orient.equals("3")){//ios相册横向拍照 传过来是转了180度的，旋转修正
+                    bitmap=BitmapUtil.rotateBitmap(bitmap,180);
+                }
+            }
             BitmapUtil.saveBitmapToSD(bitmap, MyApplication.SDPATH, photoID+".png");
 //              File file=  Luban.with(MyApplication.myApplication).load(MyApplication.SDPATH3+File.separator + "aaabbb.png")
 //                        .ignoreBy(500)
@@ -562,6 +606,9 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                 Log.d(TAG, "人员修改成功 "+subject.toString());
                 return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"修改成功"));
             }else {
+                File fff=new File(MyApplication.SDPATH+File.separator+photoID+".png");
+                if (fff.exists())
+                    Log.d(TAG, "fff.delete():" + fff.delete());
                 return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"图片不符合入库要求"));
             }
         }else {

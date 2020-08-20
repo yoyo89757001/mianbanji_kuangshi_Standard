@@ -398,7 +398,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         }
 
 
-
 //        JSONObject jsonObject=new JSONObject();
 //        try {
 //            jsonObject.put("searchThreshold",72);//识别阈值
@@ -433,6 +432,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         mRecognizeThread.start();
         mFeedFrameThread = new FeedFrameThread();
         mFeedFrameThread.start();
+
 
 
         mHandler = new Handler(new Handler.Callback() {
