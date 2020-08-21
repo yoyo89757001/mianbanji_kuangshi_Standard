@@ -396,7 +396,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         } catch (Exception e) {
            TastyToast.makeText(MianBanJiActivity4.this,"初始化失败"+e.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR).show();
         }
-//
+
 
 
 //        JSONObject jsonObject=new JSONObject();
