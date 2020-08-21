@@ -398,7 +398,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         }
 
 
-
+///
 //        JSONObject jsonObject=new JSONObject();
 //        try {
 //            jsonObject.put("searchThreshold",72);//识别阈值
