@@ -40,6 +40,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
@@ -61,6 +62,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -94,9 +96,11 @@ import megvii.testfacepass.pa.R;
 import megvii.testfacepass.pa.beans.ConfigBean;
 import megvii.testfacepass.pa.beans.DaKaBean;
 import megvii.testfacepass.pa.beans.DaKaBean_;
+import megvii.testfacepass.pa.beans.JieJiaRi;
 import megvii.testfacepass.pa.beans.Subject;
 import megvii.testfacepass.pa.beans.Subject_;
-import megvii.testfacepass.pa.beans.XGBean;
+import megvii.testfacepass.pa.beans.WeekDataBean;
+import megvii.testfacepass.pa.beans.WeekDataBean_;
 import megvii.testfacepass.pa.beans.ZhiLingBean;
 import megvii.testfacepass.pa.camera.CameraManager;
 import megvii.testfacepass.pa.camera.CameraPreview;
@@ -115,7 +119,6 @@ import megvii.testfacepass.pa.utils.NV21ToBitmap;
 import megvii.testfacepass.pa.utils.RestartAPPTool;
 import megvii.testfacepass.pa.utils.ScanGunKeyEventHelper;
 import megvii.testfacepass.pa.utils.SettingVar;
-import megvii.testfacepass.pa.view.FaceView;
 import megvii.testfacepass.pa.view.GlideRoundTransform;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -146,7 +149,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
     @BindView(R.id.faceImage)
     ImageView faceImage;
 
-    public static Activity activity;
     //private FaceView faceView;
     private boolean isReadCard=false;
     private ServerManager mServerManager;
@@ -272,7 +274,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         }catch (NoClassDefFoundError error){
             error.printStackTrace();
         }
-        activity=this;
         mScanGunKeyEventHelper=new ScanGunKeyEventHelper(this);
 
         if (netWorkStateReceiver == null) {
@@ -281,6 +282,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             registerReceiver(netWorkStateReceiver, filter);
         }
+
 
         if (configBean.getDangqianChengShi2()!=null){
             switch (configBean.getDangqianChengShi2()){
@@ -296,12 +298,11 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
             }
         }
 
-        //
+
+
 
 //        DateUtils.execSuCmd("date " + DateUtils.datas(1234567899876L)
 //                + "\n busybox hwclock -w\n");
-
-
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -339,7 +340,18 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
 //        }).start();
 
 
-        Log.d("MianBanJiActivity3", "subjectBox.query().build().findLazy().size():" + subjectBox.query().build().findLazy().size());
+       // Log.d("MianBanJiActivity3", "subjectBox.query().build().findLazy().size():" + subjectBox.query().build().findLazy().size());
+
+        if (!configBean.isRL() || !(configBean.getNian().equals(DateUtils.timesNian(System.currentTimeMillis()+"")))){//年份不相等，或者状态为flase 执行节假日日期获取
+           // Log.d("MianBanJiActivity4", "士大夫"+configBean.getNian());
+            link_jiejiari();//周末 + 节假日 -（被调成工作日的日期）= 节假日
+        }
+        Box<WeekDataBean> weekDataBeanBox=MyApplication.myApplication.getWeekDataBeanBox();
+
+        for (WeekDataBean weekDataBean : weekDataBeanBox.getAll()) {
+            Log.d("MianBanJiActivity4", weekDataBean.getData());
+        }
+
 
         //每分钟的广播
         // private TodayBean todayBean = null;
@@ -377,8 +389,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         musicId.put(7, soundPool.load(this, R.raw.xinxiguoqi, 1));//过期
 
         sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
-
 
         initView();
 
@@ -433,7 +443,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         mRecognizeThread.start();
         mFeedFrameThread = new FeedFrameThread();
         mFeedFrameThread.start();
-
 
 
         mHandler = new Handler(new Handler.Callback() {
@@ -685,7 +694,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
        // init_NFC();
 
         //开启摄像头
-        manager.open(getWindowManager(), SettingVar.cameraId, cameraWidth, cameraHeight);//前置是1
+      //  manager.open(getWindowManager(), SettingVar.cameraId, cameraWidth, cameraHeight);//前置是1
 
 //        if (configBean.isHuoTi()) {
 //            if (SettingVar.cameraId == 1) {
@@ -1961,6 +1970,113 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         });
     }
 
+    //获取节假日
+    private void link_jiejiari() {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .get()
+                .url("http://opendata.baidu.com/api.php?query="+DateUtils.timesNian(System.currentTimeMillis()+"")+"&resource_id=6018&format=json");
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                try {
+                    String [] wd=configBean.getWeekDate().split(",");
+                    Box<WeekDataBean> weekDataBeanBox=MyApplication.myApplication.getWeekDataBeanBox();
+                    List<String> s= DateUtils.getEveryday(DateUtils.timesNian(System.currentTimeMillis()+"")+"-01-01",DateUtils.timesNian(System.currentTimeMillis()+"")+"-12-31");
+                    for (String s1 : s) {
+                        //  Log.d("MianBanJiActivity4", s1);
+                        String xingqi=DateUtils.weekOne(s1);
+                        //根据配置判断
+                        boolean isk=true;
+                        for (String s2 : wd) {//如果星期在这个列表里，那就是放假，就不用加到本地数据库里面
+                            if (s2.equals(xingqi)){
+                                isk=false;
+                                break;
+                            }
+                        }
+                        if (isk){//添加之前查询有没有相同的日期
+                            WeekDataBean ww= weekDataBeanBox.query().equal(WeekDataBean_.data,s1).build().findUnique();
+                            if (ww==null){
+                                weekDataBeanBox.put(new WeekDataBean(s1,DateUtils.data(s1)));
+                            }
+                        }
+                    }
+                }catch (Exception e1){
+                    e1.printStackTrace();
+                }
+
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "心跳" + ss);
+                    JieJiaRi jieJiaRi= JSONObject.parseObject(ss, JieJiaRi.class);
+                    List<String> data1=new ArrayList<>();//节假日
+                    List<String> data2=new ArrayList<>();//调休的最后加上
+                    for (JieJiaRi.DataBean.HolidayBean holidayBean : jieJiaRi.getData().get(0).getHoliday()) {
+                        for (JieJiaRi.DataBean.HolidayBean.ListBean listBean : holidayBean.getList()) {
+                           // Log.d("listBean", listBean.getDate());
+                            //Log.d("listBean", listBean.getStatus());
+                            if (listBean.getStatus().equals("1")){
+                                data1.add(listBean.getDate());
+                            }else {
+                                data2.add(listBean.getDate());
+                            }
+                        }
+                    }
+                    //365天
+                    String [] wd=configBean.getWeekDate().split(",");
+                    Box<WeekDataBean> weekDataBeanBox=MyApplication.myApplication.getWeekDataBeanBox();
+                    List<String> s= DateUtils.getEveryday(DateUtils.timesNian(System.currentTimeMillis()+"")+"-01-01",DateUtils.timesNian(System.currentTimeMillis()+"")+"-12-31");
+                    for (String s1 : s) {
+                        //  Log.d("MianBanJiActivity4", s1);
+                        String xingqi=DateUtils.weekOne(s1);
+                        //根据配置判断
+                        boolean isk=true;
+                        for (String s2 : wd) {//如果星期在这个列表里，那就是放假，就不用加到本地数据库里面
+                            if (s2.equals(xingqi)){
+                                isk=false;
+                                break;
+                            }
+                        }
+                        for (String s2 : data1) {//节假日包含在这个列表里，那就是放假，就不用加到本地数据库里面
+                            if (s1.equals(s2)){
+                                isk=false;
+                                break;
+                            }
+                        }
+                        if (isk){//添加之前查询有没有相同的日期
+                           WeekDataBean ww= weekDataBeanBox.query().equal(WeekDataBean_.data,s1).build().findUnique();
+                           if (ww==null){
+                               weekDataBeanBox.put(new WeekDataBean(s1,DateUtils.data(s1)));
+                           }
+                        }
+                    }
+                    //最后加上调休的
+                    for (String s1 : data2) {
+                        WeekDataBean ww= weekDataBeanBox.query().equal(WeekDataBean_.data,s1).build().findUnique();
+                        if (ww==null){
+                            weekDataBeanBox.put(new WeekDataBean(s1,DateUtils.data(s1)));
+                        }
+                    }
+                    configBean.setRL(true);
+                    MMKV.defaultMMKV().encode("configBean",configBean);//保存状态
+                } catch (Exception e) {
+                    Log.d("WebsocketPushMsg", e.getMessage() + "gggg");
+
+                }
+            }
+        });
+    }
+
     //过期删除
     private void deleteFaceByTime(){
        // @SuppressLint("SimpleDateFormat")
@@ -1991,11 +2107,10 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         //删掉过期访客
        List<Subject> subjectList1= subjectBox.query().equal(Subject_.peopleType,2).build().findLazy();
         for (Subject subject : subjectList1) {
-            Log.d("MianBanJiActivity4", "System.currentTimeMillis():" + System.currentTimeMillis());
-            Log.d("MianBanJiActivity4", subject.toString());
+            //Log.d("MianBanJiActivity4", "System.currentTimeMillis():" + System.currentTimeMillis());
+           // Log.d("MianBanJiActivity4", subject.toString());
             try {
                 if (subject.getEndTime()<System.currentTimeMillis()){
-                    Log.d("MianBanJiActivity4", "ddddd");
                     paAccessControl.deleteFace(subject.getTeZhengMa().getBytes());
                     subjectBox.remove(subject);
                 }//1597312427062
@@ -2291,8 +2406,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
 //            }
 //        });
 //    }
-
-
 
 
     private void guanPing() {

@@ -11,7 +11,7 @@ import android.util.Log;
 import android.util.Patterns;
 
 
-import androidx.exifinterface.media.ExifInterface;
+
 
 import com.alibaba.fastjson.JSON;
 
@@ -64,10 +64,12 @@ import megvii.testfacepass.pa.beans.SouSuob;
 import megvii.testfacepass.pa.beans.Subject;
 import megvii.testfacepass.pa.beans.Subject_;
 import megvii.testfacepass.pa.beans.UserInfos;
+import megvii.testfacepass.pa.beans.WeekDataBean;
+import megvii.testfacepass.pa.beans.WeekDataBean_;
 import megvii.testfacepass.pa.utils.BitmapUtil;
 import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.FileUtil;
-import top.zibin.luban.Luban;
+
 
 
 @RestController
@@ -96,12 +98,11 @@ public class MyService3 {
     private Box<Subject> subjectBox  = MyApplication.myApplication.getSubjectBox();
     private Box<DaKaBean> daKaBeanBox  = MyApplication.myApplication.getDaKaBeanBox();
     private Box<DepartmentBean> departmentBeanBox  = MyApplication.myApplication.getDepartmentBeanBox();
-   // private Box<IDCardTakeBean> idCardTakeBeanBox  = MyApplication.myApplication.getIdCardTakeBeanBox();
+    private Box<WeekDataBean> weekDataBeanBox  = MyApplication.myApplication.getWeekDataBeanBox();
     //private ConfigBean MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class);
    // private  String serialnumber= MyApplication.myApplication.getMMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)Box().get(123456).getJihuoma();
    // private ConfigBean MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)= MyApplication.myApplication.getMMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)Box().get(123456);
   //  private  String pass= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getJiaoyanmima();
-
 
 
 
@@ -177,13 +178,10 @@ public class MyService3 {
     }
 
 
-
     @GetMapping(path = "/getConfig")
     String getConfig(){
-
         return com.alibaba.fastjson.JSONObject.toJSONString(MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class));
     }
-
 
 
 
@@ -750,6 +748,36 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                 return requsBean(400,true,"","参数验证失败");
             }
 
+    }
+
+
+    //    13.考勤日期获取
+//    请求地址：   http://设备IP:8090/person/findByPage
+//    请求方法： post
+    @GetMapping(path = "/data/findData")
+    String findByPagessss(){
+            try {
+                JSONArray jsonArray=new JSONArray();
+                List<WeekDataBean> subjectList= weekDataBeanBox.query()
+                        .orderDesc(WeekDataBean_.time)//降序 按时间排序
+                        .build()
+                        .find();
+                //  Log.d(TAG, "subjectList.size():" + subjectList.size());
+                for (WeekDataBean subject:subjectList){
+                    JSONObject object=new JSONObject();
+                    object.put("id",subject.getId());//sid是id
+                    object.put("data",subject.getData());
+                    object.put("time",subject.getTime());
+                    jsonArray.put(object);
+                }
+                JSONObject object=new JSONObject();
+                object.put("total",weekDataBeanBox.query().build().findLazy().size());
+                object.put("requestData",jsonArray);
+                object.put("msg","查询成功");
+                return object.toString();
+            }catch (Exception e){
+                return requsBean(-1,true,e.getMessage()+"","参数异常");
+            }
     }
 
 //    18.人员信息查询
