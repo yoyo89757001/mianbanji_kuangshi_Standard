@@ -759,7 +759,7 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
             try {
                 JSONArray jsonArray=new JSONArray();
                 List<WeekDataBean> subjectList= weekDataBeanBox.query()
-                        .orderDesc(WeekDataBean_.time)//降序 按时间排序
+                        .order(WeekDataBean_.time)//降序 按时间排序
                         .build()
                         .find();
                 //  Log.d(TAG, "subjectList.size():" + subjectList.size());

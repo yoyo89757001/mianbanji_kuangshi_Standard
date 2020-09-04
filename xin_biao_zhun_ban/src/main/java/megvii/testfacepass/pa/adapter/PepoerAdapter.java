@@ -30,7 +30,7 @@ public class PepoerAdapter extends BaseQuickAdapter<Subject, BaseViewHolder> imp
         try {
             baseViewHolder.setText(R.id.tv_group_name,taskBean.getName());
             baseViewHolder.setText(R.id.kahao,taskBean.getSid());
-            baseViewHolder.setImageResource(R.id.touxiang,R.drawable.mianbji209);
+            //baseViewHolder.setImageResource(R.id.touxiang,R.drawable.mianbji209);
             try {
                 Glide.with(getContext())
                         .load(new BitmapDrawable(getContext().getResources(),facePassHandler.getFaceImage(taskBean.getTeZhengMa().getBytes())))

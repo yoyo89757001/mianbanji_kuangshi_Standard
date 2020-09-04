@@ -40,6 +40,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -50,22 +52,21 @@ import com.hwit.HwitManager;
 import com.lztek.toolkit.Lztek;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.tencent.mmkv.MMKV;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
-
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -74,7 +75,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
 import Lib.Reader.MT.Function;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -140,14 +140,18 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
     TextView tishiyu;
     @BindView(R.id.root_layout)
     RelativeLayout rootLayout;
-    @BindView(R.id.logo)
-    TextView logo;
     @BindView(R.id.faceLinearLayout)
     LinearLayout faceLinearLayout;
     @BindView(R.id.faceName)
     TextView faceName;
     @BindView(R.id.faceImage)
     ImageView faceImage;
+    @BindView(R.id.logo)
+    TextView logo;
+    @BindView(R.id.tvTime)
+    TextView tvTime;
+    @BindView(R.id.tvDate)
+    TextView tvDate;
 
     //private FaceView faceView;
     private boolean isReadCard=false;
@@ -221,13 +225,9 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
     private String JHM = null;
     TextView tvTitle_Ir;
     TextView tvName_Ir;//识别结果弹出信息的名字
-    TextView tvName_Ir2;//识别结果弹出信息的名字
     TextView tvTime_Ir;//识别结果弹出信息的时间
-    TextView tvTime_Ir2;//识别结果弹出信息的时间
     TextView tvFaceTips_Ir;//识别信息提示
-    TextView tvFaceTips_Ir2;//识别信息提示
     LinearLayout layout_loadbg_Ir;//识别提示大框
-    LinearLayout layout_loadbg_Ir2;//识别提示大框
     RelativeLayout layout_true_gif_Ir, layout_error_gif_Ir;//蓝色图片动画 红色图片动画
     ImageView iv_true_gif_in_Ir, iv_true_gif_out_Ir, iv_error_gif_in_Ir, iv_error_gif_out_Ir;//定义旋转的动画
     Animation gifClockwise, gifAntiClockwise;
@@ -254,6 +254,8 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
     private FaceWork faceWork=null;
     private IcCardWork icCardWork=null;
     private FaceOrCardWork faceOrCardWork=null;
+    private boolean isSK=false;
+
 
 
 
@@ -297,7 +299,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                     break;
             }
         }
-
 
 
 
@@ -345,12 +346,13 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         if (!configBean.isRL() || !(configBean.getNian().equals(DateUtils.timesNian(System.currentTimeMillis()+"")))){//年份不相等，或者状态为flase 执行节假日日期获取
            // Log.d("MianBanJiActivity4", "士大夫"+configBean.getNian());
             link_jiejiari();//周末 + 节假日 -（被调成工作日的日期）= 节假日
-        }
-        Box<WeekDataBean> weekDataBeanBox=MyApplication.myApplication.getWeekDataBeanBox();
 
-        for (WeekDataBean weekDataBean : weekDataBeanBox.getAll()) {
-            Log.d("MianBanJiActivity4", weekDataBean.getData());
         }
+      //  link_jiejiari();
+//        Box<WeekDataBean> weekDataBeanBox=MyApplication.myApplication.getWeekDataBeanBox();
+//        for (WeekDataBean weekDataBean : weekDataBeanBox.getAll()) {
+//            Log.d("MianBanJiActivity4", weekDataBean.getData());
+//        }
 
 
         //每分钟的广播
@@ -512,7 +514,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                     case 999:
                         DengUT.getInstance(configBean).openLOED();
                         String icdata = (String) msg.obj;
-
                         Log.d("MianBanJiActivity3", "icdata"+icdata);
                         if (icdata==null)
                             break;
@@ -525,7 +526,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                             showToase("刷卡模式未开启",TastyToast.ERROR);
                             break;
                         }
-
+                        isSK=true;
                       //  if (configBean.getConfigModel()==2){//2是刷脸加刷卡都可以
                             try {
                                 //  Log.d("MianBanJiActivity3", icdata.toUpperCase());
@@ -694,7 +695,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
        // init_NFC();
 
         //开启摄像头
-      //  manager.open(getWindowManager(), SettingVar.cameraId, cameraWidth, cameraHeight);//前置是1
+        manager.open(getWindowManager(), SettingVar.cameraId, cameraWidth, cameraHeight);//前置是1
 
 //        if (configBean.isHuoTi()) {
 //            if (SettingVar.cameraId == 1) {
@@ -1098,7 +1099,9 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                             DengUT.isOPENRed = false;
                             DengUT.isOpenDOR = false;
                             DengUT.getInstance(configBean).closeWrite();
-                            showUIResult(1,"","");
+                            if (!isSK){
+                                showUIResult("","",0);
+                            }
                             //启动定时器或重置定时器
                             if (task2 != null) {
                                 task2.cancel();
@@ -1165,7 +1168,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                             if (!DengUT.isOPEN) {
                                 DengUT.isOPEN = true;
                                 DengUT.getInstance(configBean).openWrite();
-                                showUIResult(2,"","");
+                               // showUIResult(2,"","");
                             }
                             mDetectResultQueue.offer(detectionResult);
                             //   Log.d("ggggg", "1 mDetectResultQueue.size = " + mDetectResultQueue.size());
@@ -1436,14 +1439,18 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         /* 注册相机回调函数 */
       //  manager2.setListener(this);
 
+        AssetManager mgr = getAssets();
+        Typeface tf = Typeface.createFromAsset(mgr, "fonts/simhei.ttf");
+        tvTime.setTypeface(tf);
+
+        tvDate.setText(getDate());
+        tvTime.setText(getTime());
+        timeHandler.sendEmptyMessageDelayed(10010, 1000);
+
         tvName_Ir = findViewById(R.id.tvName_Ir);//名字
-        tvName_Ir2 = findViewById(R.id.tvName_Ir2);//名字
         tvTime_Ir = findViewById(R.id.tvTime_Ir);//时间
-        tvTime_Ir2 = findViewById(R.id.tvTime_Ir2);//时间
         tvFaceTips_Ir = findViewById(R.id.tvFaceTips_Ir);//识别信息提示
-        tvFaceTips_Ir2 = findViewById(R.id.tvFaceTips_Ir2);//识别信息提示
         layout_loadbg_Ir = findViewById(R.id.layout_loadbg_Ir);//头像区域的显示的底图背景
-        layout_loadbg_Ir2 = findViewById(R.id.layout_loadbg_Ir2);//头像区域的显示的底图背景
         layout_true_gif_Ir = findViewById(R.id.layout_true_gif_Ir);
         layout_error_gif_Ir = findViewById(R.id.layout_error_gif_Ir);
         iv_true_gif_in_Ir = findViewById(R.id.iv_true_gif_in_Ir);
@@ -1463,8 +1470,13 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         iv_error_gif_out_Ir.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         iv_true_gif_out_Ir.startAnimation(gifClockwise);
         iv_error_gif_out_Ir.startAnimation(gifClockwise);
-        AssetManager mgr = getAssets();
-        Typeface tf = Typeface.createFromAsset(mgr, "fonts/hua.ttf");
+
+        iv_true_gif_in_Ir.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        iv_error_gif_in_Ir.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        iv_true_gif_in_Ir.startAnimation(gifAntiClockwise);
+        iv_error_gif_in_Ir.startAnimation(gifAntiClockwise);
+
+
         tvTitle_Ir.setTypeface(tf);
         if (configBean.getCompanyName() == null) {
             tvTitle_Ir.setText("请设置公司名称");
@@ -1472,11 +1484,28 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
             tvTitle_Ir.setText(configBean.getCompanyName());
         }
 
-        showUIResult(1,"","");
+        //showUIResult(1,"","");
 
     }
 
+    private String getTime() {
+        return new SimpleDateFormat("HH:mm:ss", Locale.US).
+                format(Calendar.getInstance().getTime());
+    }
 
+    private String getDate() {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.US).
+                format(Calendar.getInstance().getTime());
+    }
+
+    Handler timeHandler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            tvTime.setText(getTime());
+            timeHandler.sendEmptyMessageDelayed(10010, 1000);
+        }
+    };
 
     private class RecognizeThread extends Thread {
 
@@ -1491,9 +1520,8 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                     FacePassRecognitionResult[] recognizeResult = paAccessControl.recognize(group_name, detectionResult.message);
                   //   Log.d("RecognizeThread", "识别线程");
                     if (recognizeResult != null && recognizeResult.length > 0) {
-
+                        isSK=false;
                         for (FacePassRecognitionResult result : recognizeResult) {
-
                             if (FacePassRecognitionResultType.RECOG_OK == result.facePassRecognitionResultType) {
                                 //识别的
                                 Subject subject = subjectBox.query().equal(Subject_.teZhengMa, new String(result.faceToken)).build().findUnique();
@@ -1526,7 +1554,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                                        break;
                                                    }
                                                }
-
                                                break;
                                            }
                                        }
@@ -1720,6 +1747,8 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         Log.d("MianBanJiActivity3", "onDestroy");
         if (mServerManager!=null)
         mServerManager.unRegister();
+
+        timeHandler.removeMessages(10010);
 
         if (mReadThread != null) {
             mReadThread.isIterrupt=true;
@@ -1993,6 +2022,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                         //根据配置判断
                         boolean isk=true;
                         for (String s2 : wd) {//如果星期在这个列表里，那就是放假，就不用加到本地数据库里面
+                           // Log.d("MianBanJiActivity4", xingqi+"   "+s2);
                             if (s2.equals(xingqi)){
                                 isk=false;
                                 break;
@@ -2026,9 +2056,23 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                            // Log.d("listBean", listBean.getDate());
                             //Log.d("listBean", listBean.getStatus());
                             if (listBean.getStatus().equals("1")){
-                                data1.add(listBean.getDate());
+                                String []d1=listBean.getDate().split("-");
+                                if (d1[1].length()==1){
+                                    d1[1]="0"+d1[1];
+                                }
+                                if (d1[2].length()==1){
+                                    d1[2]="0"+d1[2];
+                                }
+                                data1.add(d1[0]+"-"+d1[1]+"-"+d1[2]);
                             }else {
-                                data2.add(listBean.getDate());
+                                String []d1=listBean.getDate().split("-");
+                                if (d1[1].length()==1){
+                                    d1[1]="0"+d1[1];
+                                }
+                                if (d1[2].length()==1){
+                                    d1[2]="0"+d1[2];
+                                }
+                                data2.add(d1[0]+"-"+d1[1]+"-"+d1[2]);
                             }
                         }
                     }
@@ -2042,12 +2086,15 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                         //根据配置判断
                         boolean isk=true;
                         for (String s2 : wd) {//如果星期在这个列表里，那就是放假，就不用加到本地数据库里面
+                           // Log.d("MianBanJiActivity4", xingqi+"   "+s2);
                             if (s2.equals(xingqi)){
                                 isk=false;
                                 break;
                             }
                         }
                         for (String s2 : data1) {//节假日包含在这个列表里，那就是放假，就不用加到本地数据库里面
+                           // Log.d("MianBanJiActivity6", "节假日"+s2);
+                           // Log.d("MianBanJiActivity6", "全部日期"+s1);
                             if (s1.equals(s2)){
                                 isk=false;
                                 break;
@@ -2071,7 +2118,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                     MMKV.defaultMMKV().encode("configBean",configBean);//保存状态
                 } catch (Exception e) {
                     Log.d("WebsocketPushMsg", e.getMessage() + "gggg");
-
                 }
             }
         });
@@ -2614,15 +2660,15 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
      * @param state 状态 1 初始状态  2 识别中,出现提示语  3 识别失败  4 识别成功
      */
     protected void showUIResult(final int state, final String name, final String detectFaceTime) {
-        if (state==STATE){
-            return;
-        }else {
-            STATE=state;
-        }
+//        if (state==STATE){
+//            return;
+//        }else {
+//            STATE=state;
+//        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-              //  Log.d("MianBanJiActivity3", "state:" + state);
+                Log.d("MianBanJiActivity3", "state:" + state);
                 switch (state) {
                     case 1: {//初始状态
                         layout_true_gif_Ir.setVisibility(View.INVISIBLE);//蓝色图片动画
@@ -2701,22 +2747,35 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
      * @param
      */
     protected void showUIResult(String name, final String detectFaceTime,int tt) {
-        if (tt==0){
-            layout_loadbg_Ir2.setVisibility(View.INVISIBLE);//识别结果大框
-            tvName_Ir2.setVisibility(View.INVISIBLE);//姓名
-            tvTime_Ir2.setVisibility(View.INVISIBLE);//时间
-            tvFaceTips_Ir2.setVisibility(View.INVISIBLE);//识别提示
-            tvName_Ir2.setText(name);
-            tvTime_Ir2.setText(detectFaceTime);
-        }else {
-            layout_loadbg_Ir2.setVisibility(View.VISIBLE);//识别结果大框
-            tvName_Ir2.setVisibility(View.VISIBLE);//姓名
-            tvTime_Ir2.setVisibility(View.VISIBLE);//时间
-            tvFaceTips_Ir2.setVisibility(View.VISIBLE);//识别提示
-            tvName_Ir2.setText(name);
-            tvTime_Ir2.setText(detectFaceTime);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (tt==0){
+                    layout_loadbg_Ir.setVisibility(View.INVISIBLE);//识别结果大框
+                    tvName_Ir.setVisibility(View.INVISIBLE);//姓名
+                    tvTime_Ir.setVisibility(View.INVISIBLE);//时间
+                    tvFaceTips_Ir.setVisibility(View.INVISIBLE);//识别提示
+                    tvName_Ir.setText(name);
+                    tvTime_Ir.setText(detectFaceTime);
 
+                    layout_true_gif_Ir.setVisibility(View.VISIBLE);//蓝色图片动画
+                    layout_error_gif_Ir.setVisibility(View.INVISIBLE);//红色图片动画
+                    iv_true_gif_in_Ir.setVisibility(View.VISIBLE);//蓝色圈内层
+                    iv_true_gif_out_Ir.setVisibility(View.VISIBLE);//蓝色圈外层
+                    iv_error_gif_in_Ir.setVisibility(View.INVISIBLE);//红色圈内层
+                    iv_error_gif_out_Ir.setVisibility(View.INVISIBLE);//红色圈外层
+                    layout_loadbg_Ir.setBackgroundResource(R.mipmap.true_bg);//切换背景
+
+                }else {
+                    layout_loadbg_Ir.setVisibility(View.VISIBLE);//识别结果大框
+                    tvName_Ir.setVisibility(View.VISIBLE);//姓名
+                    tvTime_Ir.setVisibility(View.VISIBLE);//时间
+                    tvFaceTips_Ir.setVisibility(View.VISIBLE);//识别提示
+                    tvName_Ir.setText(name);
+                    tvTime_Ir.setText(detectFaceTime);
+                }
+            }
+        });
     }
 
     private void closePing(){
@@ -2742,7 +2801,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                     //关屏
                     message.what = 444;
                     mHandler.sendMessage(message);
-
                 }
             };
             timer.schedule(task, jidianqi);
