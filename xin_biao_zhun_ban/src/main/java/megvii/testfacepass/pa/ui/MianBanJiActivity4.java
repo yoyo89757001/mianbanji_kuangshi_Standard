@@ -93,6 +93,8 @@ import mcv.facepass.types.FacePassRecognitionResult;
 import mcv.facepass.types.FacePassRecognitionResultType;
 import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.R;
+import megvii.testfacepass.pa.beans.AttendanceBean;
+import megvii.testfacepass.pa.beans.AttendanceBean_;
 import megvii.testfacepass.pa.beans.ConfigBean;
 import megvii.testfacepass.pa.beans.DaKaBean;
 import megvii.testfacepass.pa.beans.DaKaBean_;
@@ -210,7 +212,8 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
     private SoundPool soundPool;
     //定义一个HashMap用于存放音频流的ID
     private HashMap<Integer, Integer> musicId = new HashMap<>();
-    private Box<DaKaBean> daKaBeanBox =MyApplication.myApplication.getDaKaBeanBox();;
+    private Box<DaKaBean> daKaBeanBox =MyApplication.myApplication.getDaKaBeanBox();
+    private Box<AttendanceBean> attendanceBeanBox =MyApplication.myApplication.getAttendanceBeanBox();
     private int pp = 0;
     private ReadThread mReadThread;
     private ReadThread2 mReadThread2;
@@ -343,10 +346,12 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
 
        // Log.d("MianBanJiActivity3", "subjectBox.query().build().findLazy().size():" + subjectBox.query().build().findLazy().size());
 
+        if (configBean.getNian()==null){
+            configBean.setNian(DateUtils.timesNian(System.currentTimeMillis()+""));
+        }
         if (!configBean.isRL() || !(configBean.getNian().equals(DateUtils.timesNian(System.currentTimeMillis()+"")))){//年份不相等，或者状态为flase 执行节假日日期获取
            // Log.d("MianBanJiActivity4", "士大夫"+configBean.getNian());
             link_jiejiari();//周末 + 节假日 -（被调成工作日的日期）= 节假日
-
         }
       //  link_jiejiari();
 //        Box<WeekDataBean> weekDataBeanBox=MyApplication.myApplication.getWeekDataBeanBox();
@@ -445,6 +450,8 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         mRecognizeThread.start();
         mFeedFrameThread = new FeedFrameThread();
         mFeedFrameThread.start();
+
+        Log.d("MianBanJiActivity4", "DateUtils.dataOn:" + (DateUtils.dataOne("12:12")-DateUtils.dataOne("10:12"))/(1000 * 60));
 
 
         mHandler = new Handler(new Handler.Callback() {
@@ -1910,7 +1917,8 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                     // String riqi11 = DateUtils.getWeek(System.currentTimeMillis()) + "   " + DateUtils.timesTwo(System.currentTimeMillis() + "");
                     //  riqi.setTypeface(tf);
                     String xiaoshiss = DateUtils.timeMinute(System.currentTimeMillis() + "");
-                    if (xiaoshiss.split(":")[0].equals("03") && xiaoshiss.split(":")[1].equals("40")) {
+                    String []xs =xiaoshiss.split(":");
+                    if (xs[0].equals("03") && xs[1].equals("40")) {
                         //过期删除
                         new Thread(new Runnable() {
                             @Override
@@ -1919,20 +1927,36 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                             }
                         }).start();
                     }
-                    //1分钟一次指令获取
 
-                    if (configBean.getHoutaiDiZhi() != null && !configBean.getHoutaiDiZhi().equals("")) {
-                        if (isGET){
-                            isGET=false;
-                            try {
-                                link_get_zhiling();
-                            }catch (Exception e){
-                                e.printStackTrace();
-                                isGET=true;
+                  //  if (xs[0].equals("23") && xs[1].equals("40")) {//一天只执行一次，可能存在问题
+                        //执行考勤规则
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    kaiqi();
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    }
-                    link_xintiao();
+                        }).start();
+               //     }
+
+
+
+                    //1分钟一次指令获取
+//                    if (configBean.getHoutaiDiZhi() != null && !configBean.getHoutaiDiZhi().equals("")) {
+//                        if (isGET){
+//                            isGET=false;
+//                            try {
+//                                link_get_zhiling();
+//                            }catch (Exception e){
+//                                e.printStackTrace();
+//                                isGET=true;
+//                            }
+//                        }
+//                    }
+//                    link_xintiao();
 
                     break;
                 case Intent.ACTION_TIME_CHANGED:
@@ -1943,6 +1967,239 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                     //设置了系统时区的action
                     //  Toast.makeText(context, "system time zone changed", Toast.LENGTH_SHORT).show();
                     break;
+            }
+        }
+    }
+
+
+
+    private void kaiqi(){
+        //需不需要考勤
+        Box<WeekDataBean> weekDataBeanBox  = MyApplication.myApplication.getWeekDataBeanBox();
+        WeekDataBean weekDataBean= weekDataBeanBox.query().equal(WeekDataBean_.data,DateUtils.getCurrentTime_Today()).build().findUnique();
+        if (weekDataBean!=null) {//不为空 说明今天需要考勤
+            ConfigBean configBean = MMKV.defaultMMKV().decodeParcelable("configBean", ConfigBean.class);
+            String nyr = DateUtils.timeYMD(System.currentTimeMillis() + "");
+            String ny = DateUtils.timeYM(System.currentTimeMillis() + "");
+            long kaishi = DateUtils.dataOnes(nyr+" 00:00");//今天开始的时间
+            long jieshu = DateUtils.dataOnes(nyr+" 23:59");//今天结束的时间
+            LazyList<Subject> subjectLazyList = subjectBox.query().equal(Subject_.peopleType, 1).build().findLazy();//所有员工
+            Log.d("MianBanJiActivity4", "subjectLazyList.size():" + subjectLazyList.size());
+            if (configBean.getKqOneFour() == 0) {//2次考勤
+                for (Subject subject : subjectLazyList) {
+                    //查询有没有今天的考勤，没有就新建
+                    AttendanceBean attendanceBean = attendanceBeanBox.query().equal(AttendanceBean_.sid, subject.getSid()).equal(AttendanceBean_.yearMonthDay,nyr).build().findUnique();
+                    if (attendanceBean == null) {
+                        AttendanceBean bean = new AttendanceBean();
+                        bean.setName(subject.getName());
+                        bean.setSid(subject.getSid());
+                        bean.setDepartment(subject.getDepartment());
+                        bean.setYearMonthDay(nyr);
+                        bean.setYearMonth(ny);
+                        //查询今天第一次打卡和最后一次打卡
+                       List<DaKaBean> daKaBeanList= daKaBeanBox.query()
+                                .equal(DaKaBean_.personId,subject.getSid())
+                                .between(DaKaBean_.time,kaishi,jieshu)
+                                .order(DaKaBean_.time)//降序 按时间排序
+                                .build().find();
+                       //拿到第一次打卡时间和最后一次打卡时间
+                        if (daKaBeanList.size()>0){
+                            long d1= daKaBeanList.get(0).getTime();//第一次
+                            long d2= daKaBeanList.get(daKaBeanList.size()-1).getTime();//最后一次
+                            //先算缺勤
+                            if (configBean.getQueqing1()!=0){//不为0表示设置了缺勤时间,上班打卡时间超过多少为缺勤
+                                long qqtime1=DateUtils.dataOnes(nyr+" "+configBean.getWook1())+configBean.getQueqing1()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒)
+                                if (d1>qqtime1){//缺勤
+                                    bean.setAbsenteeismNumber(1);
+                                    attendanceBeanBox.put(bean);
+                                    continue;
+                                }
+                            }
+                            if (configBean.getQueqing2()!=0){//不为0表示设置了缺勤时间,下班早退时间超过多少为缺勤
+                                long qqtime1=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())-configBean.getQueqing2()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒)
+                                if (d2<qqtime1){//缺勤
+                                    bean.setAbsenteeismNumber(1);
+                                    attendanceBeanBox.put(bean);
+                                    continue;
+                                }
+                            }
+                            long sbtime=DateUtils.dataOnes(nyr+" "+configBean.getWook1())+configBean.getChidao()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒）
+                            if (d1>sbtime){//迟到
+                                bean.setLateNumber(1);
+                            }
+                            long zaotime=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())-configBean.getZaotui()*60000;//早退时间 = 下班时间-早退延迟时间（一分钟等于60000毫秒）
+                            if (d2<zaotime){//早退
+                                bean.setLeaveEarlyNumber(1);
+                            }
+                            long jbtime=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())+configBean.getJiaban()*60000;//加班时间 = 下班时间+下班延迟时间（一分钟等于60000毫秒）
+                            if (d2-jbtime>0){//加班 3600000(一小时的毫秒数)
+                                bean.setOvertimeTime((int) ((d2-jbtime)/3600000));
+                            }
+                            attendanceBeanBox.put(bean);
+
+                        }else {//没打卡记录，缺勤
+                            bean.setAbsenteeismNumber(1);
+                            attendanceBeanBox.put(bean);
+                        }
+                    }else {
+                        //查询今天第一次打卡和最后一次打卡
+                        List<DaKaBean> daKaBeanList= daKaBeanBox.query()
+                                .equal(DaKaBean_.personId,subject.getSid())
+                                .between(DaKaBean_.time,kaishi,jieshu)
+                                .order(DaKaBean_.time)//降序 按时间排序
+                                .build().find();
+                        //拿到第一次打卡时间和最后一次打卡时间
+                        if (daKaBeanList.size()>0){
+                            long d1= daKaBeanList.get(0).getTime();//第一次
+                            long d2= daKaBeanList.get(daKaBeanList.size()-1).getTime();//最后一次
+                            //先算缺勤
+                            if (configBean.getQueqing1()!=0){//不为0表示设置了缺勤时间,上班打卡时间超过多少为缺勤
+                                long qqtime1=DateUtils.dataOnes(nyr+" "+configBean.getWook1())+configBean.getQueqing1()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒)
+                                if (d1>qqtime1){//缺勤
+                                    attendanceBean.setAbsenteeismNumber(1);
+                                    attendanceBeanBox.put(attendanceBean);
+                                    continue;
+                                }
+                            }
+                            if (configBean.getQueqing2()!=0){//不为0表示设置了缺勤时间,下班早退时间超过多少为缺勤
+                                long qqtime1=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())-configBean.getQueqing2()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒)
+                                if (d2<qqtime1){//缺勤
+                                    attendanceBean.setAbsenteeismNumber(1);
+                                    attendanceBeanBox.put(attendanceBean);
+                                    continue;
+                                }
+                            }
+                            long sbtime=DateUtils.dataOnes(nyr+" "+configBean.getWook1())+configBean.getChidao()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒）
+                            if (d1>sbtime){//迟到
+                                attendanceBean.setLateNumber(1);
+                            }
+                            long zaotime=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())-configBean.getZaotui()*60000;//早退时间 = 下班时间-早退延迟时间（一分钟等于60000毫秒）
+                            if (d2<zaotime){//早退
+                                attendanceBean.setLeaveEarlyNumber(1);
+                            }
+                            long jbtime=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())+configBean.getJiaban()*60000;//加班时间 = 下班时间+下班延迟时间（一分钟等于60000毫秒）
+                            if (d2-jbtime>0){//加班 3600000(一小时的毫秒数)
+                                attendanceBean.setOvertimeTime((int) ((d2-jbtime)/3600000));
+                            }
+                            attendanceBeanBox.put(attendanceBean);
+
+                        }else {//没打卡记录，缺勤
+                            attendanceBean.setAbsenteeismNumber(1);
+                            attendanceBeanBox.put(attendanceBean);
+                        }
+                    }
+                }
+                for (AttendanceBean attendanceBean : attendanceBeanBox.getAll()) {
+                    Log.d("MianBanJiActivity4", "考勤记录"+attendanceBean.toString());
+                }
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            } else {//4次考勤
+
+                for (Subject subject : subjectLazyList) {
+                    //查询有没有今天的考勤，没有就新建
+                    AttendanceBean attendanceBean = attendanceBeanBox.query().equal(AttendanceBean_.sid, subject.getSid()).equal(AttendanceBean_.yearMonthDay,nyr).build().findUnique();
+                    if (attendanceBean == null) {
+                        AttendanceBean bean = new AttendanceBean();
+                        bean.setName(subject.getName());
+                        bean.setSid(subject.getSid());
+                        bean.setDepartment(subject.getDepartment());
+                        bean.setYearMonthDay(nyr);
+                        bean.setYearMonth(ny);
+                        //查询今天第一次打卡和最后一次打卡
+                        List<DaKaBean> daKaBeanList= daKaBeanBox.query()
+                                .equal(DaKaBean_.personId,subject.getSid())
+                                .between(DaKaBean_.time,kaishi,jieshu)
+                                .order(DaKaBean_.time)//降序 按时间排序
+                                .build().find();
+                        //拿到第一次打卡时间和最后一次打卡时间
+                        if (daKaBeanList.size()>0){
+                            long d1= daKaBeanList.get(0).getTime();//第一次
+                            long d2= daKaBeanList.get(daKaBeanList.size()-1).getTime();//最后一次
+                            //先算缺勤
+                            if (configBean.getQueqing1()!=0){//不为0表示设置了缺勤时间,上班打卡时间超过多少为缺勤
+                                long qqtime1=DateUtils.dataOnes(nyr+" "+configBean.getWook1())+configBean.getQueqing1()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒)
+                                if (d1>qqtime1){//缺勤
+                                    bean.setAbsenteeismNumber(1);
+                                    attendanceBeanBox.put(bean);
+                                    continue;
+                                }
+                            }
+                            if (configBean.getQueqing2()!=0){//不为0表示设置了缺勤时间,下班早退时间超过多少为缺勤
+                                long qqtime1=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())-configBean.getQueqing2()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒)
+                                if (d2<qqtime1){//缺勤
+                                    bean.setAbsenteeismNumber(1);
+                                    attendanceBeanBox.put(bean);
+                                    continue;
+                                }
+                            }
+                            long sbtime=DateUtils.dataOnes(nyr+" "+configBean.getWook1())+configBean.getChidao()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒）
+                            if (d1>sbtime){//迟到
+                                bean.setLateNumber(1);
+                            }
+                            long zaotime=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())-configBean.getZaotui()*60000;//早退时间 = 下班时间-早退延迟时间（一分钟等于60000毫秒）
+                            if (d2<zaotime){//早退
+                                bean.setLeaveEarlyNumber(1);
+                            }
+                            long jbtime=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())+configBean.getJiaban()*60000;//加班时间 = 下班时间+下班延迟时间（一分钟等于60000毫秒）
+                            if (d2-jbtime>0){//加班 3600000(一小时的毫秒数)
+                                bean.setOvertimeTime((int) ((d2-jbtime)/3600000));
+                            }
+                            attendanceBeanBox.put(bean);
+
+                        }else {//没打卡记录，缺勤
+                            bean.setAbsenteeismNumber(1);
+                            attendanceBeanBox.put(bean);
+                        }
+                    }else {
+                        //查询今天第一次打卡和最后一次打卡
+                        List<DaKaBean> daKaBeanList= daKaBeanBox.query()
+                                .equal(DaKaBean_.personId,subject.getSid())
+                                .between(DaKaBean_.time,kaishi,jieshu)
+                                .order(DaKaBean_.time)//降序 按时间排序
+                                .build().find();
+                        //拿到第一次打卡时间和最后一次打卡时间
+                        if (daKaBeanList.size()>0){
+                            long d1= daKaBeanList.get(0).getTime();//第一次
+                            long d2= daKaBeanList.get(daKaBeanList.size()-1).getTime();//最后一次
+                            //先算缺勤
+                            if (configBean.getQueqing1()!=0){//不为0表示设置了缺勤时间,上班打卡时间超过多少为缺勤
+                                long qqtime1=DateUtils.dataOnes(nyr+" "+configBean.getWook1())+configBean.getQueqing1()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒)
+                                if (d1>qqtime1){//缺勤
+                                    attendanceBean.setAbsenteeismNumber(1);
+                                    attendanceBeanBox.put(attendanceBean);
+                                    continue;
+                                }
+                            }
+                            if (configBean.getQueqing2()!=0){//不为0表示设置了缺勤时间,下班早退时间超过多少为缺勤
+                                long qqtime1=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())-configBean.getQueqing2()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒)
+                                if (d2<qqtime1){//缺勤
+                                    attendanceBean.setAbsenteeismNumber(1);
+                                    attendanceBeanBox.put(attendanceBean);
+                                    continue;
+                                }
+                            }
+                            long sbtime=DateUtils.dataOnes(nyr+" "+configBean.getWook1())+configBean.getChidao()*60000;//上班时间 = 上班时间+迟到时间（一分钟等于60000毫秒）
+                            if (d1>sbtime){//迟到
+                                attendanceBean.setLateNumber(1);
+                            }
+                            long zaotime=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())-configBean.getZaotui()*60000;//早退时间 = 下班时间-早退延迟时间（一分钟等于60000毫秒）
+                            if (d2<zaotime){//早退
+                                attendanceBean.setLeaveEarlyNumber(1);
+                            }
+                            long jbtime=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty1())+configBean.getJiaban()*60000;//加班时间 = 下班时间+下班延迟时间（一分钟等于60000毫秒）
+                            if (d2-jbtime>0){//加班 3600000(一小时的毫秒数)
+                                attendanceBean.setOvertimeTime((int) ((d2-jbtime)/3600000));
+                            }
+                            attendanceBeanBox.put(attendanceBean);
+
+                        }else {//没打卡记录，缺勤
+                            attendanceBean.setAbsenteeismNumber(1);
+                            attendanceBeanBox.put(attendanceBean);
+                        }
+                    }
+                }
+
+
             }
         }
     }
@@ -2012,9 +2269,11 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
+
                 try {
                     String [] wd=configBean.getWeekDate().split(",");
                     Box<WeekDataBean> weekDataBeanBox=MyApplication.myApplication.getWeekDataBeanBox();
+                    weekDataBeanBox.removeAll();
                     List<String> s= DateUtils.getEveryday(DateUtils.timesNian(System.currentTimeMillis()+"")+"-01-01",DateUtils.timesNian(System.currentTimeMillis()+"")+"-12-31");
                     for (String s1 : s) {
                         //  Log.d("MianBanJiActivity4", s1);
@@ -2078,8 +2337,9 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                     }
                     //365天
                     String [] wd=configBean.getWeekDate().split(",");
-                    Box<WeekDataBean> weekDataBeanBox=MyApplication.myApplication.getWeekDataBeanBox();
                     List<String> s= DateUtils.getEveryday(DateUtils.timesNian(System.currentTimeMillis()+"")+"-01-01",DateUtils.timesNian(System.currentTimeMillis()+"")+"-12-31");
+                    Box<WeekDataBean> weekDataBeanBox=MyApplication.myApplication.getWeekDataBeanBox();
+                    weekDataBeanBox.removeAll();
                     for (String s1 : s) {
                         //  Log.d("MianBanJiActivity4", s1);
                         String xingqi=DateUtils.weekOne(s1);

@@ -52,6 +52,7 @@ import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.beans.ConfigBean;
 import megvii.testfacepass.pa.beans.DaKaBean;
 import megvii.testfacepass.pa.beans.DaKaBean_;
+import megvii.testfacepass.pa.beans.DataSaveBean;
 import megvii.testfacepass.pa.beans.DepartmentBean;
 import megvii.testfacepass.pa.beans.DepartmentBean_;
 import megvii.testfacepass.pa.beans.Logingbean;
@@ -67,6 +68,7 @@ import megvii.testfacepass.pa.beans.UserInfos;
 import megvii.testfacepass.pa.beans.WeekDataBean;
 import megvii.testfacepass.pa.beans.WeekDataBean_;
 import megvii.testfacepass.pa.utils.BitmapUtil;
+import megvii.testfacepass.pa.utils.DateUtils;
 import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.FileUtil;
 
@@ -349,9 +351,48 @@ public class MyService3 {
         }
     }
 
+
     private boolean isValidUrl(String url){
         return !TextUtils.isEmpty(url) && url.matches(Patterns.WEB_URL.pattern());
     }
+
+    //    8.考勤配置
+//    请求地址：   http://设备IP:8090/setIdentifyCallBack
+//    请求方法： POST
+    @PostMapping(path = "/data/save")
+    String setIdentifyCallBdddsack(@RequestBody DataSaveBean dataSaveBean){
+       // MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).setHoutaiDiZhi(url);
+        if (dataSaveBean!=null){
+            if (dataSaveBean.getIsArrange().size()>0){//删掉所有重新录入
+                weekDataBeanBox.removeAll();
+                for (String s : dataSaveBean.getIsArrange()) {
+                    weekDataBeanBox.put(new WeekDataBean(s, DateUtils.data(s)));
+                }
+            }
+            //保存其他的配置
+            ConfigBean configBean=MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class);
+            configBean.setWeekDate(dataSaveBean.getXinqi());
+            if (dataSaveBean.getRadio().equals("1")){
+                configBean.setKqOneFour(0);
+            }else {
+                configBean.setKqOneFour(1);
+            }
+            configBean.setWook1(dataSaveBean.getStartTime1());
+            configBean.setOffDuty1(dataSaveBean.getEndTime1());
+            configBean.setWook2(dataSaveBean.getStartTime2());
+            configBean.setOffDuty2(dataSaveBean.getEndTime2());
+            configBean.setChidao(dataSaveBean.getMinute1_1());
+            configBean.setZaotui(dataSaveBean.getMinute1_2());
+            configBean.setJiaban(dataSaveBean.getMinute1_3());
+            configBean.setQueqing1(dataSaveBean.getMinute2_1());
+            configBean.setQueqing2(dataSaveBean.getMinute2_2());
+            MMKV.defaultMMKV().encode("configBean",configBean);
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"保存设置成功"));
+        }else {
+            return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(0,"保存数据失败"));
+        }
+    }
+
 
 
     //获取图片

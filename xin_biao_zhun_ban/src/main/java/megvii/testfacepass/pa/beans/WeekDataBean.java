@@ -9,7 +9,7 @@ public class WeekDataBean {//工作日
     @Id
     private Long id;
     private String data;
-    private long time;
+    private long time;//排序用的
 
     public WeekDataBean(String data, long time) {
         this.data = data;

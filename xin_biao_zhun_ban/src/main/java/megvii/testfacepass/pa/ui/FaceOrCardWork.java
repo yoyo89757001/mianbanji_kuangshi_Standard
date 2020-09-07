@@ -3,13 +3,12 @@ package megvii.testfacepass.pa.ui;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
-
 import com.tencent.mmkv.MMKV;
-
 import java.io.File;
-
 import io.objectbox.Box;
 import megvii.testfacepass.pa.MyApplication;
+import megvii.testfacepass.pa.beans.AttendanceBean;
+import megvii.testfacepass.pa.beans.AttendanceBean_;
 import megvii.testfacepass.pa.beans.ConfigBean;
 import megvii.testfacepass.pa.beans.DaKaBean;
 import megvii.testfacepass.pa.beans.Subject;
@@ -19,13 +18,17 @@ import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.FileUtil;
 import megvii.testfacepass.pa.utils.SettingVar;
 
+
+
 public class FaceOrCardWork {//刷脸或者刷卡都可以
     private Box<DaKaBean> daKaBeanBox=null;
     private Handler mHandler=null;
 
+
     public FaceOrCardWork(Handler handler) {
         mHandler=handler;
         daKaBeanBox=MyApplication.myApplication.getDaKaBeanBox();
+
     }
 
 
@@ -50,6 +53,7 @@ public class FaceOrCardWork {//刷脸或者刷卡都可以
                 daKaBean.setDepartment(subject.getDepartment());
                 daKaBean.setPeopleType(subject.getPeopleType());
                 daKaBeanBox.put(daKaBean);
+
                 //发送一份到mq
 
                 Message message2 = Message.obtain();
@@ -119,7 +123,6 @@ public class FaceOrCardWork {//刷脸或者刷卡都可以
                     //发送一份到mq
 
                 }
-
 
                 break;
             }
