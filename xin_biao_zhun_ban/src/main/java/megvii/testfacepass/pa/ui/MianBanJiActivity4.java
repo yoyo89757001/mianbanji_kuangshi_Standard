@@ -2146,6 +2146,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                         }else {
                             kaishi4=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty2())-configBean.getQueqing2()*60000;//下午上班的时间(加上迟到时间)
                         }
+                        //
                         long jieshu4=DateUtils.dataOnes(nyr+" 23:59");//下午上班的时间(加上10分钟)
                         List<DaKaBean> daKaBeanList4= daKaBeanBox.query()
                                 .equal(DaKaBean_.personId,subject.getSid())
