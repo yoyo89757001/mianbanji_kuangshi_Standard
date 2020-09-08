@@ -12,16 +12,34 @@ public class AttendanceBean {//考勤表
     private String sid;//員工id
     private String department;//部门
     private int normalNumber;//正常打卡
-    private int lateNumber;//今天的迟到次数
-    private int leaveEarlyNumber;//今天的早退次数
-    private int absenteeismNumber;//今天的缺勤次数
-    private int lateNumber2;//今天的迟到次数
-    private int leaveEarlyNumber2;//今天的早退次数
-    private int absenteeismNumber2;//今天的缺勤次数
-    private int OvertimeTime;//今天的加班时间（小时）
+    private int lateNumber;//上午迟到分钟
+    private int leaveEarlyNumber;//上午早退分钟
+    private int absenteeismNumber;//上午缺勤
+    private int lateNumber2;//下午迟到分钟
+    private int leaveEarlyNumber2;//下午早退分钟
+    private int absenteeismNumber2;//下午缺勤
+    private int overtimeTime;//今天的加班时间（小时）
     private String yearMonthDay;//年月日
     private String yearMonth;//年月
     private String photo;// 照片
+    private int late;//今天迟到次数
+    private int leaveEarly;//今天早退次数
+
+    public int getLate() {
+        return late;
+    }
+
+    public void setLate(int late) {
+        this.late = late;
+    }
+
+    public int getLeaveEarly() {
+        return leaveEarly;
+    }
+
+    public void setLeaveEarly(int leaveEarly) {
+        this.leaveEarly = leaveEarly;
+    }
 
     public int getLateNumber2() {
         return lateNumber2;
@@ -136,11 +154,11 @@ public class AttendanceBean {//考勤表
     }
 
     public int getOvertimeTime() {
-        return OvertimeTime;
+        return overtimeTime;
     }
 
     public void setOvertimeTime(int overtimeTime) {
-        OvertimeTime = overtimeTime;
+        this.overtimeTime = overtimeTime;
     }
 
     @Override
@@ -157,7 +175,7 @@ public class AttendanceBean {//考勤表
                 ", lateNumber2=" + lateNumber2 +
                 ", leaveEarlyNumber2=" + leaveEarlyNumber2 +
                 ", absenteeismNumber2=" + absenteeismNumber2 +
-                ", OvertimeTime=" + OvertimeTime +
+                ", OvertimeTime=" + overtimeTime +
                 ", yearMonthDay='" + yearMonthDay + '\'' +
                 ", yearMonth='" + yearMonth + '\'' +
                 ", photo='" + photo + '\'' +
