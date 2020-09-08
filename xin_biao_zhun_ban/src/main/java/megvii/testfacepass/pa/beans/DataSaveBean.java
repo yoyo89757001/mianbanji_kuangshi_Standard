@@ -13,27 +13,29 @@ public class DataSaveBean {
     private int minute1_1;
     private int minute1_2;
     private int minute1_3;
+    private int minute1_4;
+    private int minute1_5;
     private int minute2_1;
     private int minute2_2;
     private String xinqi;
 
-    @Override
-    public String toString() {
-        return "DataSaveBean{" +
-                "isArrange=" + isArrange +
-                ", radio='" + radio + '\'' +
-                ", startTime1='" + startTime1 + '\'' +
-                ", endTime1='" + endTime1 + '\'' +
-                ", startTime2='" + startTime2 + '\'' +
-                ", endTime2='" + endTime2 + '\'' +
-                ", minute1_1='" + minute1_1 + '\'' +
-                ", minute1_2='" + minute1_2 + '\'' +
-                ", minute1_3='" + minute1_3 + '\'' +
-                ", minute2_1='" + minute2_1 + '\'' +
-                ", minute2_2='" + minute2_2 + '\'' +
-                ", xinqi='" + xinqi + '\'' +
-                '}';
+    public int getMinute1_4() {
+        return minute1_4;
     }
+
+    public void setMinute1_4(int minute1_4) {
+        this.minute1_4 = minute1_4;
+    }
+
+    public int getMinute1_5() {
+        return minute1_5;
+    }
+
+    public void setMinute1_5(int minute1_5) {
+        this.minute1_5 = minute1_5;
+    }
+
+
 
     public List<String> getIsArrange() {
         return isArrange;
@@ -129,5 +131,25 @@ public class DataSaveBean {
 
     public void setXinqi(String xinqi) {
         this.xinqi = xinqi;
+    }
+
+    @Override
+    public String toString() {
+        return "DataSaveBean{" +
+                "isArrange=" + isArrange +
+                ", radio='" + radio + '\'' +
+                ", startTime1='" + startTime1 + '\'' +
+                ", endTime1='" + endTime1 + '\'' +
+                ", startTime2='" + startTime2 + '\'' +
+                ", endTime2='" + endTime2 + '\'' +
+                ", minute1_1=" + minute1_1 +
+                ", minute1_2=" + minute1_2 +
+                ", minute1_3=" + minute1_3 +
+                ", minute1_4=" + minute1_4 +
+                ", minute1_5=" + minute1_5 +
+                ", minute2_1=" + minute2_1 +
+                ", minute2_2=" + minute2_2 +
+                ", xinqi='" + xinqi + '\'' +
+                '}';
     }
 }

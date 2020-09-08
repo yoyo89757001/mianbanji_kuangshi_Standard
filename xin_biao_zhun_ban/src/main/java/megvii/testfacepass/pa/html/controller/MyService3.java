@@ -386,6 +386,7 @@ public class MyService3 {
             configBean.setJiaban(dataSaveBean.getMinute1_3());
             configBean.setQueqing1(dataSaveBean.getMinute2_1());
             configBean.setQueqing2(dataSaveBean.getMinute2_2());
+
             MMKV.defaultMMKV().encode("configBean",configBean);
             return com.alibaba.fastjson.JSONObject.toJSONString(new PeopleReques(1,"保存设置成功"));
         }else {

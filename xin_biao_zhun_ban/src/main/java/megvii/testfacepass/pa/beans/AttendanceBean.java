@@ -15,11 +15,45 @@ public class AttendanceBean {//考勤表
     private int lateNumber;//今天的迟到次数
     private int leaveEarlyNumber;//今天的早退次数
     private int absenteeismNumber;//今天的缺勤次数
+    private int lateNumber2;//今天的迟到次数
+    private int leaveEarlyNumber2;//今天的早退次数
+    private int absenteeismNumber2;//今天的缺勤次数
     private int OvertimeTime;//今天的加班时间（小时）
     private String yearMonthDay;//年月日
     private String yearMonth;//年月
+    private String photo;// 照片
 
+    public int getLateNumber2() {
+        return lateNumber2;
+    }
 
+    public void setLateNumber2(int lateNumber2) {
+        this.lateNumber2 = lateNumber2;
+    }
+
+    public int getLeaveEarlyNumber2() {
+        return leaveEarlyNumber2;
+    }
+
+    public void setLeaveEarlyNumber2(int leaveEarlyNumber2) {
+        this.leaveEarlyNumber2 = leaveEarlyNumber2;
+    }
+
+    public int getAbsenteeismNumber2() {
+        return absenteeismNumber2;
+    }
+
+    public void setAbsenteeismNumber2(int absenteeismNumber2) {
+        this.absenteeismNumber2 = absenteeismNumber2;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
 
     public String getYearMonthDay() {
         return yearMonthDay;
@@ -120,9 +154,13 @@ public class AttendanceBean {//考勤表
                 ", lateNumber=" + lateNumber +
                 ", leaveEarlyNumber=" + leaveEarlyNumber +
                 ", absenteeismNumber=" + absenteeismNumber +
+                ", lateNumber2=" + lateNumber2 +
+                ", leaveEarlyNumber2=" + leaveEarlyNumber2 +
+                ", absenteeismNumber2=" + absenteeismNumber2 +
                 ", OvertimeTime=" + OvertimeTime +
                 ", yearMonthDay='" + yearMonthDay + '\'' +
                 ", yearMonth='" + yearMonth + '\'' +
+                ", photo='" + photo + '\'' +
                 '}';
     }
 }
