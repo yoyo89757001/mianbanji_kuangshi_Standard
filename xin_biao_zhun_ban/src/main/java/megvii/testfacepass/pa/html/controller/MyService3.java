@@ -49,12 +49,15 @@ import jxl.write.WritableFont;
 import mcv.facepass.FacePassException;
 import mcv.facepass.types.FacePassAddFaceResult;
 import megvii.testfacepass.pa.MyApplication;
+import megvii.testfacepass.pa.beans.AttendanceBean;
+import megvii.testfacepass.pa.beans.AttendanceBean_;
 import megvii.testfacepass.pa.beans.ConfigBean;
 import megvii.testfacepass.pa.beans.DaKaBean;
 import megvii.testfacepass.pa.beans.DaKaBean_;
 import megvii.testfacepass.pa.beans.DataSaveBean;
 import megvii.testfacepass.pa.beans.DepartmentBean;
 import megvii.testfacepass.pa.beans.DepartmentBean_;
+import megvii.testfacepass.pa.beans.KaoQingPage;
 import megvii.testfacepass.pa.beans.Logingbean;
 import megvii.testfacepass.pa.beans.PeoplePage;
 import megvii.testfacepass.pa.beans.PeopleReques;
@@ -101,6 +104,7 @@ public class MyService3 {
     private Box<DaKaBean> daKaBeanBox  = MyApplication.myApplication.getDaKaBeanBox();
     private Box<DepartmentBean> departmentBeanBox  = MyApplication.myApplication.getDepartmentBeanBox();
     private Box<WeekDataBean> weekDataBeanBox  = MyApplication.myApplication.getWeekDataBeanBox();
+    private Box<AttendanceBean> attendanceBeanBox  = MyApplication.myApplication.getAttendanceBeanBox();
     //private ConfigBean MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)= MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class);
    // private  String serialnumber= MyApplication.myApplication.getMMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)Box().get(123456).getJihuoma();
    // private ConfigBean MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)= MyApplication.myApplication.getMMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class)Box().get(123456);
@@ -559,6 +563,51 @@ public class MyService3 {
         return null;
     }
 
+
+    //获取excal
+    @PostMapping("/get/excal")
+    String ffdf(@RequestParam(name = "time") String time){
+        if (time!=null && !time.equals("")){
+            try {
+                JSONArray jsonArray=new JSONArray();
+                LazyList<AttendanceBean> subjectList= attendanceBeanBox.query()
+                        .equal(AttendanceBean_.yearMonth,time)
+                        .build()
+                        .findLazy();
+                //  Log.d(TAG, "subjectList.size():" + subjectList.size());
+                for (AttendanceBean subject:subjectList){
+                    JSONObject object=new JSONObject();
+                    object.put("photo",subject.getPhoto());//sid是id
+                    object.put("name",subject.getName());
+                    object.put("department",subject.getDepartment());
+                    object.put("lateNumber",subject.getLateNumber());
+                    object.put("lateNumber2",subject.getLateNumber2());
+                    object.put("leaveEarlyNumber",subject.getLeaveEarlyNumber());
+                    object.put("leaveEarlyNumber2",subject.getLeaveEarlyNumber2());
+                    object.put("absenteeismNumber",subject.getAbsenteeismNumber());
+                    object.put("absenteeismNumber2",subject.getAbsenteeismNumber2());
+                    object.put("overtimeTime",subject.getOvertimeTime());
+                    object.put("late",subject.getLate());
+                    object.put("leaveEarly",subject.getLeaveEarly());
+                    object.put("yearMonth",subject.getYearMonthDay());
+                    jsonArray.put(object);
+                }
+                JSONObject object=new JSONObject();
+                object.put("total",attendanceBeanBox.query().equal(AttendanceBean_.yearMonth,peoplePage.getTime()).build().findLazy().size());
+                object.put("radio",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getKqOneFour());
+                object.put("requestData",jsonArray);
+                object.put("msg","查询成功");
+                return object.toString();
+                //  return requsBean(1,true,jsonArray.toString(),"获取成功");
+            }catch (Exception e){
+                return requsBean(-1,true,e.getMessage()+"","参数异常");
+            }
+        }else {
+            return requsBean(400,true,"","参数验证失败");
+        }
+
+    }
+
 //11.人员更新
 //    请求地址：   http://设备IP:8090/person/update
 //    请求方法： POST
@@ -734,6 +783,92 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
     }
 
 
+    //    13.考勤分页查询
+//    请求地址：   http://设备IP:8090/person/findByPage
+//    请求方法： post
+    @PostMapping("/kaoqing/findByPage")
+    String findBydddPage(@RequestBody KaoQingPage peoplePage){
+        if (peoplePage!=null){
+            Log.d(TAG, peoplePage.toString());
+            if (peoplePage.getName()!=null && !peoplePage.getName().equals("")){
+                try {
+                    JSONArray jsonArray=new JSONArray();
+                    List<AttendanceBean> subjectList= attendanceBeanBox.query()
+                            .contains(AttendanceBean_.name,peoplePage.getName())
+                            .equal(AttendanceBean_.yearMonth,peoplePage.getTime())
+                            .build()
+                            .find(peoplePage.getPage()*peoplePage.getSize(),peoplePage.getSize());
+                    //  Log.d(TAG, "subjectList.size():" + subjectList.size());
+                    for (AttendanceBean subject:subjectList){
+                        JSONObject object=new JSONObject();
+                        object.put("photo",subject.getPhoto());//sid是id
+                        object.put("name",subject.getName());
+                        object.put("department",subject.getDepartment());
+                        object.put("lateNumber",subject.getLateNumber());
+                        object.put("lateNumber2",subject.getLateNumber2());
+                        object.put("leaveEarlyNumber",subject.getLeaveEarlyNumber());
+                        object.put("leaveEarlyNumber2",subject.getLeaveEarlyNumber2());
+                        object.put("absenteeismNumber",subject.getAbsenteeismNumber());
+                        object.put("absenteeismNumber2",subject.getAbsenteeismNumber2());
+                        object.put("overtimeTime",subject.getOvertimeTime());
+                        object.put("late",subject.getLate());
+                        object.put("leaveEarly",subject.getLeaveEarly());
+                        object.put("yearMonth",subject.getYearMonthDay());
+                        jsonArray.put(object);
+                    }
+                    JSONObject object=new JSONObject();
+                    object.put("total",attendanceBeanBox.query().equal(AttendanceBean_.yearMonth,peoplePage.getTime()).build().findLazy().size());
+                    object.put("radio",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getKqOneFour());
+                    object.put("requestData",jsonArray);
+                    object.put("msg","查询成功");
+                    return object.toString();
+                    //  return requsBean(1,true,jsonArray.toString(),"获取成功");
+                }catch (Exception e){
+                    return requsBean(-1,true,e.getMessage()+"","参数异常");
+                }
+            }else {
+                try {
+                    JSONArray jsonArray=new JSONArray();
+                    List<AttendanceBean> subjectList= attendanceBeanBox.query()
+                            .equal(AttendanceBean_.yearMonth,peoplePage.getTime())
+                            .build()
+                            .find(peoplePage.getPage()*peoplePage.getSize(),peoplePage.getSize());
+                    //  Log.d(TAG, "subjectList.size():" + subjectList.size());
+                    for (AttendanceBean subject:subjectList){
+                        JSONObject object=new JSONObject();
+                        object.put("photo",subject.getPhoto());//sid是id
+                        object.put("name",subject.getName());
+                        object.put("department",subject.getDepartment());
+                        object.put("lateNumber",subject.getLateNumber());
+                        object.put("lateNumber2",subject.getLateNumber2());
+                        object.put("leaveEarlyNumber",subject.getLeaveEarlyNumber());
+                        object.put("leaveEarlyNumber2",subject.getLeaveEarlyNumber2());
+                        object.put("absenteeismNumber",subject.getAbsenteeismNumber());
+                        object.put("absenteeismNumber2",subject.getAbsenteeismNumber2());
+                        object.put("overtimeTime",subject.getOvertimeTime());
+                        object.put("late",subject.getLate());
+                        object.put("leaveEarly",subject.getLeaveEarly());
+                        object.put("yearMonth",subject.getYearMonthDay());
+                        jsonArray.put(object);
+                    }
+                    JSONObject object=new JSONObject();
+                    object.put("total",attendanceBeanBox.query().equal(AttendanceBean_.yearMonth,peoplePage.getTime()).build().findLazy().size());
+                    object.put("radio",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getKqOneFour());
+                    object.put("requestData",jsonArray);
+                    object.put("msg","查询成功");
+                    return object.toString();
+
+                    //  return requsBean(1,true,jsonArray.toString(),"获取成功");
+                }catch (Exception e){
+                    return requsBean(-1,true,e.getMessage()+"","参数异常");
+                }
+            }
+
+        }else {
+            return requsBean(400,true,"","参数验证失败");
+        }
+
+    }
 
 //    13.人员分页查询
 //    请求地址：   http://设备IP:8090/person/findByPage
