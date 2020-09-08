@@ -2169,7 +2169,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                 bean.setOvertimeTime((int) ((d2-jbtime)/3600000));
                             }
                             attendanceBeanBox.put(bean);
-                            //
 
                         }else {
                             //没打卡记录，缺勤 下午
