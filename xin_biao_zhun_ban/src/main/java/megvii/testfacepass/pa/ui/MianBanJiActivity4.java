@@ -520,7 +520,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                     case 999:
                         DengUT.getInstance(configBean).openLOED();
                         String icdata = (String) msg.obj;
-                        Log.d("MianBanJiActivity3", "icdata"+icdata);
+                       // Log.d("MianBanJiActivity3", "icdata"+icdata);
                         if (icdata==null)
                             break;
                         if (isReadCard){//是否读取卡的信息给后台
