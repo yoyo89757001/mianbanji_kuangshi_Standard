@@ -2410,7 +2410,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
         try {
             LazyList<AttendanceBean> attendanceBeanLazyList= attendanceBeanBox.query().less(AttendanceBean_.time,start).build().findLazy();
             for (AttendanceBean bean : attendanceBeanLazyList) {
-                attendanceBeanBox.remove(bean);
+                attendanceBeanBox.remove(bean);//删掉考勤记录
             }
         }catch (Exception e){
             e.printStackTrace();
