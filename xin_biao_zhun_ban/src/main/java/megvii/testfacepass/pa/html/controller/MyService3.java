@@ -569,32 +569,45 @@ public class MyService3 {
     String ffdf(@RequestParam(name = "time") String time){
         if (time!=null && !time.equals("")){
             try {
+                Log.d(TAG, time+"time");
                 JSONArray jsonArray=new JSONArray();
-                LazyList<AttendanceBean> subjectList= attendanceBeanBox.query()
-                        .equal(AttendanceBean_.yearMonth,time)
-                        .build()
-                        .findLazy();
-                //  Log.d(TAG, "subjectList.size():" + subjectList.size());
-                for (AttendanceBean subject:subjectList){
+                LazyList<Subject> subjectList= subjectBox.query().build().findLazy();
+                for (Subject subject:subjectList){
+                    LazyList<AttendanceBean> attendanceBeanLazyList= attendanceBeanBox.query()
+                            .equal(AttendanceBean_.yearMonth,time)
+                            .equal(AttendanceBean_.sid,subject.getSid()).build().findLazy();
+                    AttendanceBean bean=new AttendanceBean();
+                    for (AttendanceBean attendanceBean : attendanceBeanLazyList) {//统计总和
+                        if (attendanceBean.getLate()==0 && attendanceBean.getLeaveEarly()==0 && attendanceBean.getAbsenteeismNumber()==0 && attendanceBean.getAbsenteeismNumber2()==0){
+                            bean.setNormalNumber(bean.getNormalNumber()+1);
+                        }
+                        bean.setLate(bean.getLate()+attendanceBean.getLate());//迟到次数累计
+                        bean.setLeaveEarly(bean.getLeaveEarly()+attendanceBean.getLeaveEarly());//早退次数累计
+                        bean.setAbsenteeismNumber(bean.getAbsenteeismNumber()+attendanceBean.getAbsenteeismNumber2()+attendanceBean.getAbsenteeismNumber());//缺勤次数累计
+                        bean.setLateNumber(bean.getLateNumber()+attendanceBean.getLateNumber()+attendanceBean.getLateNumber2());//迟到分钟数累计
+                        bean.setLeaveEarlyNumber(bean.getLeaveEarlyNumber()+attendanceBean.getLeaveEarlyNumber()+attendanceBean.getLeaveEarlyNumber2());//早退分钟数累计
+                        bean.setOvertimeTime(bean.getOvertimeTime()+attendanceBean.getOvertimeTime());//加班时间累计
+                    }
+                    //统计好了后
                     JSONObject object=new JSONObject();
-                    object.put("photo",subject.getPhoto());//sid是id
+                    object.put("sid",subject.getSid()+"");
                     object.put("name",subject.getName());
+                    object.put("normalNumber",bean.getNormalNumber());
                     object.put("department",subject.getDepartment());
-                    object.put("lateNumber",subject.getLateNumber());
-                    object.put("lateNumber2",subject.getLateNumber2());
-                    object.put("leaveEarlyNumber",subject.getLeaveEarlyNumber());
-                    object.put("leaveEarlyNumber2",subject.getLeaveEarlyNumber2());
-                    object.put("absenteeismNumber",subject.getAbsenteeismNumber());
-                    object.put("absenteeismNumber2",subject.getAbsenteeismNumber2());
-                    object.put("overtimeTime",subject.getOvertimeTime());
-                    object.put("late",subject.getLate());
-                    object.put("leaveEarly",subject.getLeaveEarly());
-                    object.put("yearMonth",subject.getYearMonthDay());
+                    object.put("lateNumber",bean.getLateNumber());
+                    object.put("leaveEarlyNumber",bean.getLeaveEarlyNumber());
+                    object.put("absenteeismNumber",bean.getAbsenteeismNumber());
+                    object.put("overtimeTime",bean.getOvertimeTime());
+                    object.put("late",bean.getLate());
+                    object.put("leaveEarly",bean.getLeaveEarly());
+                    object.put("yearMonth",time);
+                    if (subject.getIcCard()==null || subject.getIcCard().equals(""))
+                        object.put("icCard","未绑定IC卡");
+                    else
+                        object.put("icCard",subject.getIcCard());
                     jsonArray.put(object);
                 }
                 JSONObject object=new JSONObject();
-                object.put("total",attendanceBeanBox.query().equal(AttendanceBean_.yearMonth,peoplePage.getTime()).build().findLazy().size());
-                object.put("radio",MMKV.defaultMMKV().decodeParcelable("configBean",ConfigBean.class).getKqOneFour());
                 object.put("requestData",jsonArray);
                 object.put("msg","查询成功");
                 return object.toString();

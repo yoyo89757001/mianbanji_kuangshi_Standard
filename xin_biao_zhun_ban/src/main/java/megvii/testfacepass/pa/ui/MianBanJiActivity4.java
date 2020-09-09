@@ -453,7 +453,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
 
         Log.d("MianBanJiActivity4", "DateUtils.dataOn:" + (DateUtils.dataOne("12:12")-DateUtils.dataOne("10:12"))/(1000 * 60));
 
-
         mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NotNull Message msg) {
@@ -1928,7 +1927,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                         }).start();
                     }
 
-                  //  if (xs[0].equals("23") && xs[1].equals("40")) {//一天只执行一次，可能存在问题
+                    if (xs[0].equals("00") && xs[1].equals("01")) {//一天只执行一次，可能存在问题
                         //执行考勤规则
                         new Thread(new Runnable() {
                             @Override
@@ -1940,10 +1939,10 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                 }
                             }
                         }).start();
-               //     }
-
-
-
+                    }
+                    if (xs[0].equals("1") && xs[1].equals("00")) {//一天只执行一次重启
+                        DengUT.reboot();
+                    }
                     //1分钟一次指令获取
 //                    if (configBean.getHoutaiDiZhi() != null && !configBean.getHoutaiDiZhi().equals("")) {
 //                        if (isGET){
@@ -1974,7 +1973,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
 
 
     private void kaiqi(){
-        //需不需要考勤
+        //今天需不需要考勤
         Box<WeekDataBean> weekDataBeanBox  = MyApplication.myApplication.getWeekDataBeanBox();
         WeekDataBean weekDataBean= weekDataBeanBox.query().equal(WeekDataBean_.data,DateUtils.getCurrentTime_Today()).build().findUnique();
         if (weekDataBean!=null) {//不为空 说明今天需要考勤
@@ -1996,6 +1995,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                         bean.setDepartment(subject.getDepartment());
                         bean.setYearMonthDay(nyr);
                         bean.setYearMonth(ny);
+                        bean.setTime(System.currentTimeMillis());
                         bean.setPhoto(subject.getPhoto());
                         //查询今天第一次打卡和最后一次打卡
                        List<DaKaBean> daKaBeanList= daKaBeanBox.query()
@@ -2063,6 +2063,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                         bean.setDepartment(subject.getDepartment());
                         bean.setYearMonthDay(nyr);
                         bean.setYearMonth(ny);
+                        bean.setTime(System.currentTimeMillis());
                         bean.setPhoto(subject.getPhoto());
                         /////上午打卡时间段
                         long kaishi1=DateUtils.dataOnes(nyr+" 00:00");//今天开始的时间
@@ -2405,6 +2406,14 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
             }catch (Exception e){
                 e.printStackTrace();
             }
+        }
+        try {
+            LazyList<AttendanceBean> attendanceBeanLazyList= attendanceBeanBox.query().less(AttendanceBean_.time,start).build().findLazy();
+            for (AttendanceBean bean : attendanceBeanLazyList) {
+                attendanceBeanBox.remove(bean);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
     }

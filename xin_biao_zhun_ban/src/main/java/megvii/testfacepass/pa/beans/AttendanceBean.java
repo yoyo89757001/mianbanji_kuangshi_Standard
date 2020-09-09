@@ -24,6 +24,16 @@ public class AttendanceBean {//考勤表
     private String photo;// 照片
     private int late;//今天迟到次数
     private int leaveEarly;//今天早退次数
+    private long time;
+
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
 
     public int getLate() {
         return late;
@@ -175,10 +185,13 @@ public class AttendanceBean {//考勤表
                 ", lateNumber2=" + lateNumber2 +
                 ", leaveEarlyNumber2=" + leaveEarlyNumber2 +
                 ", absenteeismNumber2=" + absenteeismNumber2 +
-                ", OvertimeTime=" + overtimeTime +
+                ", overtimeTime=" + overtimeTime +
                 ", yearMonthDay='" + yearMonthDay + '\'' +
                 ", yearMonth='" + yearMonth + '\'' +
                 ", photo='" + photo + '\'' +
+                ", late=" + late +
+                ", leaveEarly=" + leaveEarly +
+                ", icCard='" + time + '\'' +
                 '}';
     }
 }
