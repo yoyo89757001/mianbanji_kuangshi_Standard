@@ -445,7 +445,6 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
 
         tanChuangThread = new TanChuangThread();
         tanChuangThread.start();
-
         mRecognizeThread = new RecognizeThread();
         mRecognizeThread.start();
         mFeedFrameThread = new FeedFrameThread();
@@ -1927,7 +1926,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                         }).start();
                     }
 
-                    if (xs[0].equals("00") && xs[1].equals("01")) {//一天只执行一次，可能存在问题
+                    if (xs[0].equals("23") && xs[1].equals("50")) {//一天只执行一次，可能存在问题
                         //执行考勤规则
                         new Thread(new Runnable() {
                             @Override
@@ -1981,7 +1980,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
             String nyr = DateUtils.timeYMD(System.currentTimeMillis() + "");
             String ny = DateUtils.timeYM(System.currentTimeMillis() + "");
             long kaishi = DateUtils.dataOnes(nyr+" 00:00");//今天开始的时间
-            long jieshu = DateUtils.dataOnes(nyr+" 23:59");//今天结束的时间
+            long jieshu = DateUtils.dataOnes(nyr+" 23:50");//今天结束的时间
             LazyList<Subject> subjectLazyList = subjectBox.query().equal(Subject_.peopleType, 1).build().findLazy();//所有员工
             //Log.d("MianBanJiActivity4", "subjectLazyList.size():" + subjectLazyList.size());
             if (configBean.getKqOneFour() == 0) {//2次考勤
@@ -2038,6 +2037,9 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                             if (d2-jbtime>0){//加班 3600000(一小时的毫秒数)
                                 bean.setOvertimeTime((int) ((d2-jbtime)/3600000));
                             }
+                            if (bean.getLate()==0 && bean.getLeaveEarly()==0 && bean.getAbsenteeismNumber()==0 && bean.getAbsenteeismNumber2()==0){
+                                bean.setNormalNumber(1);
+                            }
                             attendanceBeanBox.put(bean);
 
                         }else {//没打卡记录，缺勤
@@ -2087,11 +2089,9 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                 bean.setLateNumber((int) ((d1-sbtime)/60000));
                                 bean.setLate(1);
                             }
-                            attendanceBeanBox.put(bean);
 
                         }else {//没打卡记录，缺勤
                             bean.setAbsenteeismNumber(1);
-                            attendanceBeanBox.put(bean);
                         }
                         /////中午下班打卡时间段(搜索)
                         long kaishi2=0;
@@ -2113,10 +2113,9 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                 bean.setLeaveEarlyNumber((int) ((zaotime-d2)/60000));
                                 bean.setLeaveEarly(1);
                             }
-                            attendanceBeanBox.put(bean);
+
                         }else {//没下班打卡记录，缺勤
                             bean.setAbsenteeismNumber(1);
-                            attendanceBeanBox.put(bean);
                         }
                         /////////////下午上班打卡时间段(搜索)
                         long kaishi3=DateUtils.dataOnes(nyr+" "+configBean.getWook2())-configBean.getYouxiao2()*60000;//下午上班的时间(加上10分钟)
@@ -2138,12 +2137,10 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                                 bean.setLateNumber2((int) ((d1-sbtime)/60000));
                                 bean.setLate(bean.getLate()+1);
                             }
-                            attendanceBeanBox.put(bean);
 
                         }else {
                             //没打卡记录，缺勤 下午
                             bean.setAbsenteeismNumber2(1);
-                            attendanceBeanBox.put(bean);
                         }
                         /////////////下午下班班打卡时间段(搜索)
                         long kaishi4=0;
@@ -2152,7 +2149,7 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                         }else {
                             kaishi4=DateUtils.dataOnes(nyr+" "+configBean.getOffDuty2())-configBean.getQueqing2()*60000;//下午上班的时间(加上迟到时间)
                         }
-                        long jieshu4=DateUtils.dataOnes(nyr+" 23:59");//下午上班的时间(加上10分钟)
+                        long jieshu4=DateUtils.dataOnes(nyr+" 23:50");//下午上班的时间(加上10分钟)
                         List<DaKaBean> daKaBeanList4= daKaBeanBox.query()
                                 .equal(DaKaBean_.personId,subject.getSid())
                                 .between(DaKaBean_.time,kaishi4,jieshu4)
@@ -2169,14 +2166,15 @@ public class MianBanJiActivity4 extends Activity implements CameraManager.Camera
                             if (d2-jbtime>0){//加班 3600000(一小时的毫秒数)
                                 bean.setOvertimeTime((int) ((d2-jbtime)/3600000));
                             }
-                            attendanceBeanBox.put(bean);
 
                         }else {
                             //没打卡记录，缺勤 下午
                             bean.setAbsenteeismNumber2(1);
-                            attendanceBeanBox.put(bean);
                         }
-
+                        if (bean.getLate()==0 && bean.getLeaveEarly()==0 && bean.getAbsenteeismNumber()==0 && bean.getAbsenteeismNumber2()==0){
+                            bean.setNormalNumber(1);
+                        }
+                        attendanceBeanBox.put(bean);
                     }
                 }
                 for (AttendanceBean attendanceBean : attendanceBeanBox.getAll()) {

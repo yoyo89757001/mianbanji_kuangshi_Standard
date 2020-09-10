@@ -571,7 +571,7 @@ public class MyService3 {
             try {
                 Log.d(TAG, time+"time");
                 JSONArray jsonArray=new JSONArray();
-                LazyList<Subject> subjectList= subjectBox.query().build().findLazy();
+                LazyList<Subject> subjectList= subjectBox.query().equal(Subject_.peopleType,1).build().findLazy();
                 for (Subject subject:subjectList){
                     LazyList<AttendanceBean> attendanceBeanLazyList= attendanceBeanBox.query()
                             .equal(AttendanceBean_.yearMonth,time)
@@ -827,6 +827,7 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                         object.put("late",subject.getLate());
                         object.put("leaveEarly",subject.getLeaveEarly());
                         object.put("yearMonth",subject.getYearMonthDay());
+                        object.put("normalNumber",subject.getNormalNumber());
                         jsonArray.put(object);
                     }
                     JSONObject object=new JSONObject();
@@ -860,6 +861,7 @@ String createPeoplewww(@RequestParam(name = "name") String name, @RequestParam(n
                         object.put("absenteeismNumber2",subject.getAbsenteeismNumber2());
                         object.put("overtimeTime",subject.getOvertimeTime());
                         object.put("late",subject.getLate());
+                        object.put("normalNumber",subject.getNormalNumber());
                         object.put("leaveEarly",subject.getLeaveEarly());
                         object.put("yearMonth",subject.getYearMonthDay());
                         jsonArray.put(object);
