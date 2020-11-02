@@ -356,20 +356,18 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
         initView();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Realm realm = Realm.getDefaultInstance();
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        realm.deleteAll();
-                    }
-                });
-            }
-        }).start();
-
-
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Realm realm = Realm.getDefaultInstance();
+//                realm.executeTransaction(new Realm.Transaction() {
+//                    @Override
+//                    public void execute(Realm realm) {
+//                        realm.deleteAll();
+//                    }
+//                });
+//            }
+//        }).start();
 
 
 
