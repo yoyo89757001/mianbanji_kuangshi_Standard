@@ -4,15 +4,16 @@ import android.view.View;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import io.objectbox.annotation.Entity;
-import io.objectbox.annotation.Id;
-import io.objectbox.annotation.Transient;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 
 /**
  * Created by Administrator on 2018/5/31.
  */
-@Entity
-public class Subject implements Comparator<Subject> {
+
+public class Subject extends RealmObject implements Comparator<Subject> {
     public Subject() {
     }
 
@@ -40,10 +41,10 @@ public class Subject implements Comparator<Subject> {
         this.departmentName = departmentName;
         this.daka = daka;
         this.shijian = shijian;
-        this.view = view;
+
     }
 
-    @Id(assignable = true)
+    @PrimaryKey
     private long id;
     private String sid;
     private String name;// 姓名
@@ -166,16 +167,8 @@ public class Subject implements Comparator<Subject> {
         this.daka = daka;
     }
 
-    @Transient
-    private View view;
 
-    public View getView() {
-        return view;
-    }
 
-    public void setView(View view) {
-        this.view = view;
-    }
 
     public String getDepartmentName() {
         return departmentName;
@@ -380,7 +373,7 @@ public class Subject implements Comparator<Subject> {
                 ", txBytes=" + Arrays.toString(txBytes) +
                 ", w=" + w +
                 ", h=" + h +
-                ", view=" + view +
+                ", view="  +
                 '}';
     }
 }

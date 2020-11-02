@@ -1,10 +1,9 @@
 package megvii.testfacepass.pa.beans;
 
 
-import io.objectbox.annotation.Entity;
-import io.objectbox.annotation.Id;
 
-@Entity
+
+
 public class GuanHuai {
 
 
@@ -21,7 +20,6 @@ public class GuanHuai {
      * timeRange : 2018-10-09 00:00 ~ 2018-10-09 23:59
      */
 
-    @Id(assignable = true)
     private Long id;
     private Long employeeId;
     private int spareStatus;

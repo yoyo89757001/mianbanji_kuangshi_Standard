@@ -12,8 +12,8 @@ public class ZhiLingBean {
      */
 
     private int code;
-    private String desc;
-    private List<ResultBean> result;
+    private String message;
+    private List<ResultBean> data;
 
     public int getCode() {
         return code;
@@ -23,20 +23,20 @@ public class ZhiLingBean {
         this.code = code;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getMessage() {
+        return message;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public List<ResultBean> getResult() {
-        return result;
+    public List<ResultBean> getData() {
+        return data;
     }
 
-    public void setResult(List<ResultBean> result) {
-        this.result = result;
+    public void setData(List<ResultBean> data) {
+        this.data = data;
     }
 
     public static class ResultBean {

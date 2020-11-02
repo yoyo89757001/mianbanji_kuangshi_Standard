@@ -45,6 +45,7 @@
         android:id="@+id/iv_delete_group"
         android:layout_width="60dp"
         android:padding="10dp"
+        android:visibility="gone"
         android:paddingEnd="10dp"
         android:tint="@color/white"
         android:layout_marginRight="16dp"

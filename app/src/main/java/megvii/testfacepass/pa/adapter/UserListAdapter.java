@@ -19,7 +19,7 @@ import com.bumptech.glide.request.RequestOptions;
 import java.util.List;
 
 
-import io.objectbox.query.LazyList;
+
 import mcv.facepass.FacePassHandler;
 
 import megvii.testfacepass.pa.R;
@@ -34,7 +34,7 @@ import megvii.testfacepass.pa.view.GlideRoundTransform;
 
 public class UserListAdapter extends BaseAdapter {
 
-    private LazyList<Subject> mGroupNames;
+    private List<Subject> mGroupNames;
     private LayoutInflater mLayoutInflater;
     private ItemDeleteButtonClickListener mItemDeleteButtonClickListener;
     private FacePassHandler facePassHandler=null;
@@ -42,7 +42,7 @@ public class UserListAdapter extends BaseAdapter {
     private RequestOptions myOptions2 =null;
 
 
-    public UserListAdapter(LazyList<Subject> data, Context context,FacePassHandler facePassHandler) {
+    public UserListAdapter(List<Subject> data, Context context,FacePassHandler facePassHandler) {
         mGroupNames=data;
         this.context=context;
         myOptions2 = new RequestOptions()
@@ -57,7 +57,7 @@ public class UserListAdapter extends BaseAdapter {
         return mGroupNames;
     }
 
-    public void setData(LazyList<Subject> data) {
+    public void setData(List<Subject> data) {
         mGroupNames = data;
     }
 

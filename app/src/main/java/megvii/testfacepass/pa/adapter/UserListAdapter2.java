@@ -10,19 +10,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
-import com.bumptech.glide.request.RequestOptions;
-
-
 import java.util.List;
-
-import io.objectbox.query.LazyList;
-
 
 
 import megvii.testfacepass.pa.R;
-import megvii.testfacepass.pa.beans.Subject;
-import megvii.testfacepass.pa.view.GlideRoundTransform;
+
 
 
 /**
@@ -54,9 +46,7 @@ public class UserListAdapter2 extends BaseAdapter {
         return mGroupNames;
     }
 
-    public void setData(LazyList<String> data) {
-        mGroupNames = data;
-    }
+
 
     public void setOnItemDeleteButtonClickListener(ItemDeleteButtonClickListener listener) {
         mItemDeleteButtonClickListener = listener;

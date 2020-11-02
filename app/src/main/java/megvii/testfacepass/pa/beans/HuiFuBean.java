@@ -1,10 +1,9 @@
 package megvii.testfacepass.pa.beans;
 
-import io.objectbox.annotation.Entity;
-import io.objectbox.annotation.Id;
 
-@Entity
-public class HuiFuBean {
+import io.realm.RealmObject;
+
+public class HuiFuBean extends RealmObject {
 
     /**
      * id : 12345
@@ -13,7 +12,7 @@ public class HuiFuBean {
      * msg : 说明
      * shortId : 123456
      */
-    @Id(assignable = true)
+
     private Long id;
     private String pepopleId;
     private String pepopleType;
@@ -22,6 +21,8 @@ public class HuiFuBean {
     private String shortId;
     private String serialnumber;
 
+    public HuiFuBean() {
+    }
 
     public HuiFuBean(Long id, String pepopleId, String pepopleType, String type, String msg, String shortId, String serialnumber) {
         this.id = id;

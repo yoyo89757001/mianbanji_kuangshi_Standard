@@ -15,10 +15,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 
-import android.net.Uri;
+
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.text.TextUtils;
+
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -27,7 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
+
 import android.widget.FrameLayout;
 
 import android.widget.LinearLayout;
@@ -37,7 +36,7 @@ import android.widget.Toast;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import io.objectbox.Box;
+
 
 import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.R;
@@ -54,10 +53,10 @@ import megvii.testfacepass.pa.camera.CameraPreviewData2;
 
 import megvii.testfacepass.pa.dialog.RegisterDialog;
 
-import megvii.testfacepass.pa.utils.FileUtil;
+
 import megvii.testfacepass.pa.utils.NV21ToBitmap;
 import megvii.testfacepass.pa.utils.SettingVar;
-import megvii.testfacepass.pa.utils.ToastUtils;
+
 
 
 public class YuLanActivity extends Activity implements CameraManager.CameraListener, View.OnClickListener ,CameraManager2.CameraListener2{
@@ -151,9 +150,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
    ;
 
-    private Box<BaoCunBean> baoCunBeanDao = null;
-    private BaoCunBean baoCunBean = null;
-    private Box<Subject> subjectBox = null;
+
     private CameraManager2 manager2;
    // private PaAccessControl paFacePass;
     private CameraPreview2 cameraView2;
@@ -165,9 +162,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         mDetectResultQueue = new ArrayBlockingQueue<byte[]>(5);
        // mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
         //initAndroidHandler();
-        baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
-        baoCunBean = baoCunBeanDao.get(123456L);
-        subjectBox=MyApplication.myApplication.getSubjectBox();
+
       //  mFacePassHandler=MyApplication.myApplication.getFacePassHandler();
         nv21ToBitmap = new NV21ToBitmap(YuLanActivity.this);
 

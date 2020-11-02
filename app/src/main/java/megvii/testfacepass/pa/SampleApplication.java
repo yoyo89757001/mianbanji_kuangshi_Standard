@@ -1,3 +1,4 @@
+/*
 package megvii.testfacepass.pa;
 
 
@@ -20,4 +21,4 @@ public class SampleApplication extends TinkerApplication {
     }
 
 
-}
+}*/

@@ -1,12 +1,11 @@
 package megvii.testfacepass.pa.beans;
 
-import io.objectbox.annotation.Entity;
-import io.objectbox.annotation.Id;
 
-@Entity
+
+
 public class DaKaBean {
 
-    @Id
+
     private Long id;
     private String id2;
     private String name;

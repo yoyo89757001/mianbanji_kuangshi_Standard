@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.tencent.mmkv.MMKV;
+
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,12 +23,12 @@ import java.io.File;
 
 import java.util.List;
 
-
-import io.objectbox.Box;
+import io.realm.Realm;
 import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.R;
 import megvii.testfacepass.pa.beans.BaoCunBean;
 
+import megvii.testfacepass.pa.beans.HuiFuBean;
 import megvii.testfacepass.pa.utils.AcquireTokenAPI;
 import megvii.testfacepass.pa.utils.GetDeviceId;
 import megvii.testfacepass.pa.utils.ToastUtils;
@@ -43,7 +46,6 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
     static final String device = "stest-dev";
     private ProgressDialog mProgressDialog;
     private BaoCunBean baoCunBean;
-    private Box<BaoCunBean> baoCunBeanBox=MyApplication.myApplication.getBaoCunBeanBox();
     private static boolean isL=true;
     private SharedPreferences mSharedPreferences;
 
@@ -62,10 +64,14 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-        baoCunBean=baoCunBeanBox.get(123456L);
+        baoCunBean=MMKV.defaultMMKV().decodeParcelable("saveBean",BaoCunBean.class);
         mSharedPreferences = getSharedPreferences("SP", Context.MODE_PRIVATE);
         methodRequiresTwoPermission();
         MyApplication.myApplication.addActivity(this);
+
+      /*  Realm realm2 = Realm.getDefaultInstance();
+        realm2.deleteAll();
+     */
 
     }
 
@@ -155,6 +161,7 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
 
     private void start(){
         //初始化
+        Log.d("ggg", "f"+MyApplication.SDPATH);
         File file = new File(MyApplication.SDPATH);
         if (!file.exists()) {
             Log.d("ggg", "file.mkdirs():" + file.mkdirs());
@@ -176,13 +183,14 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
             } else {
                 Log.d("BaseActivity", deviceId + "设备唯一标识");
                 baoCunBean.setTuisongDiZhi(deviceId);
-                baoCunBeanBox.put(baoCunBean);
+                MMKV.defaultMMKV().encode("saveBean",baoCunBean);
+
             }
         }else {
             Log.d("BaseActivity", baoCunBean.getTuisongDiZhi());
         }
         boolean token;
-        token = mSharedPreferences.getBoolean("token", false);
+        token = MMKV.defaultMMKV().decodeBool("token",true);
         Log.d("BaseActivity", "token:" + token);
         if (token) {
             startActivity(new Intent(BaseActivity.this,MianBanJiActivity3.class));

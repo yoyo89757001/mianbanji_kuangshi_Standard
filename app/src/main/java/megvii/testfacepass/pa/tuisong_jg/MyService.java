@@ -1,3 +1,4 @@
+/*
 package megvii.testfacepass.pa.tuisong_jg;
 
 
@@ -299,9 +300,11 @@ public class MyService {
         }
         return filename;
     }
-    /*
+    */
+/*
      * Java文件操作 获取不带扩展名的文件名
-     * */
+     * *//*
+
     private   String getFileNameNoEx(String filename) {
         if ((filename != null) && (filename.length() > 0)) {
             int dot = filename.lastIndexOf('.');
@@ -1105,9 +1108,11 @@ public class MyService {
         // 这个文件应该被下载，filename=AndServer.txt的意思是告诉浏览器，这个文件默认被命名为AndServer.txt。
     }
 
-    /**
+    */
+/**
      * 得到指定月的天数
-     * */
+     * *//*
+
     public static int getMonthLastDay(int year, int month)
     {
         Calendar a = Calendar.getInstance();
@@ -1153,12 +1158,14 @@ public class MyService {
         return null;
     }
 
-    /**
+    */
+/**
      * 初始化Excel
      *
      * @param fileName 导出excel存放的地址（目录）
      * @param colName excel中包含的列名（可以有多个）
-     */
+     *//*
+
     public static void initExcel(String fileName, String[] colName) {
         format();
         WritableWorkbook workbook = null;
@@ -1191,11 +1198,13 @@ public class MyService {
         }
     }
 
-    /**
+    */
+/**
      * 校验提取出的原文件名字是否带格式
      * @param sourceFileName 要压缩的文件名
      * @return
-     */
+     *//*
+
     private String checkString(String sourceFileName){
         if (sourceFileName.indexOf(".") > 0){
             sourceFileName = sourceFileName.substring(0,sourceFileName.length() - 4);
@@ -1204,9 +1213,11 @@ public class MyService {
         return sourceFileName;
     }
 
-    /**
+    */
+/**
      * 单元格的格式设置 字体大小 颜色 对齐方式、背景颜色等...
-     */
+     *//*
+
     private static void format() {
         try {
             arial14font = new WritableFont(WritableFont.ARIAL, 14, WritableFont.BOLD);
@@ -1235,3 +1246,4 @@ public class MyService {
         }
     }
 }
+*/

@@ -2,9 +2,7 @@ package megvii.testfacepass.pa.utils;
 
 
 
-import com.yanzhenjie.andserver.framework.body.FileBody;
-import com.yanzhenjie.andserver.framework.body.StringBody;
-import com.yanzhenjie.andserver.http.HttpResponse;
+
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -114,6 +112,7 @@ public class ExcelUtil {
         }
     }
 
+/*
 
     @SuppressWarnings("unchecked")
     public static <T> void writeObjListToExcel(List<T> objList, String fileName, HttpResponse response,File file,String fileName2) {
@@ -182,6 +181,7 @@ public class ExcelUtil {
 
         }
     }
+*/
 
     @SuppressWarnings("unchecked")
     public static <T> void writeObjListToExcel(List<T> objList, String fileName) {

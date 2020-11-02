@@ -1,12 +1,9 @@
 package megvii.testfacepass.pa.beans;
 
-import io.objectbox.annotation.Entity;
-import io.objectbox.annotation.Id;
 
-@Entity
 public class IDCardTakeBean {
 
-    @Id
+
     private Long id;
     private String idCard;
     private String name;

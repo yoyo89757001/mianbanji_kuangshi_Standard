@@ -1,3 +1,4 @@
+/*
 package megvii.testfacepass.pa.tuisong_jg;
 
 import android.util.Log;
@@ -21,9 +22,11 @@ public class ServerManager {
         this.myServeInterface = myServeInterface;
     }
 
-    /**
+    */
+/**
      * Create server.
-     */
+     *//*
+
     public ServerManager(final String ip, final int port) {
 
         InetAddress inetAddress = null;
@@ -56,9 +59,11 @@ public class ServerManager {
                 .build();
     }
 
-    /**
+    */
+/**
      * Start server.
-     */
+     *//*
+
     public void startServer() {
         if (mServer.isRunning()) {
             // TODO The server is already up.
@@ -67,9 +72,11 @@ public class ServerManager {
         }
     }
 
-    /**
+    */
+/**
      * Stop server.
-     */
+     *//*
+
     public void stopServer() {
         if (mServer.isRunning()) {
             mServer.shutdown();
@@ -79,3 +86,4 @@ public class ServerManager {
     }
 
 }
+*/

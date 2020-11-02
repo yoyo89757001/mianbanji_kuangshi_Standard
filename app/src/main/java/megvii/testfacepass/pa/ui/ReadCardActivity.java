@@ -1,3 +1,4 @@
+/*
 package megvii.testfacepass.pa.ui;
 
 import androidx.appcompat.app.AlertDialog;
@@ -344,12 +345,14 @@ public class ReadCardActivity extends AppCompatActivity {
     }
 
 
-    /**
+    */
+/**
      * 将byte数组转化为字符串
      *
      * @param src
      * @return
-     */
+     *//*
+
     public static String byteToString(byte[] src) {
         StringBuilder stringBuilder = new StringBuilder();
         if (src == null || src.length <= 0) {
@@ -481,3 +484,4 @@ private ZLoadingDialog zLoadingDialog=null;
     }
 
 }
+*/

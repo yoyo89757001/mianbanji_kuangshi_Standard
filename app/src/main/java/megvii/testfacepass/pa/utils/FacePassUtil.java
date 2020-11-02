@@ -54,7 +54,7 @@ public class FacePassUtil {
                                 config.detectRectModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "detector_rect.arm.C.bin");
                                 config.landmarkModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "pf.lmk.float32.1015.bin");
 
-                                config.mouthOccAttributeModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "attribute.mouth.occ.gray.12M.190930.bin");
+                                //config.mouthOccAttributeModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "attribute.mouth.occ.gray.12M.190930.bin");
                                 //config.smileModel = FacePassModel.initModel(getApplicationContext().getAssets(), "attr.smile.mgf29.0.1.1.181229.bin");
                                 //config.ageGenderModel = FacePassModel.initModel(getApplicationContext().getAssets(), "attr.age_gender.surveillance.nnie.av200.0.1.0.190630.bin");
                                 //config.occlusionFilterModel = FacePassModel.initModel(getApplicationContext().getAssets(), "occlusion.all_attr_configurable.occ.190816.bin");
@@ -63,7 +63,7 @@ public class FacePassUtil {
                                 //config.ageGenderModel = null;
 
                                 //config.occlusionFilterEnabled = true;
-                                config.mouthOccAttributeEnabled = true;
+                               // config.mouthOccAttributeEnabled = true;
                                 config.rgbIrLivenessEnabled = false;
                                 config.smileEnabled = false;
                                 config.rotation = cameraRotation;
@@ -72,13 +72,13 @@ public class FacePassUtil {
                                 config.livenessEnabled = baoCunBean.isHuoTi();
                                 boolean ageGenderEnabledGlobal = (config.ageGenderModel != null);
                                 config.faceMinThreshold = baoCunBean.getShibieFaceSize();
-                                config.poseThreshold = new FacePassPose(30f, 30f, 30f);
-                                config.blurThreshold = 0.5f;
+                                config.poseThreshold = new FacePassPose(40f, 40f, 40f);
+                                config.blurThreshold = 0.9f;
                                 config.lowBrightnessThreshold = 60f;
                                 config.highBrightnessThreshold = 220f;
                                 config.brightnessSTDThreshold = 90f;//阴阳脸
                                 config.retryCount = baoCunBean.getMoshengrenPanDing();
-                                config.maxFaceEnabled = true;
+                                config.maxFaceEnabled = false;
                                 config.fileRootPath = MyApplication.SDPATH2;
                                 /* 创建SDK实例 */
                                 mFacePassHandler = new FacePassHandler(config);
@@ -89,13 +89,13 @@ public class FacePassUtil {
                               //  float livenessThreshold2 = 48f;
                              //   boolean livenessEnabled2 = true;
                                 int faceMinThreshold2 = baoCunBean.getRuKuFaceSize();
-                                float blurThreshold2 = 0.6f;
+                                float blurThreshold2 = 0.7f;
                                 float lowBrightnessThreshold2 = 70f;
                                 float highBrightnessThreshold2 = 210f;
                                 float brightnessSTDThreshold2 = 80f;
                                 FacePassConfig config1=new FacePassConfig(faceMinThreshold2,22f,22f,22f,blurThreshold2,
                                         lowBrightnessThreshold2,highBrightnessThreshold2,brightnessSTDThreshold2);
-                                boolean is=   mFacePassHandler.setAddFaceConfig(config1);
+                                boolean is= mFacePassHandler.setAddFaceConfig(config1);
 
                                 Log.d("YanShiActivity", " 设置入库质量配置"+is );
 

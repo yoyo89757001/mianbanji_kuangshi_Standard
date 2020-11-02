@@ -1,12 +1,9 @@
 package megvii.testfacepass.pa.beans;
 
-import io.objectbox.annotation.Entity;
-import io.objectbox.annotation.Id;
 
-@Entity
 public class ChengShiIDBean
 {
-    @Id
+
     private long sid;
     private String id;
     private String province;

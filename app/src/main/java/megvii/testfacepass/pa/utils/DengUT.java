@@ -366,6 +366,13 @@ public class DengUT {
         }
     }
 
+    public  static void reboot(){//重启
+        try {
+            Runtime.getRuntime().exec("reboot");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // public static
 

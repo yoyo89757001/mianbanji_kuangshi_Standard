@@ -1,7 +1,7 @@
 package megvii.testfacepass.pa.utils;
 
 import android.app.AlarmManager;
-import android.app.Application;
+
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +10,9 @@ import com.hwit.HwitManager;
 import com.lztek.toolkit.Lztek;
 
 import megvii.testfacepass.pa.MyApplication;
-import megvii.testfacepass.pa.SampleApplication;
+
 import megvii.testfacepass.pa.ui.BaseActivity;
-import megvii.testfacepass.pa.ui.SheZhiActivity2;
+
 
 public class UnCeHandler implements Thread.UncaughtExceptionHandler {
 
