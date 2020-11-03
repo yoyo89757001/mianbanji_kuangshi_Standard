@@ -1202,7 +1202,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                     Subject subject = new Subject();
                                     subject.setName(subjectss.getName());
                                     subject.setTeZhengMa(subjectss.getTeZhengMa());
-
+                                    subject.setSid(subjectss.getSid());
+                                    subject.setPeopleType(subjectss.getPeopleType());
+                                    realm.close();
                                     //subjectOnly = subject;
                                     // linkedBlockingQueue.offer(subject);
                                     runOnUiThread(new Runnable() {
@@ -1217,7 +1219,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //                                    message2.what = 111;
 //                                    message2.obj = subject;
 //                                    mHandler.sendMessage(message2);
-                                    realm.close();
+
 //                                    if (!DengUT.isOPENGreen) {
 //                                        DengUT.isOPENGreen = true;
 //                                        DengUT.getInstance(baoCunBean).openGreen();
@@ -1346,10 +1348,10 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //                                                }
 //                                                showUIResult(3,"陌生人","");
 //                                            }
-                                         //   final Bitmap fileBitmap = nv21ToBitmap.nv21ToBitmap(images.image, images.width, images.height);
+                                            final Bitmap fileBitmap = nv21ToBitmap.nv21ToBitmap(images.image, images.width, images.height);
                                             //  String paths = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "ruitongzipmbj";
                                             //  boolean tt = nv21ToBitmap.saveBitmap(fileBitmap, paths, time + ".png");
-                                         //   link_shangchuanshualian(subject.getSid(), fileBitmap, subject.getPeopleType() + "");
+                                            link_shangchuanshualian("", fileBitmap,  "");
                                             //  if (tt) {
                                             //     subject.setZpPath(paths + File.separator + time + ".png");
                                             //     Log.d("RecognizeThread", "subjectBox.put(subject):" + subjectBox.put(subject));
@@ -1644,7 +1646,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                 .add("serialnumber", JHM)
                 .add("iamge", Bitmap2StrByBase64(bb))
                 .build();
-   //     Log.d("MianBanJiActivity3", "id:"+id);
+        Log.d("MianBanJiActivity3", "id:"+id);
     //    Log.d("MianBanJiActivity3", "pepopleType:"+pepopleType);
     //    Log.d("MianBanJiActivity3", "Bitmap2StrByBase64:"+Bitmap2StrByBase64(bb));
         Request.Builder requestBuilder = new Request.Builder()
