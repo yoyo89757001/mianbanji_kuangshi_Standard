@@ -1,82 +1,61 @@
 package megvii.testfacepass.pa.beans;
 
-import android.view.View;
+
+
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
 
 /**
  * Created by Administrator on 2018/5/31.
  */
+@Entity
+public class Subject  {
 
-public class Subject extends RealmObject implements Comparator<Subject> {
     public Subject() {
+
+        id = "";
     }
 
-    public Subject(long id, String sid, String name, String companyId, String companyName, String workNumber, String sex, String phone, String peopleType, String email, String position, int employeeStatus, int isOpen, String remark, String photo, String storeId, String storeName, long entryTime, String birthday, String teZhengMa, String departmentName, int daka, String shijian, View view) {
-        this.id = id;
-        this.sid = sid;
-        this.name = name;
-        this.companyId = companyId;
-        this.companyName = companyName;
-        this.workNumber = workNumber;
-        this.sex = sex;
-        this.phone = phone;
-        this.peopleType = peopleType;
-        this.email = email;
-        this.position = position;
-        this.employeeStatus = employeeStatus;
-        this.isOpen = isOpen;//0是关 1是开
-        this.remark = remark;
-        this.photo = photo;
-        this.storeId = storeId;
-        this.storeName = storeName;
-        this.entryTime = entryTime;
-        this.birthday = birthday;
-        this.teZhengMa = teZhengMa;
-        this.departmentName = departmentName;
-        this.daka = daka;
-        this.shijian = shijian;
-
-    }
 
     @PrimaryKey
-    private long id;
-    private String sid;
-    private String name;// 姓名
-    private String companyId; // 公司ID
-    private String companyName; // 公司名称
-    private String workNumber; // 工号
-    private String sex; // 性别
-    private String phone;// 手机号
-    private String peopleType;// 人员类型
-    private String email;// 电子邮箱
-    private String position; // 职位
-    private int employeeStatus; // 是否在职
-    private int isOpen; // 是否开门  1是关，0是开
-    private String remark;// 备注
-    private String photo;// 照片
-    private String storeId;// 门店ID
-    private String storeName;// 门店名称
-    private long entryTime; // 入职时间
-    private String birthday; // 生日
-    private String teZhengMa;
-    private String departmentName;
-    private int daka;
-    private String shijian;
-    private String displayPhoto;
-    private byte[] txBytes;
-    private int w;
-    private int h;
-    private String idcardNum;
-    private String  faceIds1;
-    private String  faceIds2;
-    private String  faceIds3;
-    private String zpPath;
+    @NonNull
+    private String id;
+    @ColumnInfo private String name;// 姓名
+    @ColumnInfo private String companyId; // 公司ID
+    @ColumnInfo private String companyName; // 公司名称
+    @ColumnInfo private String workNumber; // 工号
+    @ColumnInfo private String sex; // 性别
+    @ColumnInfo private String phone;// 手机号
+    @ColumnInfo private String peopleType;// 人员类型
+    @ColumnInfo private String email;// 电子邮箱
+    @ColumnInfo private String position; // 职位
+    @ColumnInfo private int employeeStatus; // 是否在职
+    @ColumnInfo  private int isOpen; // 是否开门  1是关，0是开
+    @ColumnInfo private String remark;// 备注
+    @ColumnInfo  private String photo;// 照片
+    @ColumnInfo  private String storeId;// 门店ID
+    @ColumnInfo  private String storeName;// 门店名称
+    @ColumnInfo  private long entryTime; // 入职时间
+    @ColumnInfo  private String birthday; // 生日
+    @ColumnInfo private String teZhengMa;
+    @ColumnInfo private String departmentName;
+    @ColumnInfo private int daka;
+    @ColumnInfo private String shijian;
+    @ColumnInfo private String displayPhoto;
+    @ColumnInfo private byte[] txBytes;
+    @ColumnInfo  private int w;
+    @ColumnInfo  private int h;
+    @ColumnInfo private String idcardNum;
+    @ColumnInfo private String  faceIds1;
+    @ColumnInfo private String  faceIds2;
+    @ColumnInfo  private String  faceIds3;
+    @ColumnInfo  private String zpPath;
 
 
     public String getZpPath() {
@@ -186,19 +165,13 @@ public class Subject extends RealmObject implements Comparator<Subject> {
         this.teZhengMa = teZhengMa;
     }
 
-    public String getSid() {
-        return sid;
-    }
 
-    public void setSid(String sid) {
-        this.sid = sid;
-    }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -338,16 +311,11 @@ public class Subject extends RealmObject implements Comparator<Subject> {
         this.birthday = birthday;
     }
 
-    @Override
-    public int compare(Subject o1, Subject o2) {
-        return o1.getSid().compareTo(o2.getSid());
-    }
 
     @Override
     public String toString() {
         return "Subject{" +
                 "id=" + id +
-                ", sid='" + sid + '\'' +
                 ", name='" + name + '\'' +
                 ", companyId='" + companyId + '\'' +
                 ", companyName='" + companyName + '\'' +

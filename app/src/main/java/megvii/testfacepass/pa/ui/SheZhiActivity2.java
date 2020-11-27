@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -27,26 +26,18 @@ import com.lztek.toolkit.Lztek;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.tencent.mmkv.MMKV;
 import com.zyao89.view.zloading.ZLoadingDialog;
-import com.zyao89.view.zloading.Z_TYPE;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.R;
 import megvii.testfacepass.pa.beans.BaoCunBean;
-import megvii.testfacepass.pa.beans.ChengShiIDBean;
-import megvii.testfacepass.pa.beans.DaKaBean;
 import megvii.testfacepass.pa.beans.JsonBean;
-import megvii.testfacepass.pa.beans.Subject;
 import megvii.testfacepass.pa.dialog.BangDingDialog;
 import megvii.testfacepass.pa.dialog.XiuGaiDiZhiDialog;
 import megvii.testfacepass.pa.dialog.XiuGaiHuoTiFZDialog;
@@ -55,16 +46,12 @@ import megvii.testfacepass.pa.dialog.XiuGaiRuKuFZDialog;
 import megvii.testfacepass.pa.dialog.XiuGaiSBFZDialog;
 import megvii.testfacepass.pa.dialog.XiuGaiYuYinDialog;
 import megvii.testfacepass.pa.dialog.XiuGaigGSMDialog;
-
 import megvii.testfacepass.pa.utils.AppUtils;
-import megvii.testfacepass.pa.utils.DateUtils;
 import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.DiaLogUtil;
-import megvii.testfacepass.pa.utils.ExcelUtil;
 import megvii.testfacepass.pa.utils.FaceInit;
 import megvii.testfacepass.pa.utils.FileUtil;
 import megvii.testfacepass.pa.utils.GsonUtil;
-import megvii.testfacepass.pa.utils.MacUtils;
 import megvii.testfacepass.pa.utils.RestartAPPTool;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -77,52 +64,29 @@ import okhttp3.ResponseBody;
 
 
 
-public class SheZhiActivity2 extends Activity {
-    @BindView(R.id.rl3)
+public class SheZhiActivity2 extends Activity implements View.OnClickListener {
     RelativeLayout rl3;
-    @BindView(R.id.rl1)
     RelativeLayout rl1;
-    @BindView(R.id.rl2)
     RelativeLayout rl2;
-    @BindView(R.id.rl4)
     RelativeLayout rl4;
-    @BindView(R.id.rl6)
     RelativeLayout rl6;
-    @BindView(R.id.rl7)
     RelativeLayout rl7;
-    @BindView(R.id.rl8)
     RelativeLayout rl8;
-    @BindView(R.id.switchs)
     Switch switchs;
-    @BindView(R.id.switchs5678)
     Switch switchs5678;
-    @BindView(R.id.rl5)
     RelativeLayout rl5;
-    @BindView(R.id.rl9)
     RelativeLayout rl9;
-    @BindView(R.id.rl13)
     RelativeLayout rl13;
-    @BindView(R.id.rl14)
     RelativeLayout rl14;
-    @BindView(R.id.rl15)
     RelativeLayout rl15;
-    @BindView(R.id.rl16)
     RelativeLayout rl16;
-    @BindView(R.id.rl17)
     RelativeLayout rl17;
-    @BindView(R.id.rl28)
     RelativeLayout rl28;
-    @BindView(R.id.daochu)
     Button daochu;
-    @BindView(R.id.fanhui_ll)
     LinearLayout fanhui_ll;
-    @BindView(R.id.chengshi)
     TextView chengshi;
-    @BindView(R.id.switchs56)
     Switch switchs56;
-    @BindView(R.id.rl55)
     RelativeLayout rl55;
-    @BindView(R.id.banbenhao)
     TextView banbenhao;
     //  JiaZaiDialog dddd;
     private ZLoadingDialog zLoadingDialog;
@@ -131,8 +95,8 @@ public class SheZhiActivity2 extends Activity {
     private BaoCunBean baoCunBean = null;
     // public OkHttpClient okHttpClient = null;
     private ArrayList<JsonBean> options1Items = new ArrayList<>();//省
-    private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();//市
-    private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();//区
+   // private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();//市
+  //  private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();//区
 
     private static String usbPath = null;
     // private int shibai;
@@ -147,25 +111,21 @@ public class SheZhiActivity2 extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_she_zhi2);
-        ButterKnife.bind(this);
-        //ScreenAdapterTools.getInstance().reset(this);//如果希望android7.0分屏也适配的话,加上这句
-        //在setContentView();后面加上适配语句
+
+        initview();
+
         options1Items.add(new JsonBean("智连"));
         options1Items.add(new JsonBean("亮钻"));
         options1Items.add(new JsonBean("TY"));
 
         baoCunBean = MMKV.defaultMMKV().decodeParcelable("saveBean",BaoCunBean.class);
-
         banbenhao.setText("v:"+AppUtils.getVersionName(this));
-        Log.d("SheZhiActivity2", MacUtils.getMacAddress()+"mac地址");//18:93:7F:7C:6D:92mac地址
-        // mFacePassHandler=MyApplication.myApplication.getFacePassHandler();
+        //Log.d("SheZhiActivity2", MacUtils.getMacAddress()+"mac地址");//18:93:7F:7C:6D:92mac地址
         EventBus.getDefault().register(this);//订阅
-
         DengUT.getInstance(baoCunBean).openLOED();
-
-        DengUT.getInstance(baoCunBean).closeWrite();
-        DengUT.getInstance(baoCunBean).closeGreen();
-        DengUT.getInstance(baoCunBean).closeRed();
+//        DengUT.getInstance(baoCunBean).closeWrite();
+//        DengUT.getInstance(baoCunBean).closeGreen();
+//        DengUT.getInstance(baoCunBean).closeRed();
 
         if (baoCunBean.getDangqianChengShi2()!=null){
             chengshi.setText(baoCunBean.getDangqianChengShi2());
@@ -258,6 +218,53 @@ public class SheZhiActivity2 extends Activity {
      //   guanPing();
     }
 
+  //  @OnClick({R.id.rl1, R.id.rl11, R.id.rl12, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8, R.id.rl9,
+       //     R.id.rl13, R.id.rl14, R.id.rl15, R.id.rl16, R.id.rl17, R.id.rl28, R.id.daochu, R.id.rl33,R.id.rl222,R.id.rl55})
+    private void initview(){
+        rl1=findViewById(R.id.rl1);
+        rl1.setOnClickListener(this);
+        rl2=findViewById(R.id.rl2);
+        rl2.setOnClickListener(this);
+        rl3=findViewById(R.id.rl3);
+        rl3.setOnClickListener(this);
+        rl4=findViewById(R.id.rl4);
+        rl4.setOnClickListener(this);
+        rl5=findViewById(R.id.rl5);
+        rl5.setOnClickListener(this);
+        rl6=findViewById(R.id.rl6);
+        rl6.setOnClickListener(this);
+        rl7=findViewById(R.id.rl7);
+        rl7.setOnClickListener(this);
+        rl8=findViewById(R.id.rl8);
+        rl8.setOnClickListener(this);
+        rl9=findViewById(R.id.rl9);
+        rl9.setOnClickListener(this);
+        rl13=findViewById(R.id.rl13);
+        rl13.setOnClickListener(this);
+        rl14=findViewById(R.id.rl14);
+        rl14.setOnClickListener(this);
+        rl15=findViewById(R.id.rl15);
+        rl15.setOnClickListener(this);
+        rl16=findViewById(R.id.rl16);
+        rl16.setOnClickListener(this);
+        rl17=findViewById(R.id.rl17);
+        rl17.setOnClickListener(this);
+        rl28=findViewById(R.id.rl28);
+        rl28.setOnClickListener(this);
+        rl55=findViewById(R.id.rl55);
+        rl55.setOnClickListener(this);
+        switchs=findViewById(R.id.switchs);
+        switchs56=findViewById(R.id.switchs56);
+        switchs5678=findViewById(R.id.switchs5678);
+        daochu=findViewById(R.id.daochu);
+        daochu.setOnClickListener(this);
+        fanhui_ll=findViewById(R.id.fanhui_ll);
+        chengshi=findViewById(R.id.chengshi);
+        chengshi.setOnClickListener(this);
+        banbenhao=findViewById(R.id.banbenhao);
+        banbenhao.setOnClickListener(this);
+
+    }
 
     private void guanPing() {
         Intent intent = new Intent();
@@ -299,9 +306,9 @@ public class SheZhiActivity2 extends Activity {
 //    }
 
 
-    @OnClick({R.id.rl1, R.id.rl11, R.id.rl12, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8, R.id.rl9,
-            R.id.rl13, R.id.rl14, R.id.rl15, R.id.rl16, R.id.rl17, R.id.rl28, R.id.daochu, R.id.rl33,R.id.rl222,R.id.rl55})
-    public void onViewClicked(View view) {
+
+    @Override
+    public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl1: {
                 final XiuGaiDiZhiDialog diZhiDialog = new XiuGaiDiZhiDialog(SheZhiActivity2.this);
@@ -1189,6 +1196,8 @@ public class SheZhiActivity2 extends Activity {
         //   pvOptions.setPicker(options1Items, options2Items, options3Items);//三级选择器
         pvOptions.show();
     }
+
+
 
     public static class UsbBroadCastReceiver extends BroadcastReceiver {
 

@@ -2,28 +2,30 @@
 <RelativeLayout
     android:id="@+id/root_layout"
     android:clipChildren="false"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
 
     <megvii.testfacepass.pa.camera.CameraPreview
         android:id="@+id/preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_centerInParent="true"
+        android:layout_width="400dp"
+        android:layout_height="300dp"/>
 
-    <megvii.testfacepass.pa.camera.CameraPreview2
-        android:id="@+id/preview2"
-        android:layout_width="1dp"
-        android:layout_height="1dp"/>
 
+<!--    <megvii.testfacepass.pa.camera.CameraPreview2-->
+<!--        android:id="@+id/preview2"-->
+<!--        android:layout_width="1dp"-->
+<!--        android:layout_height="1dp"/>-->
 
 
     <!--顶部按钮和标题-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="90dp"
+        android:id="@+id/mmgg"
         android:background="@mipmap/pic_hd11"
         android:orientation="horizontal">
 
@@ -48,102 +50,9 @@
 
     </RelativeLayout>
 
-    <!--蓝色图片动画-->
-    <RelativeLayout
-        android:id="@+id/layout_true_gif_Ir"
-        android:layout_width="wrap_content"
-        android:visibility="gone"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="170dp">
 
-        <ImageView
-            android:id="@+id/iv_true_gif_in_Ir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/true_gif_in" />
 
-        <ImageView
-            android:id="@+id/iv_true_gif_out_Ir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/true_gif_out" />
-    </RelativeLayout>
 
-    <!--红色图片动画-->
-    <RelativeLayout
-        android:id="@+id/layout_error_gif_Ir"
-        android:layout_width="wrap_content"
-        android:visibility="gone"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="170dp">
-
-        <ImageView
-            android:id="@+id/iv_error_gif_in_Ir"
-            android:layout_width="660dp"
-            android:layout_height="660dp"
-            android:src="@mipmap/error_gif_in" />
-
-        <ImageView
-            android:id="@+id/iv_error_gif_out_Ir"
-            android:layout_width="660dp"
-            android:layout_height="660dp"
-            android:src="@mipmap/error_gif_out" />
-    </RelativeLayout>
-
-    <!--结果显示区域-->
-    <LinearLayout
-        android:id="@+id/layout_loadbg_Ir"
-        android:layout_width="720dp"
-        android:visibility="gone"
-        android:layout_height="300dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="80dp"
-        android:background="@mipmap/true_bg"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvName_Ir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:maxEms="8"
-            android:maxLines="1"
-            android:textColor="@color/white"
-            android:textSize="66dp" />
-
-        <TextView
-            android:id="@+id/tvTime_Ir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="40dp" />
-
-        <TextView
-            android:id="@+id/tvFaceTips_Ir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="36sp" />
-
-    </LinearLayout>
-
-    <!--底部logo-->
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/dp_22"
-         />
 
 
 
@@ -156,55 +65,20 @@
         android:layout_height="24dp" />
 
 
-    <ImageView
-        android:id="@+id/xiping"
-        android:visibility="gone"
-        android:background="@color/blake"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+
 
     <TextView
-        android:textColor="@color/white"
-        android:textSize="30sp"
-        android:id="@+id/tishiyu"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:textSize="20sp"
+        android:gravity="center"
         android:visibility="gone"
-        android:layout_centerInParent="true"
-        android:text="屏幕保护中..."
+        android:textColor="#FB2F2F"
+        android:id="@+id/faceName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-
-
-
-    <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/faceLinearLayout"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@drawable/zidonghuoqu_bai"
-        android:layout_centerInParent="true"
-        android:layout_width="300dp"
-        android:layout_height="360dp">
-
-        <ImageView
-            android:id="@+id/faceImage"
-            android:scaleType="fitXY"
-            android:layout_width="160dp"
-            android:layout_height="220dp"/>
-
-        <TextView
-            android:background="#2A7CF5"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center"
-            android:textSize="30sp"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:id="@+id/faceName"
-            android:padding="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-
-    </LinearLayout>
 
 
 </RelativeLayout>

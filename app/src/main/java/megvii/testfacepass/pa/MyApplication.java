@@ -7,26 +7,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.hardware.usb.UsbManager;
 import android.serialport.SerialPort;
-
-
+import android.util.Log;
 
 
 import com.tencent.bugly.Bugly;
 import com.tencent.mmkv.MMKV;
-
-
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import io.realm.Realm;
+import cn.wch.ch34xuartdriver.CH34xUARTDriver;
 import mcv.facepass.FacePassHandler;
 import megvii.testfacepass.pa.beans.BaoCunBean;
 
 import megvii.testfacepass.pa.utils.UnCeHandler;
+
+import static com.Aladdin.HaspUsbHandler.ACTION_USB_PERMISSION;
 
 
 /**
@@ -34,6 +34,7 @@ import megvii.testfacepass.pa.utils.UnCeHandler;
  */
 
 public class MyApplication extends Application {
+    public static CH34xUARTDriver driver;// 需要将CH34x的驱动类写在APP类下面，使得帮助类的生命周期与整个应用程序的生命周期是相同的
     ArrayList<Activity> list = new ArrayList<Activity>();
     public static Context context;
     private static FacePassHandler facePassHandler=null;
@@ -129,7 +130,9 @@ public class MyApplication extends Application {
         ampplication = this;
         myApplication=this;
         context = this;
-
+        driver = new CH34xUARTDriver(
+                (UsbManager) getSystemService(Context.USB_SERVICE), this,
+                ACTION_USB_PERMISSION);
         String rootDir = MMKV.initialize(this);
         System.out.println("mmkv root: " + rootDir);
         SDPATH = getExternalFilesDir(null)+ File.separator+"yinian1";
@@ -138,7 +141,6 @@ public class MyApplication extends Application {
 
        // init();
 
-        Realm.init(context);
 
         Bugly.init(this, "e92fdff61f", false);
 
@@ -168,11 +170,9 @@ public class MyApplication extends Application {
             baoCunBean.setConfigModel(1);
             baoCunBean.setMoshengrenPanDing(3);
             baoCunBean.setLight(false);
-
             MMKV.defaultMMKV().encode("saveBean",baoCunBean);
         }
-
-
+        Log.d("MyApplication", "driver.UsbFeatureSupported():" + driver.UsbFeatureSupported());
     }
 
 }

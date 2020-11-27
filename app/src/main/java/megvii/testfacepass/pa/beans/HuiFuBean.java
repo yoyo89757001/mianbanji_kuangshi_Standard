@@ -1,9 +1,14 @@
 package megvii.testfacepass.pa.beans;
 
 
-import io.realm.RealmObject;
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
-public class HuiFuBean extends RealmObject {
+@Entity
+public class HuiFuBean {
 
     /**
      * id : 12345
@@ -13,15 +18,19 @@ public class HuiFuBean extends RealmObject {
      * shortId : 123456
      */
 
+    @PrimaryKey
+    @NonNull
     private Long id;
-    private String pepopleId;
-    private String pepopleType;
-    private String type;
-    private String msg;
-    private String shortId;
-    private String serialnumber;
+    @ColumnInfo private String pepopleId;
+    @ColumnInfo  private String pepopleType;
+    @ColumnInfo private String type;
+    @ColumnInfo private String msg;
+    @ColumnInfo  private String shortId;
+    @ColumnInfo  private String serialnumber;
 
+    @Ignore
     public HuiFuBean() {
+
     }
 
     public HuiFuBean(Long id, String pepopleId, String pepopleType, String type, String msg, String shortId, String serialnumber) {

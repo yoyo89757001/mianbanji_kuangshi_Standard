@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.SystemClock;
+
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.tencent.mmkv.MMKV;
 
-import org.jetbrains.annotations.NotNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,12 +23,10 @@ import java.io.File;
 
 import java.util.List;
 
-import io.realm.Realm;
+
 import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.R;
 import megvii.testfacepass.pa.beans.BaoCunBean;
-
-import megvii.testfacepass.pa.beans.HuiFuBean;
 import megvii.testfacepass.pa.utils.AcquireTokenAPI;
 import megvii.testfacepass.pa.utils.GetDeviceId;
 import megvii.testfacepass.pa.utils.ToastUtils;

@@ -14,8 +14,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.megvii.AuthApi.AuthApi;
-import com.megvii.AuthApi.AuthCallback;
+
+
+import com.srp.AuthApi.AuthApi;
+import com.srp.AuthApi.AuthApplyResponse;
+import com.srp.AuthApi.AuthCallback;
 import com.tencent.mmkv.MMKV;
 
 import org.greenrobot.eventbus.EventBus;
@@ -101,24 +104,24 @@ public class FaceInit {
     private  void singleCertification(String cert,String active, final String id, final String url2) throws IOException {
       //  String cert = readExternal(CERT_PATH).trim();
          cert="\"{\"\"serial\"\":\"\"m00420764abde7861a9499f135641501301d9\"\",\"\"key\"\":\"\"d773e499d7987dee4a3b9fe607853b364bf09504e148787d4c51e762bb029e165137f5a1b2533768ad64cde31cfc20fc0f818ac120de0cdfba564b6c052244e392c424d99ab6dd6028cc3f6a8ce8d21b7344bc1d6d4bf9e470dca6120fc3ced81b90c7899cc761b4daf30b181fb69881559f0c7689d37c8f575483ea5b353787502c2528f43b8f04181237dc9a88ddc97e4cb1ad4e56d77726a7efba9b57f07da19531c47609de8c017edac474a31e6b066f3fbc99fd01589257592ad5223ddb\"\",\"\"counting_logic\"\":\"\"\"\"}\"\n";
-        active="q1ab123ad84529e3f5d9831a11e2037b1000202";
+        active="vfac9c78fcf9b710302bbea68c68486aa000166";
         if (TextUtils.isEmpty(cert)|| TextUtils.isEmpty(active)){
             EventBus.getDefault().post("授权文件为空");
             return;
         }
         Log.d("FaceInit", "cert:"+cert);
         Log.d("FaceInit","active:"+active );
-        obj.authDevice(cert,active, new AuthCallback() {
+        obj.authDevice(context, cert, active, new AuthApi.AuthDeviceCallBack() {
             @Override
-            public void onAuthResponse(final int i, final String s) {
-                if(i == GET_AUTH_OK){
+            public void GetAuthDeviceResult(AuthApplyResponse authApplyResponse) {
+                if(authApplyResponse.errorCode == GET_AUTH_OK){
                     Log.d("FaceInit", "激活成功");
                     MMKV.defaultMMKV().encode("token",true);
                     //link_uplodeBD(id,url2);
                 }else {
-                    Log.d("FaceInit", s);
-                    Log.d("FaceInit", "i:" + i);
-                    EventBus.getDefault().post("激活失败"+s+":"+i);
+                    Log.d("激活失败", authApplyResponse.errorMessage);
+                    Log.d("FaceInit", "i:" + authApplyResponse.errorCode);
+                   // EventBus.getDefault().post("激活失败"+s+":"+i);
                 }
             }
         });

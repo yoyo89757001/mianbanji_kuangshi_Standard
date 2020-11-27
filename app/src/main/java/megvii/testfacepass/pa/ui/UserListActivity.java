@@ -1,29 +1,31 @@
 package megvii.testfacepass.pa.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import androidx.appcompat.app.AlertDialog;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
+import mcv.facepass.FacePassException;
 import mcv.facepass.FacePassHandler;
 import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.R;
 import megvii.testfacepass.pa.adapter.UserListAdapter;
-import megvii.testfacepass.pa.beans.HuiFuBean;
+
 import megvii.testfacepass.pa.beans.Subject;
+import megvii.testfacepass.pa.utils.DBUtils;
 
 
 public class UserListActivity extends Activity implements UserListAdapter.ItemDeleteButtonClickListener {
@@ -91,8 +93,8 @@ public class UserListActivity extends Activity implements UserListAdapter.ItemDe
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Realm realm = Realm.getDefaultInstance();
-                RealmResults<Subject> huiFuBeanList = realm.where(Subject.class).findAll();
+
+                List<Subject> huiFuBeanList = DBUtils.getSubjectDao().getAllSubject();
                 for (Subject subject : huiFuBeanList) {
                     Subject sb = new Subject();
                     sb.setName(subject.getName());
@@ -125,37 +127,47 @@ public class UserListActivity extends Activity implements UserListAdapter.ItemDe
 
     @Override
     public void OnItemDeleteButtonClickListener(final int position) {
-//        final AlertDialog.Builder builder=new AlertDialog.Builder(UserListActivity.this);
-//        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                Realm realm = Realm.getDefaultInstance();
-//                if (subjectList!=null){
-//                    try {
-//                        realm.beginTransaction();
-//                        subjectRealmResults.get(position).deleteFromRealm();
-//                        realm.commitTransaction();
-//                        adapter.notifyDataSetChanged();
-//                        zongrenshu.setText("总人数:"+subjectRealmResults.size());
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }finally {
-//                        realm.close();
-//                    }
-//                }
-//                dialog.dismiss();
-//
-//            }
-//        });
-//        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.dismiss();
-//            }
-//        });
-//        builder.setMessage("你确定要删除吗？");
-//        builder.setTitle("温馨提示");
-//        builder.show();
+        final AlertDialog.Builder builder=new AlertDialog.Builder(UserListActivity.this);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (subjectList!=null){
+                    try {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    facePassHandler.deleteFace(subjectList.get(position).getTeZhengMa().getBytes());
+                                } catch (FacePassException e) {
+                                    e.printStackTrace();
+                                }
+                                DBUtils.getSubjectDao().delete(subjectList.get(position));
+                                subjectList.remove(position);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        adapter.notifyDataSetChanged();
+                                        zongrenshu.setText("总人数:"+subjectList.size());
+                                    }
+                                });
+                            }
+                        }).start();
+                    }catch (Exception e){
+                        Log.d("UserListActivity", e.getMessage()+"删除异常");
+                    }
+                }
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setMessage("你确定要删除吗？");
+        builder.setTitle("温馨提示");
+        builder.show();
 
     }
 

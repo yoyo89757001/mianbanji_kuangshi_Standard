@@ -41,39 +41,42 @@ public class FacePassUtil {
                             try {
                                 /* 填入所需要的配置 */
                                 config = new FacePassConfig();
-                                config.poseBlurModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "attr.pose_blur.align.av200.190630.bin");
+                                config.poseBlurModel = FacePassModel.initModel(context.getAssets(), "attr.pose_blur.align.av200.190630.bin");
 
-                             //   config.livenessModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "liveness.3288CPU.rgb.int8.C.bin");
+                                //单目使用CPU rgb活体模型
+                               // config.livenessModel = FacePassModel.initModel(context.getAssets(), "liveness.CPU.rgb.int8.E.bin");
+                                config.livenessModel = FacePassModel.initModel(context.getAssets(), "liveness.GPU.rgb.E.bin");
+                                //双目使用CPU rgbir活体模型
+                                //config.rgbIrLivenessModel = FacePassModel.initModel(context.getAssets(), "liveness.CPU.rgbir.int8.E.bin");
+                                //当单目或者双目有一个使用GPU活体模型时，请设置livenessGPUCache
+                                config.livenessGPUCache = FacePassModel.initModel(context.getAssets(), "liveness.GPU.AlgoPolicy.E.cache");
 
-                                //也可以使用GPU活体模型，GPU活体模型分两个，用于GPU加速的模型和CACHE，当使用CPU活体模型时，请传null，当使用GPU活体模型时，必须传入加速cache模型
-                                config.livenessModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "liveness.3288GPU.rgb.C.bin");
-                                config.livenessGPUCache = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "liveness.GPU.AlgoPolicy.C.cache");
+                                config.searchModel = FacePassModel.initModel(context.getAssets(), "feat2.arm.H.v1.0_1core.bin");
+                                config.detectModel = FacePassModel.initModel(context.getAssets(), "detector.arm.E.bin");
+                                config.detectRectModel = FacePassModel.initModel(context.getAssets(), "detector_rect.arm.E.bin");
+                                config.landmarkModel = FacePassModel.initModel(context.getAssets(), "pf.lmk.arm.D.bin");
 
-                                config.searchModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "feat2.arm.F.v1.0.1core.bin");
-                                config.detectModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "detector.arm.C.bin");
-                                config.detectRectModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "detector_rect.arm.C.bin");
-                                config.landmarkModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "pf.lmk.float32.1015.bin");
+                                config.rcAttributeModel = FacePassModel.initModel(context.getAssets(), "attr.RC.gray.12M.arm.200229.bin");
 
-                                //config.mouthOccAttributeModel = FacePassModel.initModel(MyApplication.ampplication.getAssets(), "attribute.mouth.occ.gray.12M.190930.bin");
-                                //config.smileModel = FacePassModel.initModel(getApplicationContext().getAssets(), "attr.smile.mgf29.0.1.1.181229.bin");
-                                //config.ageGenderModel = FacePassModel.initModel(getApplicationContext().getAssets(), "attr.age_gender.surveillance.nnie.av200.0.1.0.190630.bin");
-                                //config.occlusionFilterModel = FacePassModel.initModel(getApplicationContext().getAssets(), "occlusion.all_attr_configurable.occ.190816.bin");
+                                //config.smileModel = FacePassModel.initModel(context.getAssets(), "attr.smile.mgf29.0.1.1.181229.bin");
+                                //config.ageGenderModel = FacePassModel.initModel(context.getAssets(), "attr.age_gender.surveillance.nnie.av200.0.1.0.190630.bin");
+                                config.occlusionFilterModel = FacePassModel.initModel(context.getAssets(), "occlusion.all_attr_configurable.occ.190816.bin");
                                 //如果不需要表情和年龄性别功能，smileModel和ageGenderModel可以为null
                                 //config.smileModel = null;
                                 //config.ageGenderModel = null;
 
-                                //config.occlusionFilterEnabled = true;
-                               // config.mouthOccAttributeEnabled = true;
+                                config.occlusionFilterEnabled = false;
+                                config.rcAttributeEnabled = false;
                                 config.rgbIrLivenessEnabled = false;
                                 config.smileEnabled = false;
-                                config.rotation = cameraRotation;
+                                //config.rotation = cameraRotation;
                                 config.searchThreshold =  baoCunBean.getShibieFaZhi();
                                 config.livenessThreshold = baoCunBean.getHuoTiFZ();
                                 config.livenessEnabled = baoCunBean.isHuoTi();
                                 boolean ageGenderEnabledGlobal = (config.ageGenderModel != null);
-                                config.faceMinThreshold = baoCunBean.getShibieFaceSize();
-                                config.poseThreshold = new FacePassPose(40f, 40f, 40f);
-                                config.blurThreshold = 0.9f;
+                                config.faceMinThreshold = 30;
+                                config.poseThreshold = new FacePassPose(46f, 46, 46f);
+                                config.blurThreshold = 0.6f;
                                 config.lowBrightnessThreshold = 60f;
                                 config.highBrightnessThreshold = 220f;
                                 config.brightnessSTDThreshold = 90f;//阴阳脸
@@ -89,7 +92,7 @@ public class FacePassUtil {
                               //  float livenessThreshold2 = 48f;
                              //   boolean livenessEnabled2 = true;
                                 int faceMinThreshold2 = baoCunBean.getRuKuFaceSize();
-                                float blurThreshold2 = 0.7f;
+                                float blurThreshold2 = 0.6f;
                                 float lowBrightnessThreshold2 = 70f;
                                 float highBrightnessThreshold2 = 210f;
                                 float brightnessSTDThreshold2 = 80f;
@@ -109,9 +112,6 @@ public class FacePassUtil {
                                         EventBus.getDefault().post("mFacePassHandler");
                                     }
                                 });
-
-
-
                             } catch (FacePassException e) {
                                 e.printStackTrace();
 
@@ -136,7 +136,12 @@ public class FacePassUtil {
         if (mFacePassHandler == null) {
             return;
         }
-        String[] localGroups = mFacePassHandler.getLocalGroups();
+        String[] localGroups = new String[0];
+        try {
+            localGroups = mFacePassHandler.getLocalGroups();
+        } catch (FacePassException e) {
+            e.printStackTrace();
+        }
 
         if (localGroups == null || localGroups.length == 0) {
             try {
