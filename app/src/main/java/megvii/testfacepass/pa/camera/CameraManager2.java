@@ -210,7 +210,9 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
                         }
                         camera.addCallbackBuffer(mPicBuffer);
                         previewSize = sz;
+                        Log.d("CameraManager2", "fdsfdsfsd");
                     }
+                    Log.d("CameraManager2", "fdsfdsfsd22222");
                     return null;
                 }
 

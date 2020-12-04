@@ -8,17 +8,26 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <megvii.testfacepass.pa.camera.CameraPreview
-        android:id="@+id/preview"
-        android:layout_centerInParent="true"
-        android:layout_width="400dp"
-        android:layout_height="300dp"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <megvii.testfacepass.pa.camera.CameraPreview
+            android:id="@+id/preview"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
 
 
-<!--    <megvii.testfacepass.pa.camera.CameraPreview2-->
-<!--        android:id="@+id/preview2"-->
-<!--        android:layout_width="1dp"-->
-<!--        android:layout_height="1dp"/>-->
+<!--        <megvii.testfacepass.pa.camera.CameraPreview2-->
+<!--            android:id="@+id/preview2"-->
+<!--            android:layout_weight="1"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"/>-->
+    </LinearLayout>
+
+
 
 
     <!--顶部按钮和标题-->
@@ -77,6 +86,15 @@
         android:visibility="gone"
         android:textColor="#FB2F2F"
         android:id="@+id/faceName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_centerInParent="true"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:textColor="#FB2F2F"
+        android:id="@+id/wangluo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

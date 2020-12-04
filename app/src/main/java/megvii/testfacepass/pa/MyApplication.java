@@ -148,8 +148,8 @@ public class MyApplication extends Application {
       BaoCunBean  baoCunBean = MMKV.defaultMMKV().decodeParcelable("saveBean",BaoCunBean.class);
         if (baoCunBean == null) {
             baoCunBean = new BaoCunBean();
-            baoCunBean.setHoutaiDiZhi("http://hy.inteyeligence.com/front");
-            baoCunBean.setTouxiangzhuji("http://hy.inteyeligence.com/front");
+            baoCunBean.setHoutaiDiZhi("http://39.108.253.88:8087/front");
+            baoCunBean.setTouxiangzhuji("http://39.108.253.88:8087/front");
             baoCunBean.setId(123456L);
             baoCunBean.setShibieFaceSize(30);
             baoCunBean.setShibieFaZhi(72f);
@@ -160,7 +160,7 @@ public class MyApplication extends Application {
             baoCunBean.setYusu(5);
             baoCunBean.setYudiao(5);
             baoCunBean.setMima2(123456);
-            baoCunBean.setJihuoma("1285-4601-0563-4349-0569");
+            baoCunBean.setJihuoma("0000-0000-0000-0000-0000");
             baoCunBean.setHuoTi(false);
             baoCunBean.setDangqianShiJian("2");
             baoCunBean.setTianQi(false);

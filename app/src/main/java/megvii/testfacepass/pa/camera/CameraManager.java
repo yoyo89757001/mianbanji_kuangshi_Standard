@@ -132,7 +132,7 @@ public class CameraManager implements CameraPreview.CameraPreviewListener {
                 @Override
                 protected Object doInBackground(Object... params) {
                     cameraId = front ;
-
+                Log.d("CameraManager", "camera.getNumberOfCameras():" + camera.getNumberOfCameras());
                     try {
                         camera = Camera.open(cameraId);
                         Log.d("CameraManager1", "cameraId:" + cameraId);

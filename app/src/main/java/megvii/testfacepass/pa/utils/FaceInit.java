@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -104,7 +105,7 @@ public class FaceInit {
     private  void singleCertification(String cert,String active, final String id, final String url2) throws IOException {
       //  String cert = readExternal(CERT_PATH).trim();
          cert="\"{\"\"serial\"\":\"\"m00420764abde7861a9499f135641501301d9\"\",\"\"key\"\":\"\"d773e499d7987dee4a3b9fe607853b364bf09504e148787d4c51e762bb029e165137f5a1b2533768ad64cde31cfc20fc0f818ac120de0cdfba564b6c052244e392c424d99ab6dd6028cc3f6a8ce8d21b7344bc1d6d4bf9e470dca6120fc3ced81b90c7899cc761b4daf30b181fb69881559f0c7689d37c8f575483ea5b353787502c2528f43b8f04181237dc9a88ddc97e4cb1ad4e56d77726a7efba9b57f07da19531c47609de8c017edac474a31e6b066f3fbc99fd01589257592ad5223ddb\"\",\"\"counting_logic\"\":\"\"\"\"}\"\n";
-        active="vfac9c78fcf9b710302bbea68c68486aa000166";
+        active="n5d10446eb34881deed7df35c50a60dd6000708";
         if (TextUtils.isEmpty(cert)|| TextUtils.isEmpty(active)){
             EventBus.getDefault().post("授权文件为空");
             return;
@@ -115,13 +116,24 @@ public class FaceInit {
             @Override
             public void GetAuthDeviceResult(AuthApplyResponse authApplyResponse) {
                 if(authApplyResponse.errorCode == GET_AUTH_OK){
-                    Log.d("FaceInit", "激活成功");
+                    //Log.d("FaceInit", "激活成功");
                     MMKV.defaultMMKV().encode("token",true);
                     //link_uplodeBD(id,url2);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(activity,"激活成功",Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }else {
                     Log.d("激活失败", authApplyResponse.errorMessage);
                     Log.d("FaceInit", "i:" + authApplyResponse.errorCode);
-                   // EventBus.getDefault().post("激活失败"+s+":"+i);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(activity,"激活失败",Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });

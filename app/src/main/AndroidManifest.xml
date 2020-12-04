@@ -124,7 +124,8 @@
 
                 <data android:scheme="file" />
             </intent-filter>
-        </receiver> <!-- 自动重启 -->
+        </receiver>
+        <!-- 自动重启 -->
         <receiver android:name=".ui.BaseActivity$MyReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -132,7 +133,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <!-- <category android:name="android.intent.category.HOME" /> -->
             </intent-filter>
-        </receiver> <!-- <service -->
+        </receiver>
+        <!-- <service -->
         <!-- android:name=".severs.AutoSendMsgService" -->
         <!-- android:enabled="true" -->
         <!-- android:exported="true" -->

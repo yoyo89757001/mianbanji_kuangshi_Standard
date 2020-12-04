@@ -50,7 +50,7 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
     static {
         try {
             //Robin pace_face_detect.so需要在授权之前加载
-            System.loadLibrary("pace_face_detect");
+//            System.loadLibrary("pace_face_detect");
         } catch (UnsatisfiedLinkError var1) {
             Log.e("Robin", "detection" + var1.toString());
         }
@@ -64,9 +64,9 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
         setContentView(R.layout.activity_base);
         baoCunBean=MMKV.defaultMMKV().decodeParcelable("saveBean",BaoCunBean.class);
         mSharedPreferences = getSharedPreferences("SP", Context.MODE_PRIVATE);
-        methodRequiresTwoPermission();
-        MyApplication.myApplication.addActivity(this);
 
+        MyApplication.myApplication.addActivity(this);
+        methodRequiresTwoPermission();
       /*  Realm realm2 = Realm.getDefaultInstance();
         realm2.deleteAll();
      */
@@ -188,7 +188,7 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
             Log.d("BaseActivity", baoCunBean.getTuisongDiZhi());
         }
         boolean token;
-        token = MMKV.defaultMMKV().decodeBool("token",true);
+        token = MMKV.defaultMMKV().decodeBool("token",false);
         Log.d("BaseActivity", "token:" + token);
         if (token) {
             startActivity(new Intent(BaseActivity.this,MianBanJiActivity3.class));
