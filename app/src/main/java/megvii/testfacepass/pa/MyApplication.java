@@ -167,7 +167,7 @@ public class MyApplication extends Application {
             baoCunBean.setDangqianShiJian("2");
             baoCunBean.setTianQi(false);
             baoCunBean.setTishiyu("欢迎光临");
-            baoCunBean.setPort(5000);
+            baoCunBean.setPort(6000);
             baoCunBean.setMsrPanDing(true);
             baoCunBean.setConfigModel(1);
             baoCunBean.setMoshengrenPanDing(3);

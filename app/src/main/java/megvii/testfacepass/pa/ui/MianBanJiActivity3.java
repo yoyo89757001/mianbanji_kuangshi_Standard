@@ -1162,6 +1162,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                 if (subject != null) {
                                     if (concurrentHashMap2.get(subject.getId())==null){
                                         concurrentHashMap2.put(subject.getId(),"ID:"+subject.getId()+" 姓名:"+subject.getName()+"\n");
+                                        builder.append(concurrentHashMap2.get(subject.getId()));
                                     }else {
                                         continue;
                                     }
@@ -1176,10 +1177,10 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //                                    if (isAA){
 //                                        continue;
 //                                    }
-                                    Enumeration<String> stringEnumeration2=concurrentHashMap2.elements();
-                                    while (stringEnumeration2.hasMoreElements()){
-                                        builder.append(stringEnumeration2.nextElement());
-                                    }
+//                                    Enumeration<String> stringEnumeration2=concurrentHashMap2.elements();
+//                                    while (stringEnumeration2.hasMoreElements()){
+//
+//                                    }
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
