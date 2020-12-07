@@ -119,11 +119,7 @@ public class UserListAdapter extends BaseAdapter {
         });
 
         holder.groupNameTv.setText(mGroupNames.get(position).getName());
-        if (mGroupNames.get(position).getWorkNumber()==null){
-            holder.kahao.setText("未绑定ID卡");
-        }else {
-            holder.kahao.setText("已绑定ID卡: "+mGroupNames.get(position).getWorkNumber());
-        }
+        holder.kahao.setText("ID: "+mGroupNames.get(position).getId());
         try {
             if (mGroupNames.get(position).getTeZhengMa()!=null && facePassHandler!=null){
                 Glide.with(context)

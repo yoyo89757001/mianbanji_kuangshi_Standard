@@ -66,6 +66,7 @@ public class CommonDialogService extends Service implements CommonDialogListener
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d("CommonDialogService", "显示弹窗");
         ToastUtils.getInstances().setListener(this);//绑定
     }
 

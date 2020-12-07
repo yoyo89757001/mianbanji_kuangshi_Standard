@@ -4,17 +4,20 @@ package megvii.testfacepass.pa;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.hardware.usb.UsbManager;
 import android.serialport.SerialPort;
+import android.text.TextUtils;
 import android.util.Log;
 
 
 import com.tencent.bugly.Bugly;
 import com.tencent.mmkv.MMKV;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -127,32 +130,31 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+
         ampplication = this;
         myApplication=this;
         context = this;
         driver = new CH34xUARTDriver(
                 (UsbManager) getSystemService(Context.USB_SERVICE), this,
                 ACTION_USB_PERMISSION);
-        String rootDir = MMKV.initialize(this);
-        System.out.println("mmkv root: " + rootDir);
+
+
         SDPATH = getExternalFilesDir(null)+ File.separator+"yinian1";
         SDPATH2 = getExternalFilesDir(null)+File.separator+"yinian2";
         SDPATH3 = getExternalFilesDir(null)+File.separator+"yinian3";
+        //   Bugly.init(this, "e92fdff61f", false);
+        String rootDir = MMKV.initialize(this);
+        System.out.println("mmkv root: " + rootDir);
 
-       // init();
-
-
-        Bugly.init(this, "e92fdff61f", false);
-
-
-      BaoCunBean  baoCunBean = MMKV.defaultMMKV().decodeParcelable("saveBean",BaoCunBean.class);
+        BaoCunBean  baoCunBean = MMKV.defaultMMKV().decodeParcelable("saveBean",BaoCunBean.class);
         if (baoCunBean == null) {
             baoCunBean = new BaoCunBean();
             baoCunBean.setHoutaiDiZhi("http://39.108.253.88:8087/front");
             baoCunBean.setTouxiangzhuji("http://39.108.253.88:8087/front");
             baoCunBean.setId(123456L);
             baoCunBean.setShibieFaceSize(30);
-            baoCunBean.setShibieFaZhi(72f);
+            baoCunBean.setShibieFaZhi(73f);
             baoCunBean.setRuKuFaceSize(50);
             baoCunBean.setRuKuMoHuDu(0.3f);
             baoCunBean.setHuoTiFZ(72);
@@ -165,14 +167,44 @@ public class MyApplication extends Application {
             baoCunBean.setDangqianShiJian("2");
             baoCunBean.setTianQi(false);
             baoCunBean.setTishiyu("欢迎光临");
-            baoCunBean.setPort(8090);
+            baoCunBean.setPort(5000);
             baoCunBean.setMsrPanDing(true);
             baoCunBean.setConfigModel(1);
             baoCunBean.setMoshengrenPanDing(3);
             baoCunBean.setLight(false);
             MMKV.defaultMMKV().encode("saveBean",baoCunBean);
         }
+
         Log.d("MyApplication", "driver.UsbFeatureSupported():" + driver.UsbFeatureSupported());
+
+        Log.i(">>>>>>","oncreate");
+
+       // init();
+        String processName = getProcessName();
+        Log.d("MyApplication", processName+"进程");
+
+        if (!TextUtils.isEmpty(processName) && processName.equals(this.getPackageName())) {
+            Log.d("MyApplication", "初始胡");
+            //在这里进行主进程初始化逻辑操作
+
+        }
+
+        int pid = android.os.Process.myPid();
+
+        Log.d("TAG", "MyApplication pid is " + pid);
+    }
+
+    public static String getProcessName() {
+        try {
+            File file = new File("/proc/" + android.os.Process.myPid() + "/" + "cmdline");
+            BufferedReader mBufferedReader = new BufferedReader(new FileReader(file));
+            String processName = mBufferedReader.readLine().trim();
+            mBufferedReader.close();
+            return processName;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

@@ -173,9 +173,9 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
         manager.open(getWindowManager(), SettingVar.cameraId, cameraWidth, cameraHeight);//前置是1
         if (SettingVar.cameraId==1){
-            manager2.open(getWindowManager(), 0, cameraWidth, cameraHeight, SettingVar.cameraPreviewRotation2);//最后一个参数是红外预览方向
+            manager2.open(getWindowManager(), 0, cameraWidth, cameraHeight);//最后一个参数是红外预览方向
         }else {
-            manager2.open(getWindowManager(), 1, cameraWidth, cameraHeight, SettingVar.cameraPreviewRotation2);//最后一个参数是红外预览方向
+            manager2.open(getWindowManager(), 1, cameraWidth, cameraHeight);//最后一个参数是红外预览方向
         }
 
 

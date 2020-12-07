@@ -18,10 +18,10 @@ import java.util.List;
 import megvii.testfacepass.pa.utils.SettingVar;
 
 public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
-    protected int front = 1;
+    protected int front = 0;
 
     protected Camera camera = null;
-    private int camRotation = 90;
+
     protected int cameraId = -1;
 
     protected SurfaceHolder surfaceHolder = null;
@@ -116,14 +116,6 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
         return Math.abs((float) size.width / (float) size.height - standardPropotion);
     }
 
-
-    public void pauseCamera() {
-        if (camera != null)
-            camera.stopPreview();
-    }
-
-
-
     public int getCameraWidth() {
         return manualWidth;
     }
@@ -140,14 +132,12 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
                 @Override
                 protected Object doInBackground(Object... params) {
                     cameraId = front ;
-
+                    Log.d("CameraManager", "camera.getNumberOfCameras():" + camera.getNumberOfCameras());
                     try {
                         camera = Camera.open(cameraId);
-                        Log.d("CameraManager2", "cameraId:" + cameraId);
+                        Log.d("CameraManager1", "cameraId:" + cameraId);
                     } catch (Exception e) {
-
-                          return false;
-
+                        return false;
                     }
                     if (camera != null) {
                         Camera.CameraInfo info = new Camera.CameraInfo();
@@ -176,9 +166,9 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
                             previewRotation = (info.orientation - degrees + 360) % 360;
                         }
 //                        previewRotation = 90;
-                        if (SettingVar.isSettingAvailable) {
-                            previewRotation = camRotation;
-                        }
+                        // if (SettingVar.isSettingAvailable) {
+                        previewRotation = SettingVar.cameraPreviewRotation2;
+                        // }
 
                         Log.i("CameraManager", String.format("camera rotation: %d %d %d", degrees, info.orientation, previewRotation));
                         camera.setDisplayOrientation(previewRotation);
@@ -196,7 +186,7 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
                         }
                         SettingVar.cameraSettingOk = true;
                         param.setPreviewFormat(ImageFormat.NV21);
-                       // param.setPreviewFpsRange(12,30);
+                        // param.setPreviewFpsRange(12,30);
                         camera.setParameters(param);
                         PixelFormat pixelinfo = new PixelFormat();
                         int pixelformat = camera.getParameters().getPreviewFormat();
@@ -210,9 +200,7 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
                         }
                         camera.addCallbackBuffer(mPicBuffer);
                         previewSize = sz;
-                        Log.d("CameraManager2", "fdsfdsfsd");
                     }
-                    Log.d("CameraManager2", "fdsfdsfsd22222");
                     return null;
                 }
 
@@ -237,13 +225,12 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
         return open(windowManager);
     }
 
-    public boolean open(WindowManager windowManager, int front, int width, int height,int sdd) {
+    public boolean open(WindowManager windowManager, int front, int width, int height) {
         if (state == CameraState.OPENING) {
             return false;
         }
         this.manualHeight = height;
         this.manualWidth = width;
-        this.camRotation = sdd;
         this.front = front;
         return open(windowManager);
     }
@@ -256,6 +243,22 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
             camera.release();
             camera = null;
         }
+    }
+
+    public void pauseCamera(){
+        if (camera!=null)
+            camera.stopPreview();
+    }
+    public void startCamera(){
+        if (surfaceHolder!=null) {
+            try {
+                camera.setPreviewDisplay(surfaceHolder);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (camera!=null)
+            camera.startPreview();
     }
 
     public void finalRelease() {
@@ -282,7 +285,7 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
                 if (listener != null) {
                     listener.onPictureTaken2(
                             new CameraPreviewData2(data.clone(), previewSize.width, previewSize.height,
-                                    camRotation,front ));
+                                    SettingVar.cameraPreviewRotation2, front));
                 }
                 camera.addCallbackBuffer(data);
             }

@@ -98,6 +98,7 @@ public class UserListActivity extends Activity implements UserListAdapter.ItemDe
                 for (Subject subject : huiFuBeanList) {
                     Subject sb = new Subject();
                     sb.setName(subject.getName());
+                    sb.setId(subject.getId());
                     sb.setTeZhengMa(subject.getTeZhengMa());
                     subjectList.add(sb);
                 }

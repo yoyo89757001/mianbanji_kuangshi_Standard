@@ -54,9 +54,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- <activity android:name=".ui.MianBanJiActivity2"/> -->
+
         <activity
             android:name=".ui.MianBanJiActivity3"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            />
+
+<!--        <service android:name=".severs.SendMsgService" android:process="com.eends.sgservice"/>-->
+
+<!--        <activity-->
+<!--            android:name=".ui.MianBanJiActivity3_1"-->
+<!--            android:process=":comcamera123" android:theme="@style/dialog_style_all"/>-->
+
         <activity android:name=".ui.SettingActivity" />
         <activity android:name=".ui.YuLanActivity" />
         <activity
@@ -147,7 +156,8 @@
         <!-- android:name="android.accessibilityservice" -->
         <!-- android:resource="@xml/auto_reply_service_config"/> -->
         <!-- </service> -->
-        <service android:name=".dialogall.CommonDialogService" />
+<!--        <service android:name=".dialogall.CommonDialogService"/>-->
+
     </application>
 
 </manifest>

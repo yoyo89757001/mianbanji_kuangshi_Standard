@@ -20,7 +20,7 @@ import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.beans.BaoCunBean;
 
 
-public class FacePassUtil {
+public class FacePassUtil2 {
 
     /* SDK 实例对象 */
     private Context context;
@@ -29,13 +29,13 @@ public class FacePassUtil {
     private FacePassHandler mFacePassHandler;  /* 人脸识别Group */
     private  final String group_name = "facepasstestx";
 
-    public  void init(final Activity activity , final Context context, final int cameraRotation, final BaoCunBean baoCunBean){
+    public  void init( final Context context, final int cameraRotation, final BaoCunBean baoCunBean){
         this.context=context;
 
             new Thread() {
                 @Override
                 public void run() {
-                    while (!activity.isFinishing()) {
+                    while (true) {
                         if (FacePassHandler.isAvailable()) {
                             FacePassConfig config;
                             try {
@@ -87,7 +87,7 @@ public class FacePassUtil {
                                 mFacePassHandler = new FacePassHandler(config);
                                 MyApplication.myApplication.setFacePassHandler(mFacePassHandler);
 
-                                checkGroup(activity,context);
+                                checkGroup();
                               //  float searchThreshold2 = 75f;
                               //  float livenessThreshold2 = 48f;
                              //   boolean livenessEnabled2 = true;
@@ -100,18 +100,8 @@ public class FacePassUtil {
                                         lowBrightnessThreshold2,highBrightnessThreshold2,brightnessSTDThreshold2);
                                 boolean is= mFacePassHandler.setAddFaceConfig(config1);
 
-                                Log.d("YanShiActivity", " 设置入库质量配置"+is );
+                                Log.d("viclee", " 设置入库质量配置"+is );
 
-                                activity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast tastyToast= TastyToast.makeText(context,"识别模块1初始化成功",TastyToast.LENGTH_LONG,TastyToast.INFO);
-                                        tastyToast.setGravity(Gravity.CENTER,0,0);
-                                        tastyToast.show();
-                                        MyApplication.myApplication.setFacePassHandler(mFacePassHandler);
-                                        EventBus.getDefault().post("mFacePassHandler");
-                                    }
-                                });
                             } catch (FacePassException e) {
                                 e.printStackTrace();
 
@@ -122,7 +112,7 @@ public class FacePassUtil {
                         try {
                             /* 如果SDK初始化未完成则需等待 */
                             sleep(500);
-                            Log.d("FacePassUtil", "激活中。。。");
+                            Log.d("viclee", "激活中。。。");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -132,7 +122,7 @@ public class FacePassUtil {
         }
 
 
-    private  void checkGroup(Activity activity, final Context context) {
+    private  void checkGroup() {
         if (mFacePassHandler == null) {
             return;
         }

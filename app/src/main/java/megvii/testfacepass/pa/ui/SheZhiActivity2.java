@@ -77,6 +77,7 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
     RelativeLayout rl5;
     RelativeLayout rl9;
     RelativeLayout rl13;
+    RelativeLayout rl12;
     RelativeLayout rl14;
     RelativeLayout rl15;
     RelativeLayout rl16;
@@ -122,7 +123,7 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
         banbenhao.setText("v:"+AppUtils.getVersionName(this));
         //Log.d("SheZhiActivity2", MacUtils.getMacAddress()+"mac地址");//18:93:7F:7C:6D:92mac地址
         EventBus.getDefault().register(this);//订阅
-        DengUT.getInstance(baoCunBean).openLOED();
+      //  DengUT.getInstance(baoCunBean).openLOED();
 //        DengUT.getInstance(baoCunBean).closeWrite();
 //        DengUT.getInstance(baoCunBean).closeGreen();
 //        DengUT.getInstance(baoCunBean).closeRed();
@@ -239,6 +240,8 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
         rl8.setOnClickListener(this);
         rl9=findViewById(R.id.rl9);
         rl9.setOnClickListener(this);
+        rl12=findViewById(R.id.rl12);
+        rl12.setOnClickListener(this);
         rl13=findViewById(R.id.rl13);
         rl13.setOnClickListener(this);
         rl14=findViewById(R.id.rl14);
@@ -382,7 +385,7 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
             case R.id.rl12: {
                 final XiuGaiDiZhiDialog diZhiDialog = new XiuGaiDiZhiDialog(SheZhiActivity2.this);
                 diZhiDialog.setCanceledOnTouchOutside(false);
-                diZhiDialog.setContents("设置端口号", baoCunBean.getPort() + "", null);
+                diZhiDialog.setContents("设置门禁关门时间间隔", baoCunBean.getPort() + "", null);
                 diZhiDialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -393,7 +396,7 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
                             diZhiDialog.dismiss();
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "输入的端口号非数字", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                            Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "输入的时间非数字", TastyToast.LENGTH_LONG, TastyToast.INFO);
                             tastyToast.setGravity(Gravity.CENTER, 0, 0);
                             tastyToast.show();
                         }

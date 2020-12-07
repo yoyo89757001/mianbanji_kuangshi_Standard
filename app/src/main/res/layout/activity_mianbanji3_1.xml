@@ -7,25 +7,25 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-    <LinearLayout
-        android:orientation="horizontal"
+    <megvii.testfacepass.pa.camera.CameraPreview
+        android:id="@+id/preview1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"/>
 
-        <megvii.testfacepass.pa.camera.CameraPreview
-            android:id="@+id/preview1"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"/>
+<!--    <LinearLayout-->
+<!--        android:orientation="horizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
+
+<!--       -->
 
 
-        <megvii.testfacepass.pa.camera.CameraPreview2
-            android:id="@+id/preview22"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"/>
-    </LinearLayout>
+<!--&lt;!&ndash;        <megvii.testfacepass.pa.camera.CameraPreview2&ndash;&gt;-->
+<!--&lt;!&ndash;            android:id="@+id/preview22"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_weight="1"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_width="0dp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_height="match_parent"/>&ndash;&gt;-->
+<!--    </LinearLayout>-->
 
 
 
@@ -33,7 +33,7 @@
     <!--顶部按钮和标题-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="90dp"
         android:id="@+id/mmgg"
         android:background="@mipmap/pic_hd11"
         android:orientation="horizontal">

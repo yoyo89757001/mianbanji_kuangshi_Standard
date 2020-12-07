@@ -156,7 +156,7 @@
                     android:layout_toRightOf="@+id/im12"
                     android:layout_marginLeft="16px"
                     android:textColor="#6c020202"
-                    android:text="设置端口号"
+                    android:text="设置门禁关门间隔时间"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -181,6 +181,7 @@
 
             <RelativeLayout
                 android:id="@+id/rl222"
+                android:visibility="gone"
                 android:background="@drawable/jiaohu31"
                 android:layout_width="match_parent"
                 android:layout_height="60dp">
@@ -214,7 +215,6 @@
                     android:layout_width="60px"
                     android:layout_height="60px" />
                 <View
-                    android:visibility="gone"
                     android:background="#f5f5f5"
                     android:layout_width="match_parent"
                     android:layout_alignParentBottom="true"
@@ -258,7 +258,6 @@
 
 
                 <View
-                    android:visibility="gone"
                     android:background="#f5f5f5"
                     android:layout_width="match_parent"
                     android:layout_alignParentBottom="true"
@@ -967,7 +966,7 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:visibility="visible"
+                android:visibility="gone"
                 android:id="@+id/rl55"
                 android:background="@drawable/jiaohu31"
                 android:layout_width="match_parent"

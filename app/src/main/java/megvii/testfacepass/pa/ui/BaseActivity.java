@@ -47,15 +47,15 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
     private static boolean isL=true;
     private SharedPreferences mSharedPreferences;
 
-    static {
-        try {
-            //Robin pace_face_detect.so需要在授权之前加载
-//            System.loadLibrary("pace_face_detect");
-        } catch (UnsatisfiedLinkError var1) {
-            Log.e("Robin", "detection" + var1.toString());
-        }
+//    static {
+//        try {
+//            //Robin pace_face_detect.so需要在授权之前加载
+////            System.loadLibrary("pace_face_detect");
+//        } catch (UnsatisfiedLinkError var1) {
+//            Log.e("Robin", "detection" + var1.toString());
+//        }
+//    }
 
-    }
 
 
     @Override
@@ -195,6 +195,7 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
             finish();
         } else {
             startActivity(new Intent(BaseActivity.this,SheZhiActivity2.class));
+
             finish();
         }
     }
