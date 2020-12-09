@@ -105,7 +105,7 @@ public class FacePassUtil {
                                 activity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast tastyToast= TastyToast.makeText(context,"识别模块1初始化成功",TastyToast.LENGTH_LONG,TastyToast.INFO);
+                                        Toast tastyToast= TastyToast.makeText(context,"识别模块初始化成功",TastyToast.LENGTH_LONG,TastyToast.INFO);
                                         tastyToast.setGravity(Gravity.CENTER,0,0);
                                         tastyToast.show();
                                         MyApplication.myApplication.setFacePassHandler(mFacePassHandler);
