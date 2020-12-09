@@ -295,8 +295,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //        musicId.put(5, soundPool.load(this, R.raw.shuaka, 1));
 
 
-        //baoCunBean.setHoutaiDiZhi("http://39.108.253.88:8087/front");
-       // MMKV.defaultMMKV().encode("saveBean",baoCunBean);
+      //  baoCunBean.setHoutaiDiZhi("http://39.108.253.88:8087/front");
+      //  MMKV.defaultMMKV().encode("saveBean",baoCunBean);
 
         initView();
 
@@ -477,11 +477,11 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
     //    guanPing();//关屏
 
-        if (baoCunBean.isMsrPanDing()){
+        if (baoCunBean.isLight()){
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SystemClock.sleep(20000);
+                    SystemClock.sleep(30000);
                     Log.d("MianBanJiActivity3", "检测2个头是否有数据");
                     if (!isB || !isA){
                         try {

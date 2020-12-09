@@ -140,7 +140,7 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
         } else {
             switchs56.setChecked(false);
         }
-        if (baoCunBean.isMsrPanDing()) {
+        if (baoCunBean.isLight()) {
             switchs5678.setChecked(true);
         } else {
             switchs5678.setChecked(false);
@@ -177,17 +177,18 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    baoCunBean.setMsrPanDing(true);
+                    baoCunBean.setLight(true);
                     MMKV.defaultMMKV().encode("saveBean",baoCunBean);
                     Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "检测2个头开启", TastyToast.LENGTH_LONG, TastyToast.INFO);
                     tastyToast.setGravity(Gravity.CENTER, 0, 0);
                     tastyToast.show();
                 } else {
-                    baoCunBean.setMsrPanDing(false);
+                    baoCunBean.setLight(false);
                     MMKV.defaultMMKV().encode("saveBean",baoCunBean);
                     Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "检测2个头关闭", TastyToast.LENGTH_LONG, TastyToast.INFO);
                     tastyToast.setGravity(Gravity.CENTER, 0, 0);
                     tastyToast.show();
+
                 }
 
 
