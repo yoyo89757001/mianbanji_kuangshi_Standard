@@ -118,13 +118,13 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.9'//日期选择
     implementation 'com.badoo.mobile:android-weak-handler:1.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.tencent.bugly:crashreport_upgrade:1.4.2'//腾讯bugly
-    implementation 'com.tencent.bugly:nativecrashreport:3.7.3' //腾讯bugly
+    //implementation 'com.tencent.bugly:crashreport_upgrade:1.4.2'//腾讯bugly
+    //implementation 'com.tencent.bugly:nativecrashreport:3.7.3' //腾讯bugly
     implementation "com.android.support:multidex:1.0.3" // 多dex配置
     implementation 'com.tencent:mmkv-static:1.2.4'
     //implementation 'com.airbnb.android:lottie:3.0.7'
-    implementation group: 'net.sourceforge.jexcelapi', name: 'jxl', version: '2.6.12' //导出wps
-    implementation 'com.zyao89:zloading:1.2.0'//加载框
+    //implementation group: 'net.sourceforge.jexcelapi', name: 'jxl', version: '2.6.12' //导出wps
+    //implementation 'com.zyao89:zloading:1.2.0'//加载框
     implementation 'pub.devrel:easypermissions:3.0.0'//6。0权限
     //implementation 'com.yanzhenjie.andserver:api:2.1.1'//小服务器
     //annotationProcessor 'com.yanzhenjie.andserver:processor:2.1.1'//小服务器

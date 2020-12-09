@@ -25,7 +25,6 @@ import com.hwit.HwitManager;
 import com.lztek.toolkit.Lztek;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.tencent.mmkv.MMKV;
-import com.zyao89.view.zloading.ZLoadingDialog;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -89,7 +88,7 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
     RelativeLayout rl55;
     TextView banbenhao;
     //  JiaZaiDialog dddd;
-    private ZLoadingDialog zLoadingDialog;
+
     private final String group_name = "facepasstestx";
     private BangDingDialog bangDingDialog = null;
     private BaoCunBean baoCunBean = null;
@@ -1044,25 +1043,6 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
 
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
     public void onDataSynEvent(String event) {
-        if (zLoadingDialog != null) {
-            if (event.equals("daochujilu")) {
-                Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "导出成功", TastyToast.LENGTH_LONG, TastyToast.INFO);
-                tastyToast.setGravity(Gravity.CENTER, 0, 0);
-                tastyToast.show();
-                zLoadingDialog.dismiss();
-                zLoadingDialog = null;
-                return;
-            }
-            if (event.equals("daochujiluyc")) {
-                Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "导出失败", TastyToast.LENGTH_LONG, TastyToast.INFO);
-                tastyToast.setGravity(Gravity.CENTER, 0, 0);
-                tastyToast.show();
-                zLoadingDialog.dismiss();
-                zLoadingDialog = null;
-                return;
-            }
-        }
-
 
         if (bangDingDialog != null) {
             bangDingDialog.setContents(event);
