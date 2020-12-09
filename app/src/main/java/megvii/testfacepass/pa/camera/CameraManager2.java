@@ -32,7 +32,7 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
 
     private CameraState state = CameraState.IDEL;
 
-    private int previewDegreen = 0;
+    //private int previewDegreen = 0;
 
     private int manualWidth, manualHeight;
 
@@ -132,7 +132,7 @@ public class CameraManager2 implements CameraPreview2.CameraPreviewListener2 {
                 @Override
                 protected Object doInBackground(Object... params) {
                     cameraId = front ;
-                    Log.d("CameraManager", "camera.getNumberOfCameras():" + camera.getNumberOfCameras());
+                   // Log.d("CameraManager", "camera.getNumberOfCameras():" + camera.getNumberOfCameras());
                     try {
                         camera = Camera.open(cameraId);
                         Log.d("CameraManager1", "cameraId:" + cameraId);

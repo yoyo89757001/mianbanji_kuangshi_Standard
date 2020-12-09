@@ -47,7 +47,6 @@ import megvii.testfacepass.pa.dialog.XiuGaiSBFZDialog;
 import megvii.testfacepass.pa.dialog.XiuGaiYuYinDialog;
 import megvii.testfacepass.pa.dialog.XiuGaigGSMDialog;
 import megvii.testfacepass.pa.utils.AppUtils;
-import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.DiaLogUtil;
 import megvii.testfacepass.pa.utils.FaceInit;
 import megvii.testfacepass.pa.utils.FileUtil;
@@ -141,7 +140,7 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
         } else {
             switchs56.setChecked(false);
         }
-        if (baoCunBean.isLight()) {
+        if (baoCunBean.isMsrPanDing()) {
             switchs5678.setChecked(true);
         } else {
             switchs5678.setChecked(false);
@@ -178,18 +177,17 @@ public class SheZhiActivity2 extends Activity implements View.OnClickListener {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    baoCunBean.setLight(true);
+                    baoCunBean.setMsrPanDing(true);
                     MMKV.defaultMMKV().encode("saveBean",baoCunBean);
-                    Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "屏幕常亮开启", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                    Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "检测2个头开启", TastyToast.LENGTH_LONG, TastyToast.INFO);
                     tastyToast.setGravity(Gravity.CENTER, 0, 0);
                     tastyToast.show();
                 } else {
-                    baoCunBean.setLight(false);
+                    baoCunBean.setMsrPanDing(false);
                     MMKV.defaultMMKV().encode("saveBean",baoCunBean);
-                    Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "屏幕常亮关闭", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                    Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "检测2个头关闭", TastyToast.LENGTH_LONG, TastyToast.INFO);
                     tastyToast.setGravity(Gravity.CENTER, 0, 0);
                     tastyToast.show();
-
                 }
 
 

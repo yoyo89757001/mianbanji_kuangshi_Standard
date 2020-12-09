@@ -1012,19 +1012,7 @@ public class MianBanJiActivity3_1 extends Activity implements CameraManager.Came
     }
 
 
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        //即设定DecorView在PhoneWindow里的位置
-        View view = getWindow().getDecorView();
-        WindowManager.LayoutParams lp = (WindowManager.LayoutParams) view.getLayoutParams();
-        lp.gravity = Gravity.RIGHT | Gravity.TOP;
-        lp.x = 300;
-        lp.y = 0;
-        lp.width = 200;
-        lp.height = 200;
-        getWindowManager().updateViewLayout(view, lp);
-    }
+
 
     private void initView() {
         //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);

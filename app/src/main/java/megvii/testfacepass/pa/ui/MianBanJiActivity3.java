@@ -7,9 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
+
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
+
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -46,7 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,12 +79,11 @@ import megvii.testfacepass.pa.camera.CameraPreview2;
 import megvii.testfacepass.pa.camera.CameraPreviewData;
 import megvii.testfacepass.pa.camera.CameraPreviewData2;
 import megvii.testfacepass.pa.dialog.MiMaDialog4;
-import megvii.testfacepass.pa.severs.SendMsgService;
+
 import megvii.testfacepass.pa.tts.Auth;
 import megvii.testfacepass.pa.tts.OfflineResource;
 import megvii.testfacepass.pa.utils.BitmapUtil;
 import megvii.testfacepass.pa.utils.DBUtils;
-import megvii.testfacepass.pa.utils.DateUtils;
 import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.FacePassUtil;
 import megvii.testfacepass.pa.utils.GsonUtil;
@@ -152,7 +151,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //            .transform(new GlideCircleTransform270(MyApplication.myApplication, 2, Color.parseColor("#ffffffff"), 270));
    // private String serialnumber = GetDeviceId.getDeviceId(MyApplication.myApplication);
 
-    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
+    private final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .writeTimeout(20000, TimeUnit.MILLISECONDS)
             .connectTimeout(20000, TimeUnit.MILLISECONDS)
             .readTimeout(20000, TimeUnit.MILLISECONDS)
@@ -167,22 +166,15 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     /* 相机实例 */
     private CameraManager manager;
     private CameraManager2 manager2;
-    /* 显示人脸位置角度信息 */
-    // private XiuGaiGaoKuanDialog dialog = null;
-    /* 相机预览界面 */
-    private CameraPreview cameraView;
-    private CameraPreview2 cameraView2;
-    private static final int cameraWidth = 640;
-    private static final int cameraHeight = 480;
-  //  private boolean isOP = true;
-    private int heightPixels;
-    private int widthPixels;
-    int screenState = 0;// 0 横 1 竖
+
+    private static final int cameraWidth = 800;
+    private static final int cameraHeight = 600;
+   // int screenState = 0;// 0 横 1 竖
     TanChuangThread tanChuangThread;
     // private ConcurrentHashMap<Long, Integer> concurrentHashMap = new ConcurrentHashMap<Long, Integer>();
     private int dw, dh;
-    private static ConcurrentHashMap<Long, Integer> concurrentHashMap = new ConcurrentHashMap<Long, Integer>();
-    private static ConcurrentHashMap<String, String> concurrentHashMap2 = new ConcurrentHashMap<String, String>();
+    private static final ConcurrentHashMap<Long, Integer> concurrentHashMap = new ConcurrentHashMap<Long, Integer>();
+    private static final ConcurrentHashMap<String, String> concurrentHashMap2 = new ConcurrentHashMap<String, String>();
     private BaoCunBean baoCunBean = null;
     private TimeChangeReceiver timeChangeReceiver;
    // private Handler mHandler;
@@ -218,7 +210,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     FeedFrameThread mFeedFrameThread;
     private static final String group_name = "facepasstestx";
     private static StringBuilder builder=null;
-
+    private int timeall = 0;
+    private boolean isA=false,isB=false;
 
 
     @Override
@@ -240,14 +233,14 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         mDetectResultQueue = new ArrayBlockingQueue<FacePassDetectionResult>(5);
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
         MyApplication.myApplication.addActivity(this);
-       /* try {
-            lztek=Lztek.create(MyApplication.ampplication);
-            lztek.gpioEnable(218);
-            lztek.setGpioOutputMode(218);
-        }catch (NoClassDefFoundError error){
-            error.printStackTrace();
-        }
-
+//        try {
+//            lztek=Lztek.create(MyApplication.ampplication);
+//            //lztek.gpioEnable(218);
+//           // lztek.setGpioOutputMode(218);
+//        }catch (NoClassDefFoundError error){
+//            error.printStackTrace();
+//        }
+        /*
         if (baoCunBean.getDangqianChengShi2()!=null){
             switch (baoCunBean.getDangqianChengShi2()){
                 case "智连":
@@ -302,7 +295,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //        musicId.put(5, soundPool.load(this, R.raw.shuaka, 1));
 
 
-        baoCunBean.setHoutaiDiZhi("http://39.108.253.88:8087/front");
+        //baoCunBean.setHoutaiDiZhi("http://39.108.253.88:8087/front");
+       // MMKV.defaultMMKV().encode("saveBean",baoCunBean);
 
         initView();
 
@@ -456,21 +450,20 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
 
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SystemClock.sleep(5000);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d("MianBanJiActivity3", "dd"+SettingVar.cameraId);
-
-
-                    }
-                });
-
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                SystemClock.sleep(5000);
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Log.d("MianBanJiActivity3", "dd"+SettingVar.cameraId);
+//
+//                    }
+//                });
+//
+//            }
+//        }).start();
 
 
 //        if (baoCunBean.isHuoTi()) {
@@ -484,15 +477,23 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
     //    guanPing();//关屏
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                SystemClock.sleep(12000);
-//                DengUT.getInstance(baoCunBean).reboot();
-//
-//
-//            }
-//        }).start();
+        if (baoCunBean.isMsrPanDing()){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SystemClock.sleep(20000);
+                    Log.d("MianBanJiActivity3", "检测2个头是否有数据");
+                    if (!isB || !isA){
+                        try {
+                            DengUT.reboot();
+                            // lztek.hardReboot();
+                        }catch (Exception e){
+                            Log.d("MianBanJiActivity3", "亮钻设备接口异常"+e.getMessage());
+                        }
+                    }
+                }
+            }).start();
+        }
 
     }
 
@@ -614,6 +615,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     public void onPictureTaken(CameraPreviewData cameraPreviewData) {
        // Log.d("MianBanJiActivity3", "cameraPreviewData.front1:" + cameraPreviewData.front);
         /* 如果SDK实例还未创建，则跳过 */
+        isA=true;
         if (paAccessControl == null) {
             return;
         }
@@ -631,6 +633,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     @Override
     public void onPictureTaken2(CameraPreviewData2 cameraPreviewData) {
        // Log.d("MianBanJiActivity3", "cameraPreviewData.front2:" + cameraPreviewData.front);
+        isB=true;
         if (paAccessControl == null) {
             return;
         }
@@ -1063,19 +1066,23 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        heightPixels = displayMetrics.heightPixels;
-        widthPixels = displayMetrics.widthPixels;
+        //  private boolean isOP = true;
+        int heightPixels = displayMetrics.heightPixels;
+        int widthPixels = displayMetrics.widthPixels;
         SettingVar.mHeight = heightPixels;
         SettingVar.mWidth = widthPixels;
         /* 初始化界面 */
         manager = new CameraManager();
-        cameraView = findViewById(R.id.preview1);
+        /* 显示人脸位置角度信息 */
+        // private XiuGaiGaoKuanDialog dialog = null;
+        /* 相机预览界面 */
+        CameraPreview cameraView = findViewById(R.id.preview1);
         manager.setPreviewDisplay(cameraView);
         /* 注册相机回调函数 */
         manager.setListener(this);
 
         manager2 = new CameraManager2();
-        cameraView2 = findViewById(R.id.preview22);
+        CameraPreview2 cameraView2 = findViewById(R.id.preview22);
         manager2.setPreviewDisplay(cameraView2);
         /* 注册相机回调函数 */
         manager2.setListener(this);
@@ -1535,9 +1542,10 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     //mianBanJiView.setTime(DateUtils.time(System.currentTimeMillis()+""));
                     // String riqi11 = DateUtils.getWeek(System.currentTimeMillis()) + "   " + DateUtils.timesTwo(System.currentTimeMillis() + "");
                     //  riqi.setTypeface(tf);
-                    String xiaoshiss = DateUtils.timeMinute(System.currentTimeMillis() + "");
-                    if (xiaoshiss.split(":")[0].equals("03") && xiaoshiss.split(":")[1].equals("15")) {
-                     Log.d("TimeChangeReceiver", "ssss");
+                   // String xiaoshiss = DateUtils.timeMinute(System.currentTimeMillis() + "");
+                    timeall++;
+                    if (timeall>=21600) {//半个月
+                    // Log.d("TimeChangeReceiver", "ssss");
                         DengUT.reboot();
                     }
 //                    if (xiaoshiss.split(":")[1].contains("9")||xiaoshiss.split(":")[1].contains("09")) {
@@ -1620,6 +1628,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
             return;
         }
       //  Log.d("AllConnects", baoCunBean.getHoutaiDiZhi());
+
         Bitmap bb = BitmapUtil.rotateBitmap(bitmap, SettingVar.msrBitmapRotation);
         RequestBody body = null;
         body = new FormBody.Builder()

@@ -8,11 +8,7 @@ import android.content.SharedPreferences;
 
 import android.hardware.usb.UsbManager;
 import android.serialport.SerialPort;
-import android.text.TextUtils;
-import android.util.Log;
 
-
-import com.tencent.bugly.Bugly;
 import com.tencent.mmkv.MMKV;
 
 import java.io.BufferedReader;
@@ -175,23 +171,23 @@ public class MyApplication extends Application {
             MMKV.defaultMMKV().encode("saveBean",baoCunBean);
         }
 
-        Log.d("MyApplication", "driver.UsbFeatureSupported():" + driver.UsbFeatureSupported());
+      //  Log.d("MyApplication", "driver.UsbFeatureSupported():" + driver.UsbFeatureSupported());
 
-        Log.i(">>>>>>","oncreate");
+      //  Log.i(">>>>>>","oncreate");
 
-       // init();
-        String processName = getProcessName();
-        Log.d("MyApplication", processName+"进程");
-
-        if (!TextUtils.isEmpty(processName) && processName.equals(this.getPackageName())) {
-            Log.d("MyApplication", "初始胡");
-            //在这里进行主进程初始化逻辑操作
-
-        }
-
-        int pid = android.os.Process.myPid();
-
-        Log.d("TAG", "MyApplication pid is " + pid);
+        init();
+//        String processName = getProcessName();
+//        Log.d("MyApplication", processName+"进程");
+//
+//        if (!TextUtils.isEmpty(processName) && processName.equals(this.getPackageName())) {
+//            Log.d("MyApplication", "初始胡");
+//            //在这里进行主进程初始化逻辑操作
+//
+//        }
+//
+//        int pid = android.os.Process.myPid();
+//
+//        Log.d("TAG", "MyApplication pid is " + pid);
     }
 
     public static String getProcessName() {
