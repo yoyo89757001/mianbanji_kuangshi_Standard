@@ -39,6 +39,7 @@ import com.tencent.mmkv.MMKV;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1443,11 +1444,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
     public void onDataSynEvent(String event) {
-
         if (event.equals("ditu123")) {
             // if (baoCunBean.getTouxiangzhuji() != null)
             //    daBg.setImageBitmap(BitmapFactory.decodeFile(baoCunBean.getTouxiangzhuji()));
-
             //   Log.d("MainActivity101", "dfgdsgfdgfdgfdg");
             return;
         }
@@ -1550,12 +1549,12 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         //step 4: 开始异步请求
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.d("AllConnects", "请求失败" +call.request().url().toString()+ e.getMessage());
                     isGET=true;
             }
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
                 //获得返回体
                 try {
@@ -1570,8 +1569,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                             linkedBlockingQueue.put(resultBean);
                             SystemClock.sleep(3000);
                         }
-                      //  if (linkedBlockingQueue.size()==0){
-                     //   }
                         isGET=true;
                         try {
                             com.alibaba.fastjson.JSONObject oo= JSON.parseObject(commandsBean.getMessage());
@@ -1592,8 +1589,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         }catch (Exception e){
                             e.printStackTrace();
                         }
-
-
                     }else {
                         isGET=true;
                     }

@@ -176,7 +176,7 @@ public class MyApplication extends Application {
 
       //  Log.i(">>>>>>","oncreate");
 
-       // init();
+        init();
 //        String processName = getProcessName();
 //        Log.d("MyApplication", processName+"进程");
 //
