@@ -117,8 +117,11 @@ public class UserListAdapter extends BaseAdapter {
                 }
             }
         });
-
-        holder.groupNameTv.setText(mGroupNames.get(position).getName());
+        if (mGroupNames.get(position).getIsOpen()==0){
+            holder.groupNameTv.setText(mGroupNames.get(position).getName()+" (有开门权限)");
+        }else {
+            holder.groupNameTv.setText(mGroupNames.get(position).getName()+" (没有开门权限)");
+        }
         holder.kahao.setText("ID: "+mGroupNames.get(position).getId());
         try {
             if (mGroupNames.get(position).getTeZhengMa()!=null && facePassHandler!=null){

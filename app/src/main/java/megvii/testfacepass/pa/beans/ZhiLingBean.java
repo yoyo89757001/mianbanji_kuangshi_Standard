@@ -59,8 +59,15 @@ public class ZhiLingBean {
         private String image;
         private String cardID;
         private String shortId;
+        private int isOpen;//0关 1 开
 
+        public int getIsOpen() {
+            return isOpen;
+        }
 
+        public void setIsOpen(int isOpen) {
+            this.isOpen = isOpen;
+        }
 
         public int getCommand() {
             return command;

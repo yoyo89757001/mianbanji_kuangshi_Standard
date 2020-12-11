@@ -3,7 +3,6 @@ package megvii.testfacepass.pa.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,28 +12,24 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 import mcv.facepass.FacePassException;
 import mcv.facepass.FacePassHandler;
 import megvii.testfacepass.pa.MyApplication;
 import megvii.testfacepass.pa.R;
 import megvii.testfacepass.pa.adapter.UserListAdapter;
-
 import megvii.testfacepass.pa.beans.Subject;
 import megvii.testfacepass.pa.utils.DBUtils;
 
 
 public class UserListActivity extends Activity implements UserListAdapter.ItemDeleteButtonClickListener {
-    private FacePassHandler facePassHandler=MyApplication.myApplication.getFacePassHandler();
+    private  FacePassHandler facePassHandler=MyApplication.myApplication.getFacePassHandler();
 
     private ListView listView;
     private UserListAdapter adapter;
    // private UserListAdapter2 adapter2;
-    private List<Subject> subjectList=new ArrayList<>();
+    private final List<Subject> subjectList=new ArrayList<>();
     private TextView zongrenshu;
     private EditText editText;
     //private ZLoadingDialog zLoadingDialog;
@@ -138,9 +133,9 @@ public class UserListActivity extends Activity implements UserListAdapter.ItemDe
                             @Override
                             public void run() {
                                 try {
-                                    facePassHandler.deleteFace(subjectList.get(position).getTeZhengMa().getBytes());
+                                    Log.d("UserListActivity", "deleteFace:" + facePassHandler.deleteFace(subjectList.get(position).getTeZhengMa().getBytes()));
                                 } catch (FacePassException e) {
-                                    e.printStackTrace();
+                                    Log.d("UserListActivity", e.getMessage()+"deleteFace异常");
                                 }
                                 DBUtils.getSubjectDao().delete(subjectList.get(position));
                                 subjectList.remove(position);
