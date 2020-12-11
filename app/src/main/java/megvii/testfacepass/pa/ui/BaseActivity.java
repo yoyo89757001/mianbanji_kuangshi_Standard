@@ -44,7 +44,7 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
     static final String device = "stest-dev";
     private ProgressDialog mProgressDialog;
     private BaoCunBean baoCunBean;
-    private static boolean isL=true;
+    //private static boolean isL=true;
     private SharedPreferences mSharedPreferences;
 
 //    static {
@@ -254,18 +254,18 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
 
-    public static class MyReceiver extends BroadcastReceiver {
-        public MyReceiver() {
-
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-                Intent i = new Intent(context, BaseActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
-            }
-        }
-    }
+//    public static class MyReceiver extends BroadcastReceiver {
+//        public MyReceiver() {
+//
+//        }
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+//                Intent i = new Intent(context, BaseActivity.class);
+//                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                context.startActivity(i);
+//            }
+//        }
+//    }
 }

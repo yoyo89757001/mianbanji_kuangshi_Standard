@@ -167,6 +167,7 @@ public class MyApplication extends Application {
             baoCunBean.setMsrPanDing(true);
             baoCunBean.setConfigModel(1);
             baoCunBean.setMoshengrenPanDing(3);
+            baoCunBean.setJidianqi(6);
             baoCunBean.setLight(false);
             MMKV.defaultMMKV().encode("saveBean",baoCunBean);
         }
@@ -175,7 +176,7 @@ public class MyApplication extends Application {
 
       //  Log.i(">>>>>>","oncreate");
 
-        init();
+       // init();
 //        String processName = getProcessName();
 //        Log.d("MyApplication", processName+"进程");
 //
