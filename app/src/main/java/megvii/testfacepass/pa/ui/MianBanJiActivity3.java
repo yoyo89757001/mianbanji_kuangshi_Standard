@@ -299,7 +299,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //        musicId.put(5, soundPool.load(this, R.raw.shuaka, 1));
 
 
-        baoCunBean.setHoutaiDiZhi("http://172.17.8.32:8087/front");
+      //  baoCunBean.setHoutaiDiZhi("http://172.17.8.32:8087/front");
       //  MMKV.defaultMMKV().encode("saveBean",baoCunBean);
 
         initView();
@@ -1574,8 +1574,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                             com.alibaba.fastjson.JSONObject oo= JSON.parseObject(commandsBean.getMessage());
                             float threshold= Float.parseFloat(oo.getString("threshold"));
                             int interval= Integer.parseInt(oo.getString("interval"));
-                            Log.d("MianBanJiActivity3", "threshold"+threshold);
-                            Log.d("MianBanJiActivity3", "interval"+interval);
+                           // Log.d("MianBanJiActivity3", "threshold"+threshold);
+                           // Log.d("MianBanJiActivity3", "interval"+interval);
                             if (interval!=baoCunBean.getJidianqi()){
                                 baoCunBean.setJidianqi(interval);
                                 MMKV.defaultMMKV().encode("saveBean",baoCunBean);
