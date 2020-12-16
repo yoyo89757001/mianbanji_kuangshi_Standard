@@ -169,6 +169,7 @@ public class MyApplication extends Application {
             baoCunBean.setMoshengrenPanDing(3);
             baoCunBean.setJidianqi(6);
             baoCunBean.setLight(false);
+
             MMKV.defaultMMKV().encode("saveBean",baoCunBean);
         }
 

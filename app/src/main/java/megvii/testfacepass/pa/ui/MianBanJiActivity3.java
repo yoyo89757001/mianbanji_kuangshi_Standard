@@ -1,6 +1,7 @@
 package megvii.testfacepass.pa.ui;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,8 +47,10 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +88,7 @@ import megvii.testfacepass.pa.tts.Auth;
 import megvii.testfacepass.pa.tts.OfflineResource;
 import megvii.testfacepass.pa.utils.BitmapUtil;
 import megvii.testfacepass.pa.utils.DBUtils;
+import megvii.testfacepass.pa.utils.DateUtils;
 import megvii.testfacepass.pa.utils.DengUT;
 import megvii.testfacepass.pa.utils.FacePassUtil;
 import megvii.testfacepass.pa.utils.GsonUtil;
@@ -203,7 +207,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
    // LinearInterpolator lir_gif;
     private boolean isGET = true;
     private int cishu=5;
-    private int jidianqi=6000;
+    //private int jidianqi=6000;
     //private Lztek lztek=null;
   //  private CameraPreviewData mCurrentImage;
     ArrayBlockingQueue<FacePassDetectionResult> mDetectResultQueue;
@@ -214,9 +218,11 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     private static StringBuilder builder=null;
     private int timeall = 0;
     private boolean isA=false,isB=false;
-   // private int dogTime=0;
+    private String dogTime="";
+    private SimpleDateFormat df=null;
 
 
+    @SuppressLint("SimpleDateFormat")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -231,7 +237,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
        // initTTs();
         builder=new StringBuilder();
         baoCunBean = MMKV.defaultMMKV().decodeParcelable("saveBean",BaoCunBean.class);
-       // baoCunBean.setMoshengrenPanDing(3);
+
+        baoCunBean.setHoutaiDiZhi("http://9v4biy.natappfree.cc/front");
        // MMKV.defaultMMKV().encode("saveBean",baoCunBean);
         mDetectResultQueue = new ArrayBlockingQueue<FacePassDetectionResult>(5);
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
@@ -301,9 +308,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
       //  baoCunBean.setHoutaiDiZhi("http://172.17.8.32:8087/front");
       //  MMKV.defaultMMKV().encode("saveBean",baoCunBean);
-
+        df = new SimpleDateFormat("HH:mm");// 设置日期格式
         initView();
-
+        dogTime= DateUtils.timeMinute(System.currentTimeMillis()+"");
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -342,9 +349,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
         if (baoCunBean != null) {
             try {
-                if (baoCunBean.getJidianqi()!=0){
-                    jidianqi=baoCunBean.getJidianqi()*1000;
-                }
+//                if (baoCunBean.getJidianqi()!=0){
+//                    jidianqi=baoCunBean.getJidianqi()*1000;
+//                }
                 if (baoCunBean.getMoshengrenPanDing()!=0){
                     cishu=baoCunBean.getMoshengrenPanDing();
                 }
@@ -780,6 +787,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                         subject.setName(commandsBean.getName());
                                         subject.setDepartmentName(commandsBean.getDepartmentName());
                                         subject.setIsOpen(commandsBean.getIsOpen());
+                                        subject.setFaceIds1(commandsBean.getStartPeriods());
+                                        subject.setFaceIds2(commandsBean.getEndPeriods());
                                         try {
                                             DBUtils.getSubjectDao().insertAll(subject);
                                             paAccessControl.bindGroup(group_name,faceToken);
@@ -862,7 +871,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                                 subject.setPeopleType(commandsBean.getPepopleType());
                                             }
                                             subject.setIsOpen(commandsBean.getIsOpen());
-
+                                            subject.setFaceIds1(commandsBean.getStartPeriods());
+                                            subject.setFaceIds2(commandsBean.getEndPeriods());
                                             subject.setTeZhengMa(new String(faceToken));
                                             DBUtils.getSubjectDao().insertAll(subject);
                                             HuiFuBean huiFuBean = new HuiFuBean(System.currentTimeMillis(), commandsBean.getId(),
@@ -894,6 +904,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                     if (pepopleType != null) {
                                         subject.setPeopleType(pepopleType);
                                     }
+                                    subject.setFaceIds1(commandsBean.getStartPeriods());
+                                    subject.setFaceIds2(commandsBean.getEndPeriods());
                                     subject.setIsOpen(commandsBean.getIsOpen());
                                     DBUtils.getSubjectDao().insertAll(subject);
                                     HuiFuBean huiFuBean = new HuiFuBean(System.currentTimeMillis(), commandsBean.getId(),
@@ -1159,7 +1171,19 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                    //speak(subject.getName());
                                    // if (subject.getPeopleType().equals("1")){
                                         if (subject.getIsOpen()==0){
-                                            openDoor();
+                                            Date now = null;
+                                            Date beginTime = null;
+                                            Date endTime = null;
+                                            try {
+                                                now = df.parse(dogTime);
+                                                beginTime = df.parse(subject.getFaceIds1());
+                                                endTime = df.parse(subject.getFaceIds2());
+                                                boolean flag = DateUtils.belongCalendar(now, beginTime, endTime);
+                                                if (flag)
+                                                    openDoor();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
                                         }
                                         if (task != null) {
                                             task.cancel();
@@ -1456,7 +1480,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SystemClock.sleep(jidianqi);
+                    //SystemClock.sleep(jidianqi);
                     menjing2();
                 }
             }).start();
@@ -1474,9 +1498,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                 tvTitle_Ir.setText("");
             } else {
                 tvTitle_Ir.setText(baoCunBean.getWenzi1());
-            }
-            if (baoCunBean.getJidianqi()!=0){
-                jidianqi=baoCunBean.getJidianqi();
             }
             if (baoCunBean.getMoshengrenPanDing()!=0){
                 cishu=baoCunBean.getMoshengrenPanDing();
@@ -1504,6 +1525,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     // String riqi11 = DateUtils.getWeek(System.currentTimeMillis()) + "   " + DateUtils.timesTwo(System.currentTimeMillis() + "");
                     //  riqi.setTypeface(tf);
                    // String xiaoshiss = DateUtils.timeMinute(System.currentTimeMillis() + "");
+                    dogTime= DateUtils.timeMinute(System.currentTimeMillis()+"");
+
                     timeall++;
                     if (timeall>=86400) {//两个月
                     // Log.d("TimeChangeReceiver", "ssss");
@@ -1573,14 +1596,14 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         try {
                             com.alibaba.fastjson.JSONObject oo= JSON.parseObject(commandsBean.getMessage());
                             float threshold= Float.parseFloat(oo.getString("threshold"));
-                            int interval= Integer.parseInt(oo.getString("interval"));
+                            //int interval= Integer.parseInt(oo.getString("interval"));
                            // Log.d("MianBanJiActivity3", "threshold"+threshold);
                            // Log.d("MianBanJiActivity3", "interval"+interval);
-                            if (interval!=baoCunBean.getJidianqi()){
-                                baoCunBean.setJidianqi(interval);
-                                MMKV.defaultMMKV().encode("saveBean",baoCunBean);
-                                jidianqi=interval*1000;
-                            }
+//                            if (interval!=baoCunBean.getJidianqi()){
+//                                baoCunBean.setJidianqi(interval);
+//                                MMKV.defaultMMKV().encode("saveBean",baoCunBean);
+//                                jidianqi=interval*1000;
+//                            }
                             if (threshold!=baoCunBean.getShibieFaZhi()){
                                 baoCunBean.setShibieFaZhi(threshold);
                                 MMKV.defaultMMKV().encode("saveBean",baoCunBean);

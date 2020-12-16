@@ -60,6 +60,24 @@ public class ZhiLingBean {
         private String cardID;
         private String shortId;
         private int isOpen;//0关 1 开
+        private String startPeriods;
+        private String endPeriods;
+
+        public String getStartPeriods() {
+            return startPeriods;
+        }
+
+        public void setStartPeriods(String startPeriods) {
+            this.startPeriods = startPeriods;
+        }
+
+        public String getEndPeriods() {
+            return endPeriods;
+        }
+
+        public void setEndPeriods(String endPeriods) {
+            this.endPeriods = endPeriods;
+        }
 
         public int getIsOpen() {
             return isOpen;

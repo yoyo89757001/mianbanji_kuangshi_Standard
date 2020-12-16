@@ -201,6 +201,30 @@ public class DateUtils {
 
     }
 
+
+    /**
+     * 判断时间是否在时间段内
+     *
+     * @param nowTime
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static boolean belongCalendar(Date nowTime, Date beginTime,
+                                         Date endTime) {
+        Calendar date = Calendar.getInstance();
+        date.setTime(nowTime);
+
+        Calendar begin = Calendar.getInstance();
+        begin.setTime(beginTime);
+
+        Calendar end = Calendar.getInstance();
+        end.setTime(endTime);
+
+        return date.after(begin) && date.before(end);
+    }
+
+
     /**
      * @param //time斜杠分开
      * @return
@@ -208,7 +232,7 @@ public class DateUtils {
     public static String timeMinute(String time) {
         SimpleDateFormat sdr = new SimpleDateFormat("HH:mm", Locale.CHINA);
         @SuppressWarnings("unused")
-        long lcc = Long.valueOf(time);
+        long lcc = Long.parseLong(time);
      //   int i = Integer.parseInt(time);
         return sdr.format(new Date(lcc));
 
