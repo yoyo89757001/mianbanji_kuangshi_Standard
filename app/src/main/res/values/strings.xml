@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">瑞瞳智能云前台</string>
+    <string name="app_name">颐年人脸识别</string>
 
 
     <string name="tv_nfc_notsupport">设备不支持NFC</string>

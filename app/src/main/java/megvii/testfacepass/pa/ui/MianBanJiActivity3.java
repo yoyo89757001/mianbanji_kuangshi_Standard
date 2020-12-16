@@ -124,11 +124,11 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     private final TtsMode ttsMode = DEFAULT_SDK_TTS_MODE;
     private final boolean isOnlineSDK = TtsMode.ONLINE.equals(DEFAULT_SDK_TTS_MODE);
     // ================ 纯离线sdk或者选择TtsMode.ONLINE  以下参数无用;
-    private static final String TEMP_DIR = "/sdcard/baiduTTS"; // 重要！请手动将assets目录下的3个dat 文件复制到该目录
+    //private static final String TEMP_DIR = "/sdcard/baiduTTS"; // 重要！请手动将assets目录下的3个dat 文件复制到该目录
     // 请确保该PATH下有这个文件
-    private static final String TEXT_FILENAME = TEMP_DIR + "/" + TEXT_MODEL;
+   // private static final String TEXT_FILENAME = TEMP_DIR + "/" + TEXT_MODEL;
     // 请确保该PATH下有这个文件 ，m15是离线男声
-    private static final String MODEL_FILENAME = TEMP_DIR + "/" + VOICE_MALE_MODEL;
+    //private static final String MODEL_FILENAME = TEMP_DIR + "/" + VOICE_MALE_MODEL;
     // ===============初始化参数设置完毕，更多合成参数请至getParams()方法中设置 =================
     protected SpeechSynthesizer mSpeechSynthesizer;
     //离线发音选择，VOICE_FEMALE即为离线女声发音。
@@ -1333,7 +1333,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                         }
                                     }
                                   //  showUIResult(3,"陌生人","");
-                                    Log.d("RecognizeThread", "陌生人");
+                                   // Log.d("RecognizeThread", "陌生人");
                                     DengUT.isOPEN = true;
                                     //   msrBitmap = nv21ToBitmap.nv21ToBitmap(result.feedback.rgbImage.image, result.feedback.rgbImage.width, result.feedback.rgbImage.height);
                                     //   Log.d("RecognizeThread", "入库"+tID);
@@ -2016,7 +2016,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
             if (!isSuccess) {
                 return;
             } else {
-                print("离线资源存在并且可读, 目录：" + TEMP_DIR);
+               // print("离线资源存在并且可读, 目录：" + TEMP_DIR);
             }
         }
         // 日志更新在UI中，可以换成MessageListener，在logcat中查看日志
@@ -2038,9 +2038,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         // 4. 如果是纯离线SDK需要离线功能的话
         if (!isOnlineSDK) {
             // 文本模型文件路径 (离线引擎使用)， 注意TEXT_FILENAME必须存在并且可读
-            mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_TTS_TEXT_MODEL_FILE, TEXT_FILENAME);
+          //  mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_TTS_TEXT_MODEL_FILE, TEXT_FILENAME);
             // 声学模型文件路径 (离线引擎使用)， 注意TEXT_FILENAME必须存在并且可读
-            mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_TTS_SPEECH_MODEL_FILE, MODEL_FILENAME);
+          //  mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_TTS_SPEECH_MODEL_FILE, MODEL_FILENAME);
 
             mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_MIX_MODE, SpeechSynthesizer.MIX_MODE_DEFAULT);
             // 该参数设置为TtsMode.MIX生效。
@@ -2071,8 +2071,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         // 复制下上面的 mSpeechSynthesizer.setParam参数
         // 上线时请删除AutoCheck的调用
         if (!isOnlineSDK) {
-            params.put(SpeechSynthesizer.PARAM_TTS_TEXT_MODEL_FILE, TEXT_FILENAME);
-            params.put(SpeechSynthesizer.PARAM_TTS_SPEECH_MODEL_FILE, MODEL_FILENAME);
+           // params.put(SpeechSynthesizer.PARAM_TTS_TEXT_MODEL_FILE, TEXT_FILENAME);
+          //  params.put(SpeechSynthesizer.PARAM_TTS_SPEECH_MODEL_FILE, MODEL_FILENAME);
         }
 
         // 检测参数，通过一次后可以去除，出问题再打开debug
@@ -2108,16 +2108,16 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
      * @return 检测是否成功
      */
     private boolean checkOfflineResources() {
-        String[] filenames = {TEXT_FILENAME, MODEL_FILENAME};
-        for (String path : filenames) {
-            File f = new File(path);
-            if (!f.canRead()) {
-                print("[ERROR] 文件不存在或者不可读取，请从demo的assets目录复制同名文件到："
-                        + f.getAbsolutePath());
-                print("[ERROR] 初始化失败！！！");
-                return false;
-            }
-        }
+//        String[] filenames = {TEXT_FILENAME, MODEL_FILENAME};
+//        for (String path : filenames) {
+//            File f = new File(path);
+//            if (!f.canRead()) {
+//                print("[ERROR] 文件不存在或者不可读取，请从demo的assets目录复制同名文件到："
+//                        + f.getAbsolutePath());
+//                print("[ERROR] 初始化失败！！！");
+//                return false;
+//            }
+//        }
         return true;
     }
 
