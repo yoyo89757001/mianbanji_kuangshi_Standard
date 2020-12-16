@@ -6,12 +6,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.tencent.mmkv.MMKV;
 
-import mcv.facepass.FacePassHandler;
-import megvii.testfacepass.pa.beans.BaoCunBean;
-import megvii.testfacepass.pa.utils.FacePassUtil2;
-import megvii.testfacepass.pa.utils.SettingVar;
 
 
 public class SendMsgService extends Service {

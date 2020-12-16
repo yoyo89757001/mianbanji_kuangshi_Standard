@@ -122,7 +122,7 @@ public class UserListAdapter extends BaseAdapter {
         }else {
             holder.groupNameTv.setText(mGroupNames.get(position).getName()+" (没有开门权限)");
         }
-        holder.kahao.setText("ID: "+mGroupNames.get(position).getId());
+        holder.kahao.setText("ID: "+mGroupNames.get(position).getId()+"   开始时间："+mGroupNames.get(position).getFaceIds1()+" 结束时间："+mGroupNames.get(position).getFaceIds2());
         try {
             if (mGroupNames.get(position).getTeZhengMa()!=null && facePassHandler!=null){
                 Glide.with(context)

@@ -238,7 +238,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         builder=new StringBuilder();
         baoCunBean = MMKV.defaultMMKV().decodeParcelable("saveBean",BaoCunBean.class);
 
-        baoCunBean.setHoutaiDiZhi("http://9v4biy.natappfree.cc/front");
        // MMKV.defaultMMKV().encode("saveBean",baoCunBean);
         mDetectResultQueue = new ArrayBlockingQueue<FacePassDetectionResult>(5);
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);

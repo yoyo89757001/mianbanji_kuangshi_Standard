@@ -45,12 +45,13 @@ public class FacePassUtil {
 
                                 //单目使用CPU rgb活体模型
                                // config.livenessModel = FacePassModel.initModel(context.getAssets(), "liveness.CPU.rgb.int8.E.bin");
-                                config.livenessModel = FacePassModel.initModel(context.getAssets(), "liveness.GPU.rgb.E.bin");
-                                //双目使用CPU rgbir活体模型
-                                //config.rgbIrLivenessModel = FacePassModel.initModel(context.getAssets(), "liveness.CPU.rgbir.int8.E.bin");
-                                //当单目或者双目有一个使用GPU活体模型时，请设置livenessGPUCache
-                                config.livenessGPUCache = FacePassModel.initModel(context.getAssets(), "liveness.GPU.AlgoPolicy.E.cache");
-
+                                if (baoCunBean.isHuoTi()){
+                                    config.livenessModel = FacePassModel.initModel(context.getAssets(), "liveness.GPU.rgb.E.bin");
+                                    //双目使用CPU rgbir活体模型
+                                    //config.rgbIrLivenessModel = FacePassModel.initModel(context.getAssets(), "liveness.CPU.rgbir.int8.E.bin");
+                                    //当单目或者双目有一个使用GPU活体模型时，请设置livenessGPUCache
+                                    config.livenessGPUCache = FacePassModel.initModel(context.getAssets(), "liveness.GPU.AlgoPolicy.E.cache");
+                                }
                                 config.searchModel = FacePassModel.initModel(context.getAssets(), "feat2.arm.H.v1.0_1core.bin");
                                 config.detectModel = FacePassModel.initModel(context.getAssets(), "detector.arm.E.bin");
                                 config.detectRectModel = FacePassModel.initModel(context.getAssets(), "detector_rect.arm.E.bin");

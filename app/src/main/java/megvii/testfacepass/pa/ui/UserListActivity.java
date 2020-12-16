@@ -95,6 +95,8 @@ public class UserListActivity extends Activity implements UserListAdapter.ItemDe
                     sb.setName(subject.getName());
                     sb.setId(subject.getId());
                     sb.setTeZhengMa(subject.getTeZhengMa());
+                    sb.setFaceIds1(subject.getFaceIds1());
+                    sb.setFaceIds2(subject.getFaceIds2());
                     subjectList.add(sb);
                 }
                 runOnUiThread(new Runnable() {
