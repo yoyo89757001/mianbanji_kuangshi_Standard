@@ -217,6 +217,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     private static final String group_name = "facepasstestx";
     private static StringBuilder builder=null;
     private int timeall = 0;
+    private int timeall2 = 0;
     private boolean isA=false,isB=false;
     private String dogTime="";
     private SimpleDateFormat df=null;
@@ -427,6 +428,11 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
     //    guanPing();//关屏
 
+    chacks();
+
+    }
+
+    private void chacks(){
         if (baoCunBean.isLight()){//双摄像头
             new Thread(new Runnable() {
                 @Override
@@ -460,7 +466,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                 }
             }).start();
         }
-
     }
 
 
@@ -1182,6 +1187,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                                     openDoor();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
+                                                openDoor();
                                             }
                                         }
                                         if (task != null) {
@@ -1525,6 +1531,13 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     //  riqi.setTypeface(tf);
                    // String xiaoshiss = DateUtils.timeMinute(System.currentTimeMillis() + "");
                     dogTime= DateUtils.timeMinute(System.currentTimeMillis()+"");
+                    timeall2++;
+                    if(timeall2>=10){
+                        timeall2=0;
+                        isA=false;
+                        isB=false;
+                        chacks();
+                    }
 
                     timeall++;
                     if (timeall>=86400) {//两个月
