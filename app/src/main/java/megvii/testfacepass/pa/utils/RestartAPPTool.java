@@ -27,7 +27,7 @@ public class RestartAPPTool {
     }
     /***重启整个APP*/
     public static void restartAPP(Context context){
-        restartAPP(context,10);
+        restartAPP(context,3000);
     }
 }
 
