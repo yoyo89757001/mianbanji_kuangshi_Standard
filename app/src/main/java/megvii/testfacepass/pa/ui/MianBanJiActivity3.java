@@ -404,18 +404,14 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
        // init_NFC();
 
 
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SystemClock.sleep(35000);
-
-              //  int a=0;
-              //  Log.d("MianBanJiActivity3", "a/10:" + (10 / a));
-
-
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                SystemClock.sleep(35000);
+//              //  int a=0;
+//              //  Log.d("MianBanJiActivity3", "a/10:" + (10 / a));
+//            }
+//        }).start();
 
 
 //        if (baoCunBean.isHuoTi()) {
