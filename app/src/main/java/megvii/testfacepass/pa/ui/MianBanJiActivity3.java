@@ -3,14 +3,13 @@ package megvii.testfacepass.pa.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-
 import android.graphics.Bitmap;
-
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -25,7 +24,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.alibaba.fastjson.JSON;
 import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
 import com.baidu.tts.client.SpeechSynthesizer;
@@ -44,9 +42,17 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -83,7 +89,6 @@ import megvii.testfacepass.pa.camera.CameraPreview2;
 import megvii.testfacepass.pa.camera.CameraPreviewData;
 import megvii.testfacepass.pa.camera.CameraPreviewData2;
 import megvii.testfacepass.pa.dialog.MiMaDialog4;
-
 import megvii.testfacepass.pa.tts.Auth;
 import megvii.testfacepass.pa.tts.OfflineResource;
 import megvii.testfacepass.pa.utils.BitmapUtil;
@@ -106,13 +111,14 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import static megvii.testfacepass.pa.tts.IOfflineResourceConst.DEFAULT_SDK_TTS_MODE;
 import static megvii.testfacepass.pa.tts.IOfflineResourceConst.PARAM_SN_NAME;
-import static megvii.testfacepass.pa.tts.IOfflineResourceConst.TEXT_MODEL;
-import static megvii.testfacepass.pa.tts.IOfflineResourceConst.VOICE_MALE_MODEL;
+
+
 
 
 
 
 public class MianBanJiActivity3 extends Activity implements CameraManager.CameraListener, CameraManager2.CameraListener2 {
+
 
 
     private TextView faceName;
@@ -221,6 +227,11 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     private boolean isA=false,isB=false;
     private String dogTime="";
     private SimpleDateFormat df=null;
+    private int num=0;
+    private int num2=0;
+    private File file22 = null;
+
+
 
 
     @SuppressLint("SimpleDateFormat")
@@ -362,10 +373,8 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
             } catch (Exception e) {
                TastyToast.makeText(MianBanJiActivity3.this,"初始化失败"+e.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR).show();
-
             }
         }
-
 
         if (netWorkStateReceiver == null) {
             netWorkStateReceiver = new NetWorkStateReceiver();
@@ -373,7 +382,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             registerReceiver(netWorkStateReceiver, filter);
         }
-
 
         tanChuangThread = new TanChuangThread();
         tanChuangThread.start();
@@ -404,14 +412,26 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
        // init_NFC();
 
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                SystemClock.sleep(35000);
-//              //  int a=0;
-//              //  Log.d("MianBanJiActivity3", "a/10:" + (10 / a));
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SystemClock.sleep(35000);
+                ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+                List<ActivityManager.RunningAppProcessInfo> runnings = am.getRunningAppProcesses();
+                for(ActivityManager.RunningAppProcessInfo running : runnings){
+                    if(running.processName.equals(getPackageName())){
+                        if(running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                                || running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE){
+                            Log.d("MianBanJiActivity3", "在前台");
+                        }else{
+                            Log.d("MianBanJiActivity3", "在后台");
+                            RestartAPPTool.restartAPP(MianBanJiActivity3.this);
+                        }
+                        break;
+                    }
+                }
+            }
+        }).start();
 
 
 //        if (baoCunBean.isHuoTi()) {
@@ -422,10 +442,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 //            }
 //        }
 
-
-    //    guanPing();//关屏
-
     chacks();
+
+    file22 = new File(MyApplication.SDPATH,"lala.txt");
 
     }
 
@@ -1255,7 +1274,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                                // Log.d("RecognizeThread", "未识别"+result.trackId+cishu);
                                 //未识别的
                                 // 防止concurrentHashMap 数据过多 ,超过一定数据 删除没用的
-                                if (concurrentHashMap.size() > 12) {
+                                if (concurrentHashMap.size() > 20) {
                                     concurrentHashMap.clear();
                                 }
                                 if (concurrentHashMap.get(result.trackId) == null) {
@@ -1366,12 +1385,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     protected void onStop() {
         Log.d("MianBanJiActivity3", "停止");
 
-        if (manager != null) {
-            manager.release();
-        }
-        if (manager2 != null) {
-            manager2.release();
-        }
+
 //        if (manager != null) {
 //            manager.release();
 //        }
@@ -1397,6 +1411,13 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
     @Override
     protected void onDestroy() {
         Log.d("MianBanJiActivity3", "onDestroy");
+        if (manager != null) {
+            manager.release();
+        }
+        if (manager2 != null) {
+            manager2.release();
+        }
+
         if (linkedBlockingQueue != null) {
             linkedBlockingQueue.clear();
         }
@@ -1527,6 +1548,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     // String riqi11 = DateUtils.getWeek(System.currentTimeMillis()) + "   " + DateUtils.timesTwo(System.currentTimeMillis() + "");
                     //  riqi.setTypeface(tf);
                    // String xiaoshiss = DateUtils.timeMinute(System.currentTimeMillis() + "");
+
+
+
                     dogTime= DateUtils.timeMinute(System.currentTimeMillis()+"");
                     timeall2++;
                     if(timeall2>=10){
@@ -1535,7 +1559,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                         isB=false;
                         chacks();
                     }
-
                     timeall++;
                     if (timeall>=86400) {//两个月
                     // Log.d("TimeChangeReceiver", "ssss");
@@ -1552,6 +1575,12 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                             link_get_zhiling();
                         }
                     }
+
+                    num2++;
+                    if (num2>=1){
+                        num2=0;
+                        read();
+                    }
                     break;
                 case Intent.ACTION_TIME_CHANGED:
                     //设置了系统时间
@@ -1562,6 +1591,73 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     //  Toast.makeText(context, "system time zone changed", Toast.LENGTH_SHORT).show();
                     break;
             }
+        }
+    }
+
+    private void read(){
+
+        InputStream instream = null;
+        try {
+            instream = new FileInputStream(file22);
+            InputStreamReader inputreader = new InputStreamReader(instream);
+            BufferedReader buffreader = new BufferedReader(inputreader);
+            String line = null;
+            //分行读取
+            StringBuilder sb = new StringBuilder("");
+            try {
+                while ((line = buffreader.readLine()) != null) {
+                    sb.append(line);
+                }
+                instream.close();
+                Log.d("MianBanJiActivity3", "主app读取文本的值"+sb.toString());
+                num++;
+                if (!sb.toString().equals("fu")){
+                    if (num>=2){
+                        num=0;
+                        //重启副app
+                        Log.d("MianBanJiActivity3", "重启副app");
+                        Intent intent = getPackageManager().getLaunchIntentForPackage("com.example.yinian.menkou.mylala");
+                        if (intent != null) {
+                            startActivity(intent);
+                        }
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SystemClock.sleep(7000);
+                                ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+                                List<ActivityManager.RunningAppProcessInfo> runnings = am.getRunningAppProcesses();
+                                for(ActivityManager.RunningAppProcessInfo running : runnings){
+                                    if(running.processName.equals(getPackageName())){
+                                        if(running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                                                || running.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE){
+                                            Log.d("MianBanJiActivity3", "在前台");
+                                        }else{
+                                            Log.d("MianBanJiActivity3", "在后台");
+                                            RestartAPPTool.restartAPP(MianBanJiActivity3.this);
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }).start();
+                    }
+                }else {
+                    num=0;
+                }
+                FileOutputStream outStream = null;
+                try {
+                    outStream = new FileOutputStream(file22);
+                    outStream.write("zhu".getBytes());
+                    outStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 

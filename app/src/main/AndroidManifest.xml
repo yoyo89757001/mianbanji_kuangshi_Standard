@@ -56,8 +56,8 @@
 
         <activity
             android:name=".ui.MianBanJiActivity3"
-            android:launchMode="singleTask"
-            />
+            android:launchMode="singleTask"/>
+
 
 <!--        <service android:name=".severs.SendMsgService" android:process="com.eends.sgservice"/>-->
 
@@ -133,15 +133,16 @@
                 <data android:scheme="file" />
             </intent-filter>
         </receiver>
-        <!-- 自动重启 -->
-        <receiver android:name=".ui.BaseActivity$MyReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+<!--        &lt;!&ndash; 自动重启 &ndash;&gt;-->
+<!--        <receiver android:name=".ui.BaseActivity$MyReceiver">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.BOOT_COMPLETED" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-                <!-- <category android:name="android.intent.category.HOME" /> -->
-            </intent-filter>
-        </receiver>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--                &lt;!&ndash; <category android:name="android.intent.category.HOME" /> &ndash;&gt;-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+
         <!-- <service -->
         <!-- android:name=".severs.AutoSendMsgService" -->
         <!-- android:enabled="true" -->
