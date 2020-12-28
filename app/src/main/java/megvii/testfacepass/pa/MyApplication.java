@@ -5,12 +5,10 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import android.hardware.usb.UsbManager;
 import android.serialport.SerialPort;
-
+import com.tencent.bugly.Bugly;
 import com.tencent.mmkv.MMKV;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -18,13 +16,10 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Objects;
-
 import cn.wch.ch34xuartdriver.CH34xUARTDriver;
 import mcv.facepass.FacePassHandler;
 import megvii.testfacepass.pa.beans.BaoCunBean;
-
 import megvii.testfacepass.pa.utils.UnCeHandler;
-
 import static com.Aladdin.HaspUsbHandler.ACTION_USB_PERMISSION;
 
 
@@ -139,7 +134,7 @@ public class MyApplication extends Application {
         SDPATH = getExternalFilesDir(null)+ File.separator+"yinian1";
         SDPATH2 = getExternalFilesDir(null)+File.separator+"yinian2";
         SDPATH3 = getExternalFilesDir(null)+File.separator+"yinian3";
-        //   Bugly.init(this, "e92fdff61f", false);
+
         String rootDir = MMKV.initialize(this);
         System.out.println("mmkv root: " + rootDir);
 
@@ -174,10 +169,12 @@ public class MyApplication extends Application {
         }
 
       //  Log.d("MyApplication", "driver.UsbFeatureSupported():" + driver.UsbFeatureSupported());
-
       //  Log.i(">>>>>>","oncreate");
 
         init();
+
+        Bugly.init(this, "39a45bdcda", false);
+
 //        String processName = getProcessName();
 //        Log.d("MyApplication", processName+"进程");
 //

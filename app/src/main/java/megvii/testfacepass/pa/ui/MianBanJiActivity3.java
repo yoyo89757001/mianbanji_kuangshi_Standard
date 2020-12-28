@@ -405,16 +405,17 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
 
 
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                SystemClock.sleep(5000);
-//
-//              Subject subject = DBUtils.getSubjectDao().getSubjectById("248");
-//              Log.d("MianBanJiActivity3", "subject:" + subject);
-//
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SystemClock.sleep(35000);
+
+              //  int a=0;
+              //  Log.d("MianBanJiActivity3", "a/10:" + (10 / a));
+
+
+            }
+        }).start();
 
 
 //        if (baoCunBean.isHuoTi()) {

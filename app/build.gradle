@@ -118,8 +118,8 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.9'//日期选择
     implementation 'com.badoo.mobile:android-weak-handler:1.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    //implementation 'com.tencent.bugly:crashreport_upgrade:1.4.2'//腾讯bugly
-    //implementation 'com.tencent.bugly:nativecrashreport:3.7.3' //腾讯bugly
+    implementation 'com.tencent.bugly:crashreport_upgrade:1.4.2'//腾讯bugly
+    implementation 'com.tencent.bugly:nativecrashreport:3.7.3' //腾讯bugly
     implementation "com.android.support:multidex:1.0.3" // 多dex配置
     implementation 'com.tencent:mmkv-static:1.2.4'
     //implementation 'com.airbnb.android:lottie:3.0.7'
