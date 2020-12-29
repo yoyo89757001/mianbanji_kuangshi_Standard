@@ -1465,6 +1465,9 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
             print("释放资源成功");
         }
 
+        if (MyApplication.myApplication.getFacePassHandler()!=null)
+            MyApplication.myApplication.getFacePassHandler().release();
+
         Log.d("MianBanJiActivity3", "onDestroy");
         super.onDestroy();
         MyApplication.myApplication.removeActivity(this);

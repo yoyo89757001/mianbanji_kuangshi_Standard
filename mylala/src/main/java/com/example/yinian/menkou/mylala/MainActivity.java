@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private File file22 =null;
     private int num=0;
     private int num2=0;
+    private final TimeChangeReceiver timeChangeReceiver=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     protected void onDestroy() {
+        if (timeChangeReceiver!=null)
+        unregisterReceiver(timeChangeReceiver);
         super.onDestroy();
 
     }
@@ -120,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
     }
+
+
 
 
      class TimeChangeReceiver extends BroadcastReceiver {
