@@ -357,7 +357,6 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
         }
 
 
-
         if (baoCunBean != null) {
             try {
 //                if (baoCunBean.getJidianqi()!=0){
@@ -1577,7 +1576,7 @@ public class MianBanJiActivity3 extends Activity implements CameraManager.Camera
                     }
 
                     num2++;
-                    if (num2>=1){
+                    if (num2>=3){
                         num2=0;
                         read();
                     }

@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             switch (Objects.requireNonNull(intent.getAction())) {
                 case Intent.ACTION_TIME_TICK:
                     num2++;
-                    if (num2>=1){
+                    if (num2>=3){
                         num2=0;
                         new Thread(new Runnable() {
                             @Override
