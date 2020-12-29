@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private File file22 =null;
     private int num=0;
     private int num2=0;
-    private final TimeChangeReceiver timeChangeReceiver=null;
+    private TimeChangeReceiver timeChangeReceiver=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         intentFilter.addAction(Intent.ACTION_TIME_TICK);//每分钟变化
         intentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);//设置了系统时区
         intentFilter.addAction(Intent.ACTION_TIME_CHANGED);//设置了系统时间
-        TimeChangeReceiver timeChangeReceiver = new TimeChangeReceiver();
+        timeChangeReceiver = new TimeChangeReceiver();
         registerReceiver(timeChangeReceiver, intentFilter);
 
     }
